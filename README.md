@@ -8,6 +8,9 @@ I draw image in svg with
 [svgwrite](http://svgwrite.readthedocs.io/en/master/attributes/presentation.html),
 and convert it into png with [cairosvg](http://cairosvg.org/documentation/).
 
+It look like crazy overkill but in future I could add some interactions (use svg itself inside html).
+And I can use vector images.
+
 To install system dependencies for cairosvg in OSX (MacOS):
 '''
 brew update
