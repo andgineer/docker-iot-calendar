@@ -1,0 +1,4 @@
+tornado
+svgwrite
+requests
+cairosvg

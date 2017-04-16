@@ -17,10 +17,26 @@ from tornado.options import define, options
 import pprint
 import json
 from tornado.escape import json_encode
-from bson.objectid import ObjectId
-import traceback
 import datetime
-#import mistune
+from calendar_image import calendar_image_as_svg
+from svg_to_png import svg_to_png
+
+
+class ImageHandler(tornado.web.RequestHandler):
+    def disable_cache(self):
+        self.set_header('Cache-Control', 'no-cache, must-revalidate')
+        self.set_header('Expires', '0')
+        now = datetime.datetime.now()
+        expiration = datetime.datetime(now.year-1, now.month, now.day)
+        self.set_header('Last-Modified', expiration)
+
+    #todo async decorators and calls to API
+    def get(self):
+        # with open('static/img/ancient_scholar.png', 'rb') as image_file:
+        #     image = image_file.read()
+        image = svg_to_png(calendar_image_as_svg())
+        self.write(image)
+        self.flush()
 
 
 class CalendarHandler(tornado.web.RequestHandler):
@@ -35,7 +51,7 @@ class CalendarHandler(tornado.web.RequestHandler):
     def get(self):
         self.disable_cache()
         self.render(
-            'calendar.html',
+            'index.html',
             page_title='Calendar',
         )
 
@@ -48,7 +64,8 @@ class Application(tornado.web.Application):
         )
         handlers = [
             (r'/', CalendarHandler),
-            (r'/static/(.*)', tornado.web.StaticFileHandler, {'path': os.path.join(os.path.dirname(__file__), 'static/')}),
+            (r'/page_image.png', ImageHandler),
+            (r'/img/(.*)', tornado.web.StaticFileHandler, {'path': os.path.join(os.path.dirname(__file__), 'static/img')}),
             (r'/styles/(.*)', tornado.web.StaticFileHandler, {'path': os.path.join(os.path.dirname(__file__), 'static/styles/')}),
             (r'/scripts/(.*)', tornado.web.StaticFileHandler, {'path': os.path.join(os.path.dirname(__file__), 'static/scripts/')})
         ]
@@ -56,10 +73,10 @@ class Application(tornado.web.Application):
 
 
 if __name__ == '__main__':
-    define("port", default=8080, help="run on the given port", type=int)
+    define('port', default=4444, help='run on the given port', type=int)
     tornado.options.parse_command_line()
     http_server = tornado.httpserver.HTTPServer(Application())
     http_server.listen(options.port)
+    print('Running on port {}'.format(options.port))
 
     tornado.ioloop.IOLoop.instance().start()
-
