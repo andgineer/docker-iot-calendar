@@ -20,6 +20,26 @@ from tornado.escape import json_encode
 import datetime
 from calendar_image import calendar_image_as_svg
 from svg_to_png import svg_to_png
+import json
+import os.path
+
+
+SETTINGS_FILE_NAME = '../amazon-dash-private/settings.json'
+
+settings = {}
+
+
+NO_SETTINGS_FILE = '''\nNo {} found. \nIf you run application in docker container you
+should connect volume with setting files, like
+    -v $PWD/amazon-dash-private:/amazon-dash-private:ro'''
+
+def load_settings():
+    """ Load settings """
+    if not os.path.isfile(SETTINGS_FILE_NAME):
+        print(NO_SETTINGS_FILE.format(SETTINGS_FILE_NAME))
+        exit(1)
+    with open(SETTINGS_FILE_NAME, 'r') as settings_file:
+        return json.loads(settings_file.read())
 
 
 class ImageHandler(tornado.web.RequestHandler):
@@ -73,6 +93,8 @@ class Application(tornado.web.Application):
 
 
 if __name__ == '__main__':
+    settings = load_settings()
+
     define('port', default=4444, help='run on the given port', type=int)
     tornado.options.parse_command_line()
     http_server = tornado.httpserver.HTTPServer(Application())
