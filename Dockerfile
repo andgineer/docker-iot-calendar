@@ -1,7 +1,7 @@
 FROM masterandrey/docker-python-base
 
 COPY pip.requirements.txt /pip.requirements.txt
-COPY server/*  /server/
+COPY src/*  /iot_calendar/
 
 RUN apk add jpeg-dev zlib-dev cairo-dev \
     && pip install -r pip.requirements.txt \
@@ -11,6 +11,6 @@ RUN apk add jpeg-dev zlib-dev cairo-dev \
 
 EXPOSE 4444
 
-WORKDIR /server
+WORKDIR /iot_calendar
 
-CMD ["python3", "app.py"]
+CMD ["python3", "iot_calendar.py"]
