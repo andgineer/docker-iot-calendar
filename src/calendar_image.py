@@ -1,7 +1,13 @@
 #import svgwrite
+import os
 import datetime
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
+from dateutil.tz import tzoffset
+from matplotlib.legend_handler import HandlerPatch
+from matplotlib.patches import Rectangle
+from io import BytesIO
+
 
 # def calendar_image_as_svg():
 #     COLOR = 'black'
@@ -23,12 +29,11 @@ picture_height = 6 # * dpi = 600
 pies_height = 3.5 / 6
 pies_top = 1 - pies_height
 
-pie_row_header_width = (1 / days) / 3
-pie_width = (1 - pie_row_header_width) / days
+WEEK_DAYS = 7
+pie_row_header_width = (1 / WEEK_DAYS) / 3
+pie_width = (1 - pie_row_header_width) / WEEK_DAYS
 pie_col_header_height = (pies_height / weeks) / 5
 pie_height = (pies_height - pie_col_header_height) / weeks
-
-image_padding = pie_width / 5
 
 watch_left = 0
 watch_width = 0.3
@@ -41,84 +46,53 @@ plot_height = 1 - pies_height - 0.1
 plot_bottom = 1 - plot_height
 
 
-class ImageHandler(HandlerBase):
-    def create_artists(self, legend, orig_handle,
-                       xdescent, ydescent, width, height, fontsize,
-                       trans):
+# class HandlerRectangle(HandlerPatch):
+#     def create_artists(self, legend, orig_handle,
+#                        xdescent, ydescent, width, height, fontsize, trans):
+#         bb = Bbox.from_bounds(xdescent - 0,
+#                               ydescent - 20,
+#                               width + 0,
+#                               height + 8)
+#
+#         tbb = TransformedBbox(bb, trans)
+#         image = BboxImage(tbb)
+#         image.set_data(self.image_data)
+#
+#         self.update_prop(image, orig_handle, legend)
+#         image.set_transform(trans)
+#         return [image]
+#
+#     def set_image(self, image_path, image_stretch=(0, 0)):
+#         if os.path.exists(image_path):
+#             self.image_data = read_png(image_path)
+#         self.image_stretch = image_stretch
 
-        # enlarge the image by these margins
-        sx, sy = self.image_stretch
-
-        # create a bounding box to house the image
-        bb = Bbox.from_bounds(xdescent - sx,
-                              ydescent - sy,
-                              width + sx,
-                              height + sy)
-
-        tbb = TransformedBbox(bb, trans)
-        image = BboxImage(tbb)
-        image.set_data(self.image_data)
-
-        self.update_prop(image, orig_handle, legend)
-
-        return [image]
-
-    def set_image(self, image_path, image_stretch=(0, 0)):
-        if os.path.exists(image_path):
-            self.image_data = read_png(image_path)
-        self.image_stretch = image_stretch
-
-from matplotlib.legend_handler import HandlerPatch
-import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
-
-
-class HandlerRectangle(HandlerPatch):
-    def create_artists(self, legend, orig_handle,
-                       xdescent, ydescent, width, height, fontsize, trans):
-        bb = Bbox.from_bounds(xdescent - 0,
-                              ydescent - 20,
-                              width + 0,
-                              height + 8)
-
-        tbb = TransformedBbox(bb, trans)
-        image = BboxImage(tbb)
-        image.set_data(self.image_data)
-
-        self.update_prop(image, orig_handle, legend)
-        image.set_transform(trans)
-        return [image]
-
-    def set_image(self, image_path, image_stretch=(0, 0)):
-        if os.path.exists(image_path):
-            self.image_data = read_png(image_path)
-        self.image_stretch = image_stretch
-
-def draw_plot(axes, x, y, legend_labels, legend='rectangle'):
+def draw_plot(axes, x, y, labels, legend='rectangle'):
+    legend_labels = [label['summary'] for label in labels]
     polies = axes.stackplot(x, y)
     axes.patch.set_visible(False)
     if legend == 'rectangle':
         plt.legend([plt.Rectangle((0, 0), 1, 1, fc=poly.get_facecolor()[0]) for poly in polies], legend_labels)
-    elif legend == 'icons':
-        legend_proxies = []
-        handler_map = {}
-        for poly in polies:
-            patch = mpatches.Rectangle((0, 0), 0.1, 0.1, facecolor=poly.get_facecolor()[0])
-            legend_proxies.append(patch)
-            image_handler = HandlerRectangle() #ImageHandler()
-            image_handler.set_image(image_path='old-woman.png', image_stretch=(0, 16))
-            handler_map[poly] = image_handler
-        plt.legend(
-            legend_proxies,
-            legend_labels,
-            handleheight=3,
-            handlelength=4,
-            #handles=[custom_handler],
-            #handler_map={mpatches.Rectangle: image_handler},
-            handler_map=handler_map, #{s: custom_handler, s2: custom_handler},
-            labelspacing=1,
-            frameon=True
-        )
+    # elif legend == 'icons':
+    #     legend_proxies = []
+    #     handler_map = {}
+    #     for poly in polies:
+    #         patch = Rectangle((0, 0), 0.1, 0.1, facecolor=poly.get_facecolor()[0])
+    #         legend_proxies.append(patch)
+    #         image_handler = HandlerRectangle() #ImageHandler()
+    #         image_handler.set_image(image_path='old-woman.png', image_stretch=(0, 16))
+    #         handler_map[poly] = image_handler
+    #     plt.legend(
+    #         legend_proxies,
+    #         legend_labels,
+    #         handleheight=3,
+    #         handlelength=4,
+    #         #handles=[custom_handler],
+    #         #handler_map={mpatches.Rectangle: image_handler},
+    #         handler_map=handler_map, #{s: custom_handler, s2: custom_handler},
+    #         labelspacing=1,
+    #         frameon=True
+    #     )
     elif legend == 'inside':
         #loc = y1.argmax()
         #ax.text(loc, y1[loc]*0.25, areaLabels[0])
@@ -184,6 +158,7 @@ def draw_pies(grid, weeks=4, empty_image_file_name=None):
         plt.pie(values, shadow=True, explode=explode, radius=radius)
 
     def draw_empty_pie(week, day):
+        image_padding = pie_width / 5
         axs.append(
             plt.axes([
                 pie_row_header_width + day * pie_width + image_padding,
@@ -219,19 +194,42 @@ def draw_pies(grid, weeks=4, empty_image_file_name=None):
         ax.set_xticklabels([])
         ax.set_yticklabels([])
 
-
-if __name__ == '__main__':
+def draw_calendar(grid, x, y, dashboard, labels):
     plt.figure(figsize=(picture_width, picture_height), dpi=dpi)
     plt.style.use('grayscale')
-
     draw_plot(
         plt.axes([plot_left, plot_bottom, plot_width, plot_height]),
-        x, y, ['morning', 'evening'])
+        x, y,
+        labels
+    )
+    draw_pies(
+        grid,
+        weeks=weeks,
+        empty_image_file_name=os.path.join(dashboard['images_folder'], dashboard['empty_image'])
+    )
+    bytes_file = BytesIO()
+    plt.savefig(bytes_file, dpi=dpi, cmap='gray', pad_inches=0, bbox_inches='tight')
+    return bytes_file.getvalue()
 
-    draw_pies(grid, weeks=weeks, empty_image_file_name='old-woman.png')
 
-    plt.savefig('myfig.png', dpi=dpi, cmap='gray', pad_inches=0, bbox_inches='tight')
-
+def test():
+    x = [datetime.datetime(2017, 4, 6, 0, 0), datetime.datetime(2017, 4, 7, 0, 0), datetime.datetime(2017, 4, 8, 0, 0), datetime.datetime(2017, 4, 11, 0, 0), datetime.datetime(2017, 4, 12, 0, 0), datetime.datetime(2017, 4, 13, 0, 0), datetime.datetime(2017, 4, 14, 0, 0), datetime.datetime(2017, 4, 16, 0, 0), datetime.datetime(2017, 4, 17, 0, 0)]
+    y = [[0.0, 15.0, 9.0, 0.0, 9.0, 5.0, 6.0, 0.0, 11.0], [15.0, 17.0, 0.0, 20.0, 20.0, 19.0, 30.0, 32.0, 23.0]]
+    grid = [[{'date': datetime.datetime(2017, 3, 27, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [ 0.,  0.]}, {'date': datetime.datetime(2017, 3, 28, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [ 0.,  0.]}, {'date': datetime.datetime(2017, 3, 29, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [ 0.,  0.]}, {'date': datetime.datetime(2017, 3, 30, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [ 0.,  0.]}, {'date': datetime.datetime(2017, 3, 31, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [ 0.,  0.]}, {'date': datetime.datetime(2017, 4, 1, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [ 0.,  0.]}, {'date': datetime.datetime(2017, 4, 2, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [ 0.,  0.]}], [{'date': datetime.datetime(2017, 4, 3, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [ 0.,  0.]}, {'date': datetime.datetime(2017, 4, 4, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [ 0.,  0.]}, {'date': datetime.datetime(2017, 4, 5, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [ 0.,  0.]}, {'date': datetime.datetime(2017, 4, 6, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [  0.,  15.]}, {'date': datetime.datetime(2017, 4, 7, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [ 15.,  17.]}, {'date': datetime.datetime(2017, 4, 8, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [ 9.,  0.]}, {'date': datetime.datetime(2017, 4, 9, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [ 0.,  0.]}], [{'date': datetime.datetime(2017, 4, 10, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [ 0.,  0.]}, {'date': datetime.datetime(2017, 4, 11, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [  0.,  20.]}, {'date': datetime.datetime(2017, 4, 12, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [  9.,  20.]}, {'date': datetime.datetime(2017, 4, 13, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [  5.,  19.]}, {'date': datetime.datetime(2017, 4, 14, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [  6.,  30.]}, {'date': datetime.datetime(2017, 4, 15, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [ 0.,  0.]}, {'date': datetime.datetime(2017, 4, 16, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [  0.,  32.]}], [{'date': datetime.datetime(2017, 4, 17, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [ 11.,  23.]}, {'date': datetime.datetime(2017, 4, 18, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [ 0.,  0.]}, {'date': datetime.datetime(2017, 4, 19, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [ 0.,  0.]}, {'date': datetime.datetime(2017, 4, 20, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [ 0.,  0.]}, {'date': datetime.datetime(2017, 4, 21, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [ 0.,  0.]}, {'date': datetime.datetime(2017, 4, 22, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [ 0.,  0.]}, {'date': datetime.datetime(2017, 4, 23, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [ 0.,  0.]}]]
+    dashboard = {
+        "summary": "Anna work-out",
+        "empty_image": "old-woman.png",
+        "images_folder": "../amazon-dash-private/"
+    }
+    labels = [
+        {"summary": "Morning work-out", "image": "morning.png"},
+        {"summary": "Physiotherapy", "image": "evening.png"}
+    ]
+    image = draw_calendar(grid, x, y, dashboard, labels)
+    with open('test.png', 'wb') as png_file:
+        png_file.write(image)
     plt.show()
-    # with open('test.svg', 'w') as svg_file:
-    #     svg_file.write(calendar_image_as_svg())
+
+
+if __name__ == '__main__':
+    test()

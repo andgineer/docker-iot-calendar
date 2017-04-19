@@ -18,8 +18,9 @@ import pprint
 import json
 from tornado.escape import json_encode
 import datetime
-from calendar_image import calendar_image_as_svg
-from svg_to_png import svg_to_png
+from calendar_image import draw_calendar
+from calendar_data import events_to_weeks_grid, events_to_array, calendar_events_list
+from google_calendar import collect_events
 import json
 import os.path
 
@@ -54,7 +55,20 @@ class ImageHandler(tornado.web.RequestHandler):
     def get(self):
         # with open('static/img/ancient_scholar.png', 'rb') as image_file:
         #     image = image_file.read()
-        image = svg_to_png(calendar_image_as_svg())
+        dashboard_name = 'anna_work_out'
+        calendar_events = calendar_events_list(settings, dashboard_name)
+        events = collect_events(calendar_events, settings)
+        grid = events_to_weeks_grid(events)
+        x, y = events_to_array(events)
+        dashboard = settings['dashboards'][dashboard_name]
+        if 'images_folder' not in dashboard:
+            dashboard['images_folder'] = settings['dashboards']['images_folder']
+        image = draw_calendar(
+            grid,
+            x, y,
+            dashboard,
+            labels=calendar_events
+        )
         self.write(image)
         self.flush()
 

@@ -4,39 +4,50 @@ Prepare data for calendar_image.py
 import copy
 import datetime
 import numpy as np
+from dateutil.tz import tzoffset
 
 
-class CalendarData(object):
-    def __init__(self, settings):
-        self.settings = settings
-        self.actions = settings['actions']
+# def dashboard_list(settings):
+#     result = [dashboard['summary'] for dashboard in settings['dashboards']]
+#     return result
 
-    def preprocess_actions(self, button, actions):
-        """
-        Add summary (with button name value) if there is no one.
-        Substitutes {button} with button name in parameters
-        and {summary} with summary parameter.
-        """
-        actions = copy.deepcopy(actions)
-        for action in actions:
-            if 'summary' not in action:
+def preprocess_actions(button, button_settings):
+    """
+    Add summary (with button name value) if there is no one.
+    Substitutes {button} with button name in parameters.
+    """
+    def subst(s):
+        return s.format(button=button)
+    actions = copy.deepcopy(button_settings['actions'])
+    for action in actions:
+        if 'summary' not in action:
+            if 'summary' in button_settings:
+                action['summary'] = button_settings['summary']
+            else:
                 action['summary'] = button
-            summary = action['summary'].format(button=button)
-            for param in action:
-                if isinstance(action[param], str):
-                    action[param] = action[param].format(button=button, summary=summary)
-        return actions
+        for param in action:
+            if isinstance(action[param], str):
+                action[param] = subst(action[param])
+                #todo recursive replace if param is list/dict
+    return actions
 
-    def dashboard_actions(self, dashboard):
-        """Returns list of actions for the dashboard"""
-        result = []
-        for button in self.actions:
-            if button != '__DEFAULT__':
-                actions = self.actions[button]['actions']
-                actions = self.preprocess_actions(button, actions)
-                for act in actions:
-                    result.append(act)
-        return result
+
+def calendar_events_list(settings, dashboard_name):
+    result = []
+    for button in settings['actions']:
+        if button != '__DEFAULT__':
+            button_actions = settings['actions'][button]
+            actions = preprocess_actions(button, button_actions)
+            for action in actions:
+                if 'type' in action and action['type'] == 'calendar' and action['dashboard'] == dashboard_name:
+                    if isinstance(action['summary'], list):
+                        for interval in action['summary']:
+                            a = copy.deepcopy(action)
+                            a['summary'] = interval['summary']
+                            result.append(a)
+                    else:
+                        result.append(copy.deepcopy(action))
+    return result
 
 
 def event_duration(event):
@@ -159,5 +170,8 @@ def test():
 
 
 if __name__ == '__main__':
+    from iot_calendar import load_settings
+    settings = load_settings()
+    print(calendar_events_list(settings, 'anna_work_out'))
     test()
 

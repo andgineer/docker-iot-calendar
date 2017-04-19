@@ -87,19 +87,18 @@ class Calendar(object):
         )
 
 
-def collect_events():
+def collect_events(calendar_events, settings):
     events = []
-    for button in settings['actions']:
-        for action in settings['actions'][button]['actions']:
-            if action['type'] == 'calendar':
-                calendar = Calendar(settings, action['calendar_id'])
-                events.extend(calendar.get_last_events(button))
+    for event in calendar_events:
+        calendar = Calendar(settings, event['calendar_id'])
+        events.append(calendar.get_last_events(event['summary']))
     return events
 
 
 if __name__ == "__main__":
-    from app import load_settings
+    from iot_calendar import load_settings
+    from calendar_data import calendar_events_list
     settings = load_settings()
-
-    events = collect_events()
+    calendar_events = calendar_events_list(settings, 'anna_work_out')
+    events = collect_events(calendar_events)
     pprint(events)

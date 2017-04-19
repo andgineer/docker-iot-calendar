@@ -2,3 +2,6 @@ tornado
 svgwrite
 requests
 cairosvg
+numpy
+dateutil
+matplotlib

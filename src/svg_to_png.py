@@ -1,3 +1,6 @@
+"""
+Obsolete
+"""
 import cairosvg
 import io
 
