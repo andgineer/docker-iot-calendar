@@ -56,7 +56,9 @@ class DashboardImageHandler(tornado.web.RequestHandler):
         style = self.get_argument('style', '')
         if not style:
             style = 'grayscale'
-        dashboard_name = 'anna_work_out'
+        dashboard_name = self.get_argument('b', '')
+        if not dashboard_name:
+            dashboard_name = list(settings['dashboards'].keys())[0]
         calendar_events = calendar_events_list(settings, dashboard_name)
         events = collect_events(calendar_events, settings)
         grid = events_to_weeks_grid(events)
@@ -72,6 +74,7 @@ class DashboardImageHandler(tornado.web.RequestHandler):
             labels=calendar_events
         )
         self.write(image)
+        self.set_header("Content-type",  "image/png")
         self.flush()
 
 
