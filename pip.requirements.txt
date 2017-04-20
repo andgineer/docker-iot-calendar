@@ -3,5 +3,5 @@ svgwrite
 requests
 cairosvg
 numpy
-dateutil
+python-dateutil
 matplotlib
