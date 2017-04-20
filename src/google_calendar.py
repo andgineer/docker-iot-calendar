@@ -28,10 +28,13 @@ class Calendar(object):
         return credentials.authorize(httplib2.Http())
 
     def get_service(self):
+        #logging.getLogger('googleapiclient.discovery').setLevel(logging.CRITICAL)
         return discovery.build(
             'calendar',
             'v3',
-            http=self.http
+            http=self.http,
+            cache_discovery=False # file cash bug: https://github.com/google/google-api-python-client/issues/299
+            # also we can use older pip uninstall oauth2client ; pip install oauth2client==3.0.0
         )
 
     def parse_time(self, s):
