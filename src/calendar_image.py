@@ -23,8 +23,8 @@ explode = (0.1, 0.05)
 weeks = 4
 
 dpi = 100
-picture_width = 8 # * dpi = 800
-picture_height = 6 # * dpi = 600
+picture_width = 8 * (8 / 8.29) # * dpi = 800  # I cannot remove padding around drawing so I have to manually
+picture_height = 6 * (6 / 6.16) # * dpi = 600 # ajust image to be exactly 800x600. Not sure if that has good stability.
 
 pies_height = 3.5 / 6
 pies_top = 1 - pies_height
@@ -194,9 +194,12 @@ def draw_pies(grid, weeks=4, empty_image_file_name=None):
         ax.set_xticklabels([])
         ax.set_yticklabels([])
 
-def draw_calendar(grid, x, y, dashboard, labels):
+
+def draw_calendar(grid, x, y, dashboard, labels, xkcd=True, style='grayscale'):
+    if xkcd:
+        plt.xkcd()
     plt.figure(figsize=(picture_width, picture_height), dpi=dpi)
-    plt.style.use('grayscale')
+    plt.style.use(style)
     draw_plot(
         plt.axes([plot_left, plot_bottom, plot_width, plot_height]),
         x, y,
@@ -208,7 +211,7 @@ def draw_calendar(grid, x, y, dashboard, labels):
         empty_image_file_name=os.path.join(dashboard['images_folder'], dashboard['empty_image'])
     )
     bytes_file = BytesIO()
-    plt.savefig(bytes_file, dpi=dpi, cmap='gray', pad_inches=0, bbox_inches='tight')
+    plt.savefig(bytes_file, dpi=dpi, pad_inches=0, bbox_inches='tight') # cmap='gray'
     return bytes_file.getvalue()
 
 
@@ -219,13 +222,13 @@ def test():
     dashboard = {
         "summary": "Anna work-out",
         "empty_image": "old-woman.png",
-        "images_folder": "../amazon-dash-private/"
+        "images_folder": "../amazon-dash-private/images/"
     }
     labels = [
         {"summary": "Morning work-out", "image": "morning.png"},
         {"summary": "Physiotherapy", "image": "evening.png"}
     ]
-    image = draw_calendar(grid, x, y, dashboard, labels)
+    image = draw_calendar(grid, x, y, dashboard, labels, style='seaborn-talk')
     with open('test.png', 'wb') as png_file:
         png_file.write(image)
     plt.show()
