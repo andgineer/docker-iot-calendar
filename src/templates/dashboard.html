@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <script type="text/javascript">
+        {% include "update_image.js" %}
+    </script>
+    <img id="page_image" src="dashboard.png?b={{ dashboard_name }}&style={{ style }}">
+{% end %}

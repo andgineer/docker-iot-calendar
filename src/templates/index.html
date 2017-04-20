@@ -1,5 +1,16 @@
 {% extends "base.html" %}
 
 {% block body %}
-    <img id="page_image" src="page_image.png">
+<div>
+    <ol class="rounded-list">
+        {% for dashboard in dashboards %}
+        <li><a href="">{{ dashboards[dashboard]['summary'] }}</a>
+            <ol class="rectangle-list">
+                <li><a href="/?b={{ dashboard }}&style=seaborn-talk">Colourful dashboard</a></li>
+                <li><a href="/?b={{ dashboard }}">Gray dashboard (for kindle)</a></li>
+            </ol>
+        </li>
+        {% end %}
+    </ol>
+</div>
 {% end %}

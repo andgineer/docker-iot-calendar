@@ -2,7 +2,6 @@ FROM masterandrey/docker-python-base
 
 COPY pip.requirements.txt /pip.requirements.txt
 COPY xkcd.otf /
-COPY src/*  /iot_calendar/
 
 # ADD repositories /etc/apk/repositories
 
@@ -20,6 +19,8 @@ RUN apk add jpeg-dev zlib-dev cairo-dev \
     # https://hub.docker.com/r/o76923/alpine-numpy-stack/~/dockerfile/
     && rm -rf ~/.pip/cache/ \
     && rm -rf /var/cache/apk/*
+
+COPY src  /iot_calendar/
 
 EXPOSE 4444
 

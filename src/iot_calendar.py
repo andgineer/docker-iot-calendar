@@ -43,7 +43,7 @@ def load_settings():
         return json.loads(settings_file.read())
 
 
-class ImageHandler(tornado.web.RequestHandler):
+class DashboardImageHandler(tornado.web.RequestHandler):
     def disable_cache(self):
         self.set_header('Cache-Control', 'no-cache, must-revalidate')
         self.set_header('Expires', '0')
@@ -53,8 +53,9 @@ class ImageHandler(tornado.web.RequestHandler):
 
     #todo async decorators and calls to API
     def get(self):
-        # with open('static/img/ancient_scholar.png', 'rb') as image_file:
-        #     image = image_file.read()
+        style = self.get_argument('style', '')
+        if not style:
+            style = 'grayscale'
         dashboard_name = 'anna_work_out'
         calendar_events = calendar_events_list(settings, dashboard_name)
         events = collect_events(calendar_events, settings)
@@ -62,18 +63,19 @@ class ImageHandler(tornado.web.RequestHandler):
         x, y = events_to_array(events)
         dashboard = settings['dashboards'][dashboard_name]
         if 'images_folder' not in dashboard:
-            dashboard['images_folder'] = settings['dashboards']['images_folder']
+            dashboard['images_folder'] = settings['images_folder']
         image = draw_calendar(
             grid,
             x, y,
             dashboard,
+            style=style,
             labels=calendar_events
         )
         self.write(image)
         self.flush()
 
 
-class CalendarHandler(tornado.web.RequestHandler):
+class DashboardListHandler(tornado.web.RequestHandler):
     def disable_cache(self):
         self.set_header('Cache-Control', 'no-cache, must-revalidate')
         self.set_header('Expires', '0')
@@ -84,10 +86,24 @@ class CalendarHandler(tornado.web.RequestHandler):
     #todo async decorators and calls to API
     def get(self):
         self.disable_cache()
-        self.render(
-            'index.html',
-            page_title='Calendar',
-        )
+        dashboard_name = self.get_argument('b', '')
+        if dashboard_name:
+            style = self.get_argument('style', '')
+            if not style:
+                style = 'grayscale'
+            self.render(
+                'dashboard.html',
+                dashboard_name=dashboard_name,
+                style=style,
+                page_title='Dashboard',
+            )
+        else:
+            dashboards = settings['dashboards']
+            self.render(
+                'index.html',
+                dashboards=dashboards,
+                page_title='Dashboards list',
+            )
 
 
 class Application(tornado.web.Application):
@@ -97,8 +113,8 @@ class Application(tornado.web.Application):
             debug=True,
         )
         handlers = [
-            (r'/', CalendarHandler),
-            (r'/page_image.png', ImageHandler),
+            (r'/', DashboardListHandler),
+            (r'/dashboard.png', DashboardImageHandler),
             (r'/img/(.*)', tornado.web.StaticFileHandler, {'path': os.path.join(os.path.dirname(__file__), 'static/img')}),
             (r'/styles/(.*)', tornado.web.StaticFileHandler, {'path': os.path.join(os.path.dirname(__file__), 'static/styles/')}),
             (r'/scripts/(.*)', tornado.web.StaticFileHandler, {'path': os.path.join(os.path.dirname(__file__), 'static/scripts/')})
