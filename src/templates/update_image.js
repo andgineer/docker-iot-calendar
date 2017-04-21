@@ -15,5 +15,5 @@ function updatePageImage() {
 
 $(document).ready(function () {
     //setInterval calls every ... ms
-    setInterval(updatePageImage, 10000);
+    setInterval(updatePageImage, 60000);
 });
