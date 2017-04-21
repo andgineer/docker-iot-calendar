@@ -12,7 +12,7 @@ picture_width = 8 * (800 / 821) # * dpi = 800  # I cannot remove padding around 
 picture_height = 6 * (600 / 614) # * dpi = 600 # ajust image to be exactly 800x600. Not sure if that has good stability.
 
 left_gap = 0.01
-pies_height = 3.5 / 6
+pies_height = 3.5 / 6 # vertical proportion between weeks grid and plot above it
 pies_top = 1 - pies_height
 
 WEEK_DAYS = 7
@@ -22,7 +22,7 @@ pie_col_header_height = (pies_height / weeks) / 5
 pie_height = (pies_height - pie_col_header_height) / weeks
 pie_scale = 0.9
 
-grid_aspect = 1.345
+grid_aspect = 1.345 # horizontal scale to fill full width of weeks grid
 
 watch_left = 0
 watch_width = 0.3
