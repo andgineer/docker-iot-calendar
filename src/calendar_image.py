@@ -1,31 +1,17 @@
-#import svgwrite
 import os
 import datetime
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 from dateutil.tz import tzoffset
-from matplotlib.legend_handler import HandlerPatch
-from matplotlib.patches import Rectangle
 from io import BytesIO
-
-
-# def calendar_image_as_svg():
-#     COLOR = 'black'
-#     dwg = svgwrite.Drawing(size=('600', '800'))
-#     dwg.add(dwg.line(start=(0, 0), end=(600, 600), stroke_width=3, stroke=COLOR))
-#     dwg.add(dwg.line(start=(600, 0), end=(0, 600), stroke_width=3, stroke=COLOR))
-#     dwg.add(dwg.text(datetime.datetime.now().strftime('%H:%M:%S'), insert=(100, 20), fill=COLOR))
-#     svgwrite.image.Image('static/img/morning.svg', insert=(0, 0), size=(100,100))
-#     return dwg.tostring()
-
-explode = (0.1, 0.05)
 
 weeks = 4
 
 dpi = 100
-picture_width = 8 * (8 / 8.29) # * dpi = 800  # I cannot remove padding around drawing so I have to manually
-picture_height = 6 * (6 / 6.16) # * dpi = 600 # ajust image to be exactly 800x600. Not sure if that has good stability.
+picture_width = 8 * (800 / 821) # * dpi = 800  # I cannot remove padding around drawing so I have to manually
+picture_height = 6 * (600 / 614) # * dpi = 600 # ajust image to be exactly 800x600. Not sure if that has good stability.
 
+left_gap = 0.01
 pies_height = 3.5 / 6
 pies_top = 1 - pies_height
 
@@ -34,6 +20,9 @@ pie_row_header_width = (1 / WEEK_DAYS) / 3
 pie_width = (1 - pie_row_header_width) / WEEK_DAYS
 pie_col_header_height = (pies_height / weeks) / 5
 pie_height = (pies_height - pie_col_header_height) / weeks
+pie_scale = 0.9
+
+grid_aspect = 1.345
 
 watch_left = 0
 watch_width = 0.3
@@ -46,59 +35,19 @@ plot_height = 1 - pies_height - 0.1
 plot_bottom = 1 - plot_height
 
 
-# class HandlerRectangle(HandlerPatch):
-#     def create_artists(self, legend, orig_handle,
-#                        xdescent, ydescent, width, height, fontsize, trans):
-#         bb = Bbox.from_bounds(xdescent - 0,
-#                               ydescent - 20,
-#                               width + 0,
-#                               height + 8)
-#
-#         tbb = TransformedBbox(bb, trans)
-#         image = BboxImage(tbb)
-#         image.set_data(self.image_data)
-#
-#         self.update_prop(image, orig_handle, legend)
-#         image.set_transform(trans)
-#         return [image]
-#
-#     def set_image(self, image_path, image_stretch=(0, 0)):
-#         if os.path.exists(image_path):
-#             self.image_data = read_png(image_path)
-#         self.image_stretch = image_stretch
-
 def draw_plot(axes, x, y, labels, legend='rectangle'):
     legend_labels = [label['summary'] for label in labels]
     polies = axes.stackplot(x, y)
     axes.patch.set_visible(False)
     if legend == 'rectangle':
         plt.legend([plt.Rectangle((0, 0), 1, 1, fc=poly.get_facecolor()[0]) for poly in polies], legend_labels)
-    # elif legend == 'icons':
-    #     legend_proxies = []
-    #     handler_map = {}
-    #     for poly in polies:
-    #         patch = Rectangle((0, 0), 0.1, 0.1, facecolor=poly.get_facecolor()[0])
-    #         legend_proxies.append(patch)
-    #         image_handler = HandlerRectangle() #ImageHandler()
-    #         image_handler.set_image(image_path='old-woman.png', image_stretch=(0, 16))
-    #         handler_map[poly] = image_handler
-    #     plt.legend(
-    #         legend_proxies,
-    #         legend_labels,
-    #         handleheight=3,
-    #         handlelength=4,
-    #         #handles=[custom_handler],
-    #         #handler_map={mpatches.Rectangle: image_handler},
-    #         handler_map=handler_map, #{s: custom_handler, s2: custom_handler},
-    #         labelspacing=1,
-    #         frameon=True
-    #     )
     elif legend == 'inside':
         #loc = y1.argmax()
         #ax.text(loc, y1[loc]*0.25, areaLabels[0])
         pass
 
-def draw_pies(grid, weeks=4, empty_image_file_name=None):
+
+def draw_pies(figure, grid, weeks=4, empty_image_file_name=None):
     def find_max_total(grid):
         max_total = 0
         for week in range(len(grid)):
@@ -108,87 +57,79 @@ def draw_pies(grid, weeks=4, empty_image_file_name=None):
                     max_total = total
         return max_total
 
-    def draw_day_header(day):
-        axs.append(
-            plt.axes([
-                pie_row_header_width + day * pie_width ,
-                weeks * pie_height,
-                pie_width,
-                pie_col_header_height
-            ],
-                facecolor='white'))
-        plt.text(
-            0.5, 0.5,
-            grid[0][day]['date'].strftime('%A'),
-            horizontalalignment='center',
-            verticalalignment='center',
-            fontsize=12
-        )
-        plt.axis('off')
+    def draw_day_headers():
+        for day in range(WEEK_DAYS):
+            plt.text(
+                (pie_row_header_width + (day + 0.5) * pie_width) * grid_aspect,
+                weeks * pie_height + 0.5 * pie_col_header_height,
+                grid[0][day]['date'].strftime('%A'),
+                horizontalalignment='center',
+                verticalalignment='center',
+                fontsize=12
+            )
 
-    def draw_week_header(week):
-        axs.append(
-            plt.axes([
-                0,
-                week * pie_height,
-                pie_row_header_width,
-                pie_height
-            ],
-                facecolor='white'))
-        plt.text(
-            0.5, 0.5,
-            grid[week][0]['date'].strftime('%d\n%b'),
-            horizontalalignment='center',
-            verticalalignment='center',
-            fontsize=14
-        )
-        plt.axis('off')
+    def draw_week_headers():
+        for week in range(weeks):
+            plt.text(
+                pie_row_header_width * 0.5,
+                (week + 0.5) * pie_height,
+                grid[week][0]['date'].strftime('%d\n%b'),
+                horizontalalignment='center',
+                verticalalignment='center',
+                fontsize=14
+            )
 
     def draw_pie(week, day, values):
-        axs.append(
-            plt.axes([
-                pie_row_header_width + day * pie_width,
-                week * pie_height,
-                pie_width,
-                pie_height
-            ],
-                facecolor='white'))
-        plt.axis('off')
-        radius = sum(values) / max_total
-        plt.pie(values, shadow=True, explode=explode, radius=radius)
+        radius = sum(values) / max_total * pie_height * pie_scale / 2
+        colours = ['C{}'.format(i) for i in range(len(values))]
+        explode = [0.007 for i in range(len(values))]
+        plt.pie(
+            values,
+            #shadow=True,
+            explode=explode,
+            radius=radius,
+            colors=colours,
+            center=((pie_row_header_width + (day + 0.5) * pie_width) * grid_aspect, (week + 0.5) * pie_height)
+        )
 
     def draw_empty_pie(week, day):
         image_padding = pie_width / 5
-        axs.append(
-            plt.axes([
-                pie_row_header_width + day * pie_width + image_padding,
-                week * pie_height + image_padding,
-                pie_width - image_padding * 2,
-                pie_height - image_padding * 2
-            ],
-                facecolor='white'
-            )
-        )
-        plt.axis('off')
         if grid[week][day]['date'] < tomorrow and empty_image_file_name:
-            plt.imshow(img, aspect=1)
+            plt.imshow(
+                img,
+                extent=((pie_row_header_width + day * pie_width + image_padding) * grid_aspect,
+                        (pie_row_header_width + (day + 1) * pie_width - image_padding) * grid_aspect,
+                        week * pie_height + image_padding,
+                        (week + 1) * pie_height - image_padding))
 
     max_total = find_max_total(grid)
     if empty_image_file_name:
         img = mpimg.imread(empty_image_file_name)
     tomorrow = datetime.datetime.now(grid[0][0]['date'].tzinfo).replace(hour=0, minute=0, second=0, microsecond=0) + datetime.timedelta(days=1)
     axs = []
-    for day in range(len(grid[0])):
-        draw_day_header(day)
+    ax = figure.add_axes(
+        [left_gap, 0, 1, pies_height], # left, bottom, width, height, in fractions of figure width and height
+        frameon=False,
+        autoscale_on=False,
+        ylim=(0, pies_height),
+        xlim=(0, grid_aspect)
+    )
+    plt.axis('off')
+    axs.append(ax)
+    draw_day_headers()
+    draw_week_headers()
     for week in range(weeks):
-        draw_week_header(week)
+        for day in range(len(grid[week])):
+            values = grid[week][day]['values']
+            if sum(values) <= 0:
+                draw_empty_pie(week, day)
     for week in range(weeks):
         for day in range(len(grid[week])):
             values = grid[week][day]['values']
             if sum(values) > 0:
                 draw_pie(week, day, values)
-            else:
-                draw_empty_pie(week, day)
+    ax.set_ylim(0, pies_height)
+    ax.set_xlim(0, grid_aspect)
     for ax in axs:
         ax.patch.set_visible(False)
         ax.set_xticklabels([])
@@ -198,7 +139,7 @@ def draw_pies(grid, weeks=4, empty_image_file_name=None):
 def draw_calendar(grid, x, y, dashboard, labels, xkcd=True, style='grayscale'):
     if xkcd:
         plt.xkcd()
-    plt.figure(figsize=(picture_width, picture_height), dpi=dpi)
+    figure = plt.figure(figsize=(picture_width, picture_height), dpi=dpi, facecolor='white')
     plt.style.use(style)
     draw_plot(
         plt.axes([plot_left, plot_bottom, plot_width, plot_height]),
@@ -206,6 +147,7 @@ def draw_calendar(grid, x, y, dashboard, labels, xkcd=True, style='grayscale'):
         labels
     )
     draw_pies(
+        figure,
         grid,
         weeks=weeks,
         empty_image_file_name=os.path.join(dashboard['images_folder'], dashboard['empty_image'])
@@ -231,6 +173,7 @@ def test():
     image = draw_calendar(grid, x, y, dashboard, labels, style='seaborn-talk')
     with open('test.png', 'wb') as png_file:
         png_file.write(image)
+    print('{}{}{}'.format(pie_height, pie_width, pie_height / pie_width))
     plt.show()
 
 

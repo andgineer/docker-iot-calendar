@@ -3,7 +3,6 @@ Prepare data for calendar_image.py
 """
 import copy
 import datetime
-import numpy as np
 from dateutil.tz import tzoffset
 
 
@@ -82,7 +81,7 @@ def events_to_weeks_grid(events, weeks=4):
         for day in range(7):
             week_array.append({
                 'date': first_date_in_grid + datetime.timedelta(weeks=week, days=day),
-                'values': np.zeros(len(events))
+                'values': [0 for _ in range(len(events))]
             })
         grid.append(week_array)
     if len(events) == 0:
@@ -105,7 +104,7 @@ def events_to_array(events):
             date = event['start'].replace(hour=0, minute=0, second=0, microsecond=0)
             date_str = date.strftime(DATE_FMT)
             if date_str not in by_date:
-                by_date[date_str] = np.zeros(len(events))
+                by_date[date_str] = [0 for _ in range(len(events))]
             by_date[date_str][event_list_idx] += event_duration(event)
     x = [datetime.datetime.strptime(date_str, DATE_FMT) for date_str in sorted(by_date.keys())]
     y = []

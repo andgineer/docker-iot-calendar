@@ -11,11 +11,11 @@ docker run --rm -it -v $PWD/amazon-dash-private:/amazon-dash-private:ro -p 4444:
 
 Local address for the calendar page `http://localhost:4444`
 
-There are also 
+At first I thought it would be great idea to use
 [svgwrite](http://svgwrite.readthedocs.io/en/master/attributes/presentation.html),
-and [cairosvg](http://cairosvg.org/documentation/) were installed in the container.
+and [cairosvg](http://cairosvg.org/documentation/), but then decided otherwise.
 
-To install system dependencies for cairosvg in OSX (if you want to run it outside docker container):
+But if you do need cairosvg, to install system dependencies in OSX (if you want to run it outside docker container):
 '''
 brew update
 brew install cairo
