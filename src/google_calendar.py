@@ -5,10 +5,12 @@ from googleapiclient import discovery
 import httplib2
 import datetime
 import os
+import os.path
 import dateutil.parser
 import time
 from pprint import pprint
 
+GOOGLE_CREDENTIALS_PARAM = 'credentials_file_name'
 
 class Calendar(object):
     def __init__(self, settings, calendar_id):
@@ -19,15 +21,30 @@ class Calendar(object):
         self.calendarId = calendar_id
 
     def get_credentials_http(self):
-        credentials = ServiceAccountCredentials.from_json_keyfile_name(
-            self.settings['credentials_file_name'],
-            [
-                'https://www.googleapis.com/auth/calendar'
-            ]
-        )
+        if not os.path.isfile(self.settings[GOOGLE_CREDENTIALS_PARAM]):
+            print('''Google API credentials file {} not found.
+Get it on https://console.developers.google.com/start/api?id=calendar'''.format(
+                self.settings[GOOGLE_CREDENTIALS_PARAM]
+            ))
+            return None
+        try:
+            credentials = ServiceAccountCredentials.from_json_keyfile_name(
+                self.settings[GOOGLE_CREDENTIALS_PARAM],
+                [
+                    'https://www.googleapis.com/auth/calendar'
+                ]
+            )
+        except Exception as e:
+            print('''Cannot login to Google API - check your credential file {}.
+You can get new one from https://console.developers.google.com/start/api?id=calendar'''.format(
+                self.settings[GOOGLE_CREDENTIALS_PARAM]
+            ))
+            return None
         return credentials.authorize(httplib2.Http())
 
     def get_service(self):
+        if not self.http:
+            return None
         #logging.getLogger('googleapiclient.discovery').setLevel(logging.CRITICAL)
         return discovery.build(
             'calendar',
@@ -57,6 +74,8 @@ class Calendar(object):
         [ {'summary': summary, 'start': start, 'end': end} ]
         """
         result = []
+        if not self.service:
+            return result
         page_token = None
         while True:
             events = self.service.events().list(

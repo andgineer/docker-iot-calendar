@@ -20,7 +20,8 @@ from tornado.escape import json_encode
 import datetime
 from calendar_image import draw_calendar
 from calendar_data import events_to_weeks_grid, events_to_array, calendar_events_list
-from google_calendar import collect_events
+from google_calendar import collect_events, GOOGLE_CREDENTIALS_PARAM
+from openweathermap_org import Weather, WEATHER_KEY_PARAM
 import json
 import os.path
 
@@ -34,13 +35,37 @@ NO_SETTINGS_FILE = '''\nNo {} found. \nIf you run application in docker containe
 should connect volume with setting files, like
     -v $PWD/amazon-dash-private:/amazon-dash-private:ro'''
 
-def load_settings():
+def load_settings(secrets_folder=None):
     """ Load settings """
+    def set_folder(params, substr, folder):
+        for param in params:
+            if param.find(substr) > -1:
+                _, name = os.path.split(params[param])
+                params[param] = os.path.join(folder, name)
+
     if not os.path.isfile(SETTINGS_FILE_NAME):
         print(NO_SETTINGS_FILE.format(SETTINGS_FILE_NAME))
         exit(1)
     with open(SETTINGS_FILE_NAME, 'r') as settings_file:
-        return json.loads(settings_file.read())
+        settings = json.loads(settings_file.read())
+
+    if secrets_folder:
+        g_path, g_name = os.path.split(settings[GOOGLE_CREDENTIALS_PARAM])
+        settings[GOOGLE_CREDENTIALS_PARAM] = os.path.join(secrets_folder, g_name)
+        w_path, w_name = os.path.split(settings[WEATHER_KEY_PARAM])
+        settings[WEATHER_KEY_PARAM] = os.path.join(secrets_folder, w_name)
+    if 'images_folder' in settings:
+        images_folder = settings['images_folder']
+        for dashboard in settings['dashboards']:
+            set_folder(settings['dashboards'][dashboard], 'image', images_folder)
+        for button in settings['actions']:
+            if 'summary' in settings['actions'][button]:
+                for summary in settings['actions'][button]['summary']:
+                    set_folder(summary, 'image', images_folder)
+            for action in settings['actions'][button]['actions']:
+                set_folder(action, 'image', images_folder)
+    print(settings)
+    return settings
 
 
 class DashboardImageHandler(tornado.web.RequestHandler):
@@ -63,12 +88,16 @@ class DashboardImageHandler(tornado.web.RequestHandler):
         events = collect_events(calendar_events, settings)
         grid = events_to_weeks_grid(events)
         x, y = events_to_array(events)
+        wth = Weather(settings)
+        weather = wth.get_weather(settings['latitude'], settings['longitude'])
+        weather['images_folder'] = settings['images_folder']
         dashboard = settings['dashboards'][dashboard_name]
         if 'images_folder' not in dashboard:
             dashboard['images_folder'] = settings['images_folder']
         image = draw_calendar(
             grid,
             x, y,
+            weather,
             dashboard,
             style=style,
             labels=calendar_events
@@ -126,10 +155,11 @@ class Application(tornado.web.Application):
 
 
 if __name__ == '__main__':
-    settings = load_settings()
-
     define('port', default=4444, help='run on the given port', type=int)
+    define('secrets', default=None, help='path to files with secrets', type=str)
     tornado.options.parse_command_line()
+    print(options.secrets)
+    settings = load_settings(options.secrets)
     http_server = tornado.httpserver.HTTPServer(Application())
     http_server.listen(options.port)
     print('Running on port {}'.format(options.port))

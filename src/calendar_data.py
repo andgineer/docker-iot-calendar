@@ -4,6 +4,7 @@ Prepare data for calendar_image.py
 import copy
 import datetime
 from dateutil.tz import tzoffset
+import collections
 
 
 # def dashboard_list(settings):
@@ -15,8 +16,21 @@ def preprocess_actions(button, button_settings):
     Add summary (with button name value) if there is no one.
     Substitutes {button} with button name in parameters.
     """
-    def subst(s):
-        return s.format(button=button)
+    def subst(param):
+        if isinstance(param, str):
+            return param.format(button=button)
+        if isinstance(param, collections.Mapping):
+            result = {}
+            for item in param:
+                result[item] = subst(param[item])
+            return result
+        if isinstance(param, collections.Iterable):
+            result = []
+            for item in param:
+                result.append(subst(item))
+            return result
+        return param
+
     actions = copy.deepcopy(button_settings['actions'])
     for action in actions:
         if 'summary' not in action:
@@ -25,24 +39,32 @@ def preprocess_actions(button, button_settings):
             else:
                 action['summary'] = button
         for param in action:
-            if isinstance(action[param], str):
-                action[param] = subst(action[param])
-                #todo recursive replace if param is list/dict
+            action[param] = subst(action[param])
     return actions
 
 
 def calendar_events_list(settings, dashboard_name):
+    """
+    :param settings:
+    :param dashboard_name:
+    :return: list of calendar actions for the dashboard_name
+    [{'summary': summary, 'calendar_id': calendar_id}, ...]
+    """
     result = []
     for button in settings['actions']:
         if button != '__DEFAULT__':
             button_actions = settings['actions'][button]
             actions = preprocess_actions(button, button_actions)
+            print(actions)
             for action in actions:
-                if 'type' in action and action['type'] == 'calendar' and action['dashboard'] == dashboard_name:
+                if 'type' in action and action['type'] == 'calendar'\
+                        and 'dashboard' in action and action['dashboard'] == dashboard_name:
                     if isinstance(action['summary'], list):
                         for interval in action['summary']:
                             a = copy.deepcopy(action)
                             a['summary'] = interval['summary']
+                            if 'image' in interval:
+                                a['image'] = interval['image']
                             result.append(a)
                     else:
                         result.append(copy.deepcopy(action))
@@ -114,6 +136,9 @@ def events_to_array(events):
 
 
 def test():
+    from iot_calendar import load_settings
+    settings = load_settings()
+    print(calendar_events_list(settings, 'anna_work_out'))
     events = [
         [
             {'end': datetime.datetime(2017, 4, 7, 8, 17, tzinfo=tzoffset(None, 10800)),
@@ -169,8 +194,5 @@ def test():
 
 
 if __name__ == '__main__':
-    from iot_calendar import load_settings
-    settings = load_settings()
-    print(calendar_events_list(settings, 'anna_work_out'))
     test()
 

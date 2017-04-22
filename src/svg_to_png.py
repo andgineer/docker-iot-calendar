@@ -3,6 +3,7 @@ Obsolete
 """
 import cairosvg
 import io
+import os
 
 
 def svg_to_png(svg):
@@ -31,7 +32,17 @@ def test():
     with open('output.png', 'wb') as png_file:
         png_file.write(svg_to_png(svg))
 
+def convert(folder):
+    for subdir, dirs, files in os.walk(folder):
+        for file_name in files:
+            if file_name.endswith('.svg'):
+                with open(os.path.join(subdir, file_name), 'rb') as svg:
+                    png = svg_to_png(svg.read())
+                png_name = file_name.replace('.svg', '.png')
+                with open(os.path.join(subdir, png_name), 'wb') as png_file:
+                    png_file.write(png)
 
 if __name__ == '__main__':
-    test()
+    #test()
+    convert('static/img')
 
