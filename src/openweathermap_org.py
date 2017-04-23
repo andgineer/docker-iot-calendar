@@ -2,13 +2,22 @@ import requests
 import json
 import os.path
 import datetime
+import singleton_decorator
 
 WEATHER_KEY_PARAM = 'openweathermap_key_file_name'
+MIN_API_CALL_DELAY_SECONDS = 60 * 10
 
+
+@singleton_decorator.singleton
 class Weather(object):
     def __init__(self, settings):
         self.settings = settings
         self.key = self.load_key()
+        print(self.key)
+        self.weather_last_call = {
+            'time': datetime.datetime.now() - datetime.timedelta(days=1),
+            'weather': None
+        }
 
     def load_key(self):
         if WEATHER_KEY_PARAM in self.settings \
@@ -53,7 +62,7 @@ class Weather(object):
         }
         return conditions_map.get(str(condition_code), icons_map.get(icon_code[:-1], ''))
 
-    def get_weather(self, latitude, longitude, days=1, units='m'):
+    def _get_weather(self, latitude, longitude, days, units):
         """
         :param latitude:
         :param longitude:
@@ -121,11 +130,36 @@ class Weather(object):
             'day': dates
         }
 
+    def get_weather(self, latitude, longitude, days=1, units='m'):
+        """
+        Protect from too frequet requests to openweathermap.
+        The API description specifies 10 minutes delay.
+        """
+        now = datetime.datetime.now()
+        today = now.replace(hour=0, minute=0, second=0, microsecond=0)
+        seconds_passed = (now - self.weather_last_call['time']).seconds
+        last_call_day = self.weather_last_call['time'].replace(hour=0, minute=0, second=0, microsecond=0)
+        if seconds_passed < MIN_API_CALL_DELAY_SECONDS and today == last_call_day:
+            print('Use stored weather data without calling openweathermap API (from {})'.format(
+                self.weather_last_call['time']
+            ))
+            return self.weather_last_call['weather']
+        weather = self._get_weather(latitude, longitude, days, units)
+        self.weather_last_call['time'] = now
+        self.weather_last_call['weather'] = weather
+        return weather
+
 
 if __name__ == '__main__':
     from pprint import pprint
     from iot_calendar import load_settings
-    settings = load_settings()
+    settings = load_settings(secrets_folder='../secrets')
+    weather = Weather(settings)
+    pprint(weather.get_weather('60.002228', '30.296947', days=4))
+    weather = Weather(settings)
+    pprint(weather.get_weather('60.002228', '30.296947', days=4))
+    import time
+    time.sleep(3)
     weather = Weather(settings)
     pprint(weather.get_weather('60.002228', '30.296947', days=4))
 
