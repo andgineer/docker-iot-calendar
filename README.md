@@ -1,10 +1,13 @@
 [Docker Hub container](https://hub.docker.com/r/masterandrey/docker-iot-calendar/) 
 with python http server (Tornado) that generates image for Amazon Kindle.
 
+See [description in my blog](http://masterandrey.com/posts/ru/iot_calendar_synology/).
+
 The image contains calendar with events from Google Calendar - supposedly events from your IoT
 (like [Smart wifi button (Amazon Dash Button hack)](http://masterandrey.com/posts/en/amazon_dash_button_hack/)).
 
-Also it has html-page (index.html) that just serves that page with new version of image every 10 seconds.
+Also it has html-page that just serves new version of that image every 10 seconds (link to
+this page in index.html).
 
 Run in the `docker-iot-calendar` folder:
 ```
