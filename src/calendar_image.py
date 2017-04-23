@@ -1,7 +1,7 @@
 import os
 import datetime
 import matplotlib
-from matplotlib.dates import date2num
+from matplotlib.dates import date2num, DateFormatter
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import matplotlib.patches as patches
@@ -28,7 +28,7 @@ pie_scale = 0.9
 
 legend_image_sz = 0.2 # size of legend icons in 1 x 1
 
-width_aspect = 1.345 # horizontal scale to fill full width of weeks grid
+width_aspect = 1.25 # horizontal scale to fill full width of weeks grid
 
 watch_left = 0
 watch_width = 0.3
@@ -36,12 +36,12 @@ watch_height = 1 - pies_height
 watch_bottom = 1 - watch_height
 
 plot_left = watch_width
-plot_width = 1 - watch_width
+plot_width = 1 - watch_width - 0.01
 plot_height = 1 - pies_height - 0.1
 plot_bottom = 1 - plot_height
 
 
-def draw_pies(figure, grid, weeks=4, empty_image_file_name=None):
+def draw_pies(grid, weeks=4, empty_image_file_name=None):
     def find_max_total(grid):
         max_total = 0
         for week in range(len(grid)):
@@ -83,7 +83,10 @@ def draw_pies(figure, grid, weeks=4, empty_image_file_name=None):
             explode=explode,
             radius=radius,
             colors=colours,
-            center=((pie_row_header_width + (day + 0.5) * pie_width) * width_aspect, (week + 0.5) * pie_height)
+            center=(
+                (pie_row_header_width + (day + 0.5) * pie_width) * width_aspect,
+                (week + 0.5) * pie_height
+            )
         )
 
     def draw_empty_pie(week, day):
@@ -105,7 +108,7 @@ def draw_pies(figure, grid, weeks=4, empty_image_file_name=None):
         plt.gca().add_patch(
             patches.Rectangle(
                 ((pie_row_header_width + day * pie_width) * width_aspect, week * pie_height),
-                pie_width * width_aspect,
+                pie_width * width_aspect * 0.98,
                 pie_height,
                 edgecolor='black',
                 fill=False,
@@ -118,7 +121,7 @@ def draw_pies(figure, grid, weeks=4, empty_image_file_name=None):
         img = mpimg.imread(empty_image_file_name)
     today = datetime.datetime.now(grid[0][0]['date'].tzinfo).replace(hour=0, minute=0, second=0, microsecond=0)
     tomorrow = today + datetime.timedelta(days=1)
-    ax = figure.add_axes(
+    ax = plt.gcf().add_axes(
         [left_gap, 0, 1, pies_height], # left, bottom, width, height, in fractions of figure width and height
         frameon=False,
         autoscale_on=False,
@@ -144,7 +147,15 @@ def draw_pies(figure, grid, weeks=4, empty_image_file_name=None):
 
 def draw_plot(x, y, labels, rect, legend='inside'):
     ax = plt.axes(rect)
-    x_scale = rect[2] / rect[3]
+    if len(x) > 0:
+        days_on_plot = (x[-1] - x[0]).days
+        if days_on_plot < 5 * 30:
+            shortFmt = DateFormatter('%b %d')
+        elif days_on_plot < 5 * 365:
+            shortFmt = DateFormatter('%d')
+        else:
+            shortFmt = DateFormatter('%Y')
+        ax.xaxis.set_major_formatter(shortFmt)
     legend_labels = [label['summary'] for label in labels]
     polies = ax.stackplot(x, y)
     ax.patch.set_visible(False)
@@ -172,22 +183,24 @@ def draw_plot(x, y, labels, rect, legend='inside'):
                 xlim = ax.get_xlim()
                 xsz = xlim[1] - xlim[0]
                 ysz = ylim[1] - ylim[0]
+                x_scale = 1 / plot_height # at the moment I do not understand why 1 and not plot_width
                 x_val = (date2num(x_pos) - xlim[0]) / xsz * x_scale
                 y_val = (y_pos - ylim[0]) / ysz
                 img = mpimg.imread(labels[region]['image'])
-                axes = plt.axes(rect, label='2')
+                axes = plt.axes([plot_left, plot_bottom, plot_width, plot_height], label='2')
                 plt.axis('off')
                 axes.patch.set_visible(False)
                 axes.set_xticklabels([])
                 axes.set_yticklabels([])
                 axes.set_ylim((0, 1))
                 axes.set_xlim((0, x_scale))
-                plt.imshow(
+                imgplot = plt.imshow(
                     img,
-                    extent=(x_val, x_val + legend_image_sz,
+                    extent=(x_val - legend_image_sz / 2, x_val + legend_image_sz / 2,
                             y_val - legend_image_sz - legend_text_height, y_val - legend_text_height),
                     interpolation='bicubic'
                 )
+                #imgplot.set_cmap('jet')
 
 
 def draw_weather(weather, rect):
@@ -222,21 +235,23 @@ def draw_weather(weather, rect):
     )
 
 def draw_calendar(grid, x, y, weather, dashboard, labels, xkcd=True, style='grayscale'):
-    if xkcd:
-        plt.xkcd()
-    figure = plt.figure(figsize=(picture_width, picture_height), dpi=dpi, facecolor='white')
-    plt.style.use(style)
-    draw_weather(weather, rect=[0, plot_bottom, plot_left * 0.8, plot_height])
-    draw_plot(x, y, labels, rect=[plot_left, plot_bottom, plot_width, plot_height])
-    draw_pies(
-        figure,
-        grid,
-        weeks=weeks,
-        empty_image_file_name=dashboard['empty_image']
-    )
-    bytes_file = BytesIO()
-    plt.savefig(bytes_file, dpi=dpi, pad_inches=0, bbox_inches='tight') # cmap='gray'
-    return bytes_file.getvalue()
+    plt.clf()
+    plt.close()
+    plt.figure(figsize=(picture_width, picture_height), dpi=dpi, facecolor='white')
+    #plt.style.use(style) # that does not apply new style: https://github.com/matplotlib/matplotlib/issues/8348
+    with plt.style.context(style, after_reset=True):
+        if xkcd:
+            plt.xkcd()
+        draw_weather(weather, rect=[0, plot_bottom, plot_left * 0.8, plot_height])
+        draw_plot(x, y, labels, rect=[plot_left, plot_bottom, plot_width, plot_height])
+        draw_pies(
+            grid,
+            weeks=weeks,
+            empty_image_file_name=dashboard['empty_image']
+        )
+        bytes_file = BytesIO()
+        plt.savefig(bytes_file, dpi=dpi, pad_inches=0, bbox_inches='tight') # cmap='gray'
+        return bytes_file.getvalue()
 
 
 def test():

@@ -6,8 +6,9 @@
         {% for dashboard in dashboards %}
         <li><a href="">{{ dashboards[dashboard]['summary'] }}</a>
             <ol class="rectangle-list">
-                <li><a href="/?b={{ dashboard }}&style=seaborn-talk">Colourful dashboard</a></li>
-                <li><a href="/?b={{ dashboard }}">Gray dashboard (for kindle)</a></li>
+                <li><a href="/?b={{ dashboard }}&style=seaborn-talk">Colourful handwritten dashboard</a></li>
+                <li><a href="/?b={{ dashboard }}&style=seaborn-talk&xkcd=0">Colourful straight dashboard</a></li>
+                <li><a href="/?b={{ dashboard }}">Gray handwritten dashboard (for kindle)</a></li>
             </ol>
         </li>
         {% end %}

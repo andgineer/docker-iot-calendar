@@ -82,6 +82,7 @@ class DashboardImageHandler(tornado.web.RequestHandler):
         if not style:
             style = 'grayscale'
         dashboard_name = self.get_argument('b', '')
+        xkcd = int(self.get_argument('xkcd', 1))
         if not dashboard_name:
             dashboard_name = list(settings['dashboards'].keys())[0]
         calendar_events = calendar_events_list(settings, dashboard_name)
@@ -90,7 +91,8 @@ class DashboardImageHandler(tornado.web.RequestHandler):
         x, y = events_to_array(events)
         wth = Weather(settings)
         weather = wth.get_weather(settings['latitude'], settings['longitude'])
-        weather['images_folder'] = settings['images_folder']
+        if weather:
+            weather['images_folder'] = settings['images_folder']
         dashboard = settings['dashboards'][dashboard_name]
         if 'images_folder' not in dashboard:
             dashboard['images_folder'] = settings['images_folder']
@@ -100,6 +102,7 @@ class DashboardImageHandler(tornado.web.RequestHandler):
             weather,
             dashboard,
             style=style,
+            xkcd=xkcd,
             labels=calendar_events
         )
         self.write(image)
@@ -121,12 +124,14 @@ class DashboardListHandler(tornado.web.RequestHandler):
         dashboard_name = self.get_argument('b', '')
         if dashboard_name:
             style = self.get_argument('style', '')
+            xkcd = int(self.get_argument('xkcd', 1))
             if not style:
                 style = 'grayscale'
             self.render(
                 'dashboard.html',
                 dashboard_name=dashboard_name,
                 style=style,
+                xkcd=xkcd,
                 page_title='Dashboard',
             )
         else:
@@ -158,7 +163,6 @@ if __name__ == '__main__':
     define('port', default=4444, help='run on the given port', type=int)
     define('secrets', default=None, help='path to files with secrets', type=str)
     tornado.options.parse_command_line()
-    print(options.secrets)
     settings = load_settings(options.secrets)
     http_server = tornado.httpserver.HTTPServer(Application())
     http_server.listen(options.port)

@@ -1,7 +1,6 @@
 tornado
 requests
-numpy
 python-dateutil
-matplotlib
 oauth2client
 google-api-python-client
+

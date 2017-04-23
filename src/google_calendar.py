@@ -110,9 +110,13 @@ You can get new one from https://console.developers.google.com/start/api?id=cale
 
 
 def collect_events(calendar_events, settings):
+    calendars = {}
     events = []
     for event in calendar_events:
-        calendar = Calendar(settings, event['calendar_id'])
+        if event['calendar_id'] in calendars:
+            calendar = calendars[event['calendar_id']]
+        else:
+            calendar = Calendar(settings, event['calendar_id'])
         events.append(calendar.get_last_events(event['summary']))
     return events
 
