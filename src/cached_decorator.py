@@ -34,6 +34,8 @@ class cached(object):
 
     def __call__(self, func):
         def cached_func(*args, **kw):
+            #todo if this is function (no object method) and first argument is object,
+            #we will use __dict__ of it - may be better to understand that this is not class method?
             if len(args) and hasattr(args[0], '__dict__'):
                 hash_list = [str(args[0].__dict__), func.__name__, str(args[1:]), str(kw)] # __init__ params so we see if object created with different parameters
             else:
@@ -61,7 +63,7 @@ class cached(object):
         return functools.partial(self.__call__, obj)
 
 
-if __name__ == '__main__':
+def test():
     import time
 
     class F(object):
@@ -81,6 +83,13 @@ if __name__ == '__main__':
     @cached(cache_time_seconds=0.07, print_if_cached='returned cached f3 at {time}')
     def f3(n):
         return n
+
+    class F2(object):
+        def __init__(self, n):
+            self.n = n
+        @cached(cache_time_seconds=0.05, print_if_cached='returned cached f2 at {time}')
+        def f2(self, n):
+            return n * self.n
 
     f = F(10)
     assert f.f1(1) == 1
@@ -103,4 +112,14 @@ if __name__ == '__main__':
     assert f.f1(100) == 197
     assert f3(15) == 15
     assert f3(15) == 15 # should be cached
-    print('should be 6 cached calls')
+    f = F2(10)
+    assert f.f2(5) == 50
+    assert f.f2(5) == 50 # should be cached
+    time.sleep(0.1)
+    assert f.f2(5) == 50
+    print('should be 7 cached calls')
+
+
+if __name__ == '__main__':
+    test()
+
