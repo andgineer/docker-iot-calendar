@@ -5,6 +5,7 @@ import copy
 import datetime
 from dateutil.tz import tzoffset
 import collections
+import pprint
 
 
 # def dashboard_list(settings):
@@ -55,7 +56,8 @@ def calendar_events_list(settings, dashboard_name):
         if button != '__DEFAULT__':
             button_actions = settings['actions'][button]
             actions = preprocess_actions(button, button_actions)
-            print(actions)
+            print('Processed actions')
+            pprint.pprint(actions)
             for action in actions:
                 if 'type' in action and action['type'] == 'calendar'\
                         and 'dashboard' in action and action['dashboard'] == dashboard_name:

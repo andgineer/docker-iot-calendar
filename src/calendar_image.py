@@ -8,6 +8,8 @@ import matplotlib.patches as patches
 from dateutil.tz import tzoffset
 from io import BytesIO
 import numpy as np
+import hashlib
+
 
 weeks = 4
 
@@ -40,6 +42,8 @@ plot_width = 1 - watch_width - 0.025 # -0.02 to remove padding - tight layout do
 plot_height = 1 - pies_height - 0.125
 plot_bottom = 1 - plot_height - 0.025
 
+last_image = {
+}
 
 def draw_pies(grid, weeks=4, empty_image_file_name=None):
     def find_max_total(grid):
@@ -234,7 +238,7 @@ def draw_weather(weather, rect):
         interpolation='bicubic'
     )
 
-def draw_calendar(grid, x, y, weather, dashboard, labels, xkcd=True, style='grayscale'):
+def _draw_calendar(grid, x, y, weather, dashboard, labels, xkcd=True, style='grayscale'):
     plt.clf()
     plt.close()
     plt.figure(figsize=(picture_width, picture_height), dpi=dpi, facecolor='white')
@@ -257,13 +261,35 @@ def draw_calendar(grid, x, y, weather, dashboard, labels, xkcd=True, style='gray
             bytes_file,
             dpi=dpi,
             pad_inches=0,
-            bbox_inches='tight',
+            #bbox_inches='tight', # we want exact size specified for the picture, not the actual drawing size
             frameon=False,
-            #format='jpeg',
+            #format='jpeg', # no gain here (117kB vs 113 with 70% jpeg compression quality) so better use loseless png
             #jpeg_quality=70,
-            # cmap='gray',
+            #cmap='gray',
         )
         return bytes_file.getvalue()
+
+
+def draw_calendar(grid, x, y, weather, dashboard, labels, **kw):
+    """
+    return old image if params and data are the same
+    """
+    def calc_hash(**kw):
+        args_str = str(kw).encode('utf-8')
+        return hashlib.sha256(args_str).hexdigest()
+
+    param_str = str(kw)
+    if param_str not in last_image:
+        last_image[param_str] = {'hash': None}
+    saved_image = last_image[param_str]
+    params_hash = calc_hash(grid=grid, x=x, y=y, weather=weather)
+    if saved_image['hash'] == params_hash:
+        print('Use cached image')
+        return saved_image['image']
+    image = _draw_calendar(grid, x, y, weather, dashboard, labels, **kw)
+    saved_image['image'] = image
+    saved_image['hash'] = params_hash
+    return image
 
 
 def test():

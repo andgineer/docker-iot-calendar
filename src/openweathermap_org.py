@@ -95,7 +95,7 @@ class Weather(object):
         weather = weather_response.json()
 
         if weather['cod'] != '200':
-            print(weather['message'])
+            print('#'*5, 'ERROR:', weather['message'])
             return None
 
         highs = []
