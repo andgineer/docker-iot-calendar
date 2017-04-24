@@ -1,6 +1,7 @@
 import datetime
 import functools
 import hashlib
+import inspect
 
 
 class cached(object):
@@ -8,12 +9,13 @@ class cached(object):
     If called later before cache_time_seconds passed with the same arguments, the cached value
     is returned, and not re-evaluated.
 
-    It compares hash of all function's arguments (str representation), including 'self' if that is object
-    method. And string representation for 'self' would be
-    "(<__main__.<CLASS NAME> object at <WRAPPED OBJECT INSTANCE ID>".
-    So you need to use singleton if the object instances are the same.
-    And if you change something in object instance aside of function arguments the decorator would not
-    see that.
+    It compares hash of all function's arguments (str representation), and __init__ argumets of the
+    object instance if this is class method.
+    If you change something in object instance aside of function arguments and __init__ arguments,
+    the decorator would not see that.
+
+    Decorator instance is one per decorated class, so we need to take in account only __init__
+    arguments, for other class will be other decorator instance.
     """
 
     def __init__(self, cache_time_seconds, print_if_cached=None, evaluate_on_day_change=False):
@@ -32,7 +34,11 @@ class cached(object):
 
     def __call__(self, func):
         def cached_func(*args, **kw):
-            hash = hashlib.sha256((func.__name__ + str(args) + str(kw)).encode('utf-8')).hexdigest()
+            if len(args) and hasattr(args[0], '__dict__'):
+                hash_list = [str(args[0].__dict__), func.__name__, str(args[1:]), str(kw)] # __init__ params so we see if object created with different parameters
+            else:
+                hash_list = ['', func.__name__, str(args), str(kw)]
+            hash = hashlib.sha256('\n'.join(hash_list).encode('utf-8')).hexdigest()
             now = datetime.datetime.now()
             for item in list(self.cache): # we have to keep cache clean
                 if (now - self.cache[item]['time']).total_seconds() > self.cache_time_seconds:
@@ -78,16 +84,23 @@ if __name__ == '__main__':
 
     f = F(10)
     assert f.f1(1) == 1
-    assert f.f1(1) == 1
+    assert f.f1(1) == 1 # should be cached
+    assert f.f2(5) == 50
     time.sleep(0.2)
     assert f.f1(1) == 1
     assert f.f2(5) == 50
-    assert f.f2(5) == 50
+    assert f.f2(5) == 50 # should be cached
     time.sleep(0.1)
     assert f.f2(5) == 50
-    f=F(20)
+    f = F(20)
     assert f.f2(5) == 100
     assert f.f1(100) == 197
+    f = F(20)
+    assert f.f2(5) == 100 # should be cached
+    assert f.f1(100) == 197 # should be cached
+    f = F(10)
+    assert f.f2(5) == 50 # should be cached
+    assert f.f1(100) == 197
     assert f3(15) == 15
-    assert f3(15) == 15
-    print('should be 3 cached calls')
+    assert f3(15) == 15 # should be cached
+    print('should be 6 cached calls')
