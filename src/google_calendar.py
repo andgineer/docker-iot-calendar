@@ -9,8 +9,11 @@ import os.path
 import dateutil.parser
 import time
 from pprint import pprint
+from cached_decorator import cached
+
 
 GOOGLE_CREDENTIALS_PARAM = 'credentials_file_name'
+MIN_GOOGLE_API_CALL_DELAY_SECONDS = 15
 
 class Calendar(object):
     def __init__(self, settings, calendar_id):
@@ -108,7 +111,10 @@ You can get new one from https://console.developers.google.com/start/api?id=cale
             datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
         )
 
-
+@cached(
+    cache_time_seconds=MIN_GOOGLE_API_CALL_DELAY_SECONDS,
+    print_if_cached='Use stored google calendar data (from {time})'
+)
 def collect_events(calendar_events, settings):
     calendars = {}
     events = []

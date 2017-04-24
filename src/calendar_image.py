@@ -9,7 +9,10 @@ from dateutil.tz import tzoffset
 from io import BytesIO
 import numpy as np
 import hashlib
+from cached_decorator import cached
 
+
+IMAGE_CACHED_SECONDS = 60 * 60 * 24 *30
 
 weeks = 4
 
@@ -238,7 +241,13 @@ def draw_weather(weather, rect):
         interpolation='bicubic'
     )
 
-def _draw_calendar(grid, x, y, weather, dashboard, labels, xkcd=True, style='grayscale'):
+
+@cached(
+    cache_time_seconds=IMAGE_CACHED_SECONDS,
+    print_if_cached='Use stored imaged without rendering (from {time})',
+    evaluate_on_day_change=True
+)
+def draw_calendar(grid, x, y, weather, dashboard, labels, xkcd=True, style='grayscale'):
     plt.clf()
     plt.close()
     plt.figure(figsize=(picture_width, picture_height), dpi=dpi, facecolor='white')
@@ -268,28 +277,6 @@ def _draw_calendar(grid, x, y, weather, dashboard, labels, xkcd=True, style='gra
             #cmap='gray',
         )
         return bytes_file.getvalue()
-
-
-def draw_calendar(grid, x, y, weather, dashboard, labels, **kw):
-    """
-    return old image if params and data are the same
-    """
-    def calc_hash(**kw):
-        args_str = str(kw).encode('utf-8')
-        return hashlib.sha256(args_str).hexdigest()
-
-    param_str = str(kw)
-    if param_str not in last_image:
-        last_image[param_str] = {'hash': None}
-    saved_image = last_image[param_str]
-    params_hash = calc_hash(grid=grid, x=x, y=y, weather=weather)
-    if saved_image['hash'] == params_hash:
-        print('Use cached image')
-        return saved_image['image']
-    image = _draw_calendar(grid, x, y, weather, dashboard, labels, **kw)
-    saved_image['image'] = image
-    saved_image['hash'] = params_hash
-    return image
 
 
 def test():

@@ -2,13 +2,14 @@ import requests
 import json
 import os.path
 import datetime
-import singleton_decorator
+from singleton_decorator import singleton
+from cached_decorator import cached
 
 WEATHER_KEY_PARAM = 'openweathermap_key_file_name'
 MIN_API_CALL_DELAY_SECONDS = 60 * 10
 
 
-@singleton_decorator.singleton
+@singleton
 class Weather(object):
     def __init__(self, settings):
         self.settings = settings
@@ -62,7 +63,12 @@ class Weather(object):
         }
         return conditions_map.get(str(condition_code), icons_map.get(icon_code[:-1], ''))
 
-    def _get_weather(self, latitude, longitude, days, units):
+    @cached(
+        cache_time_seconds=MIN_API_CALL_DELAY_SECONDS,
+        print_if_cached='Use stored weather data without calling openweathermap API (from {time})',
+        evaluate_on_day_change=True
+    )
+    def get_weather(self, latitude, longitude, days=1, units='m'):
         """
         :param latitude:
         :param longitude:
@@ -129,25 +135,6 @@ class Weather(object):
             'icon': icons,
             'day': dates
         }
-
-    def get_weather(self, latitude, longitude, days=1, units='m'):
-        """
-        Protect from too frequet requests to openweathermap.
-        The API description specifies 10 minutes delay.
-        """
-        now = datetime.datetime.now()
-        today = now.replace(hour=0, minute=0, second=0, microsecond=0)
-        seconds_passed = (now - self.weather_last_call['time']).seconds
-        last_call_day = self.weather_last_call['time'].replace(hour=0, minute=0, second=0, microsecond=0)
-        if seconds_passed < MIN_API_CALL_DELAY_SECONDS and today == last_call_day:
-            print('Use stored weather data without calling openweathermap API (from {})'.format(
-                self.weather_last_call['time']
-            ))
-            return self.weather_last_call['weather']
-        weather = self._get_weather(latitude, longitude, days, units)
-        self.weather_last_call['time'] = now
-        self.weather_last_call['weather'] = weather
-        return weather
 
 
 if __name__ == '__main__':
