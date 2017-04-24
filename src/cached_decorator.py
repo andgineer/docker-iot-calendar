@@ -87,9 +87,16 @@ def test():
     class F2(object):
         def __init__(self, n):
             self.n = n
-        @cached(cache_time_seconds=0.05, print_if_cached='returned cached f2 at {time}')
+        @cached(cache_time_seconds=0.05, print_if_cached='returned cached F2.f2 at {time}')
         def f2(self, n):
             return n * self.n
+
+    class F3(object):
+        @cached(cache_time_seconds=0.05, print_if_cached='returned cached F3.f2 at {time}')
+        def f1(self, n):
+            if n in (0, 1):
+                return n
+            return (n-1) + (n-2)
 
     f = F(10)
     assert f.f1(1) == 1
@@ -117,7 +124,10 @@ def test():
     assert f.f2(5) == 50 # should be cached
     time.sleep(0.1)
     assert f.f2(5) == 50
-    print('should be 7 cached calls')
+    f = F3()
+    assert f.f1(100) == 197
+    assert f.f1(100) == 197 # should be cached
+    print('should be 8 cached calls')
 
 
 if __name__ == '__main__':
