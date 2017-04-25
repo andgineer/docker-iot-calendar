@@ -11,6 +11,11 @@ class cached(object):
         @cached(0.1)
         def function_to_cash_for_one_tenth_of_second():
 
+    ! For object method it should be the last decorator applied because it saves ref to decorated function
+    and if it changed by other decorator it would treat method call as function call, and
+    in this case without @singleton for the class it would cache different instances with different hashes.
+    And would not use the object attributes in hash.
+
     All instances of the same class would be the same for cache decorator if they has the same
     attributes.
     So the object do not need to be singleton to be cached.
