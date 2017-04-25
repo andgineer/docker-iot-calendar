@@ -1,28 +1,40 @@
 import datetime
 import functools
 import hashlib
-import inspect
 
 
 class cached(object):
     """Decorator that caches a function's or class method's return value for cache_time_seconds.
     If called later before cache_time_seconds passed with the same arguments, the cached value
     is returned, and not re-evaluated.
+    Example of usage:
+        @cached(0.1)
+        def function_to_cash_for_one_tenth_of_second():
 
-    It compares hash of all function's arguments (str representation), and __dict__ of the
-    first argument if it have __dict__ (we assume that this is object ref for object method in
-    this case).
-    So if you change something in the object __dict__ (like self.<attribute>),
-    the decorator also would see that.
-    !!! If we decorate just function (no object method) and first argument is object that has attribute
-    with the same name as decorated function, we will use __dict__ of it, not str representation!
-    At the moment I do not know how to check __hash__ - may be use decorator of decorator?
-    And I cannot use str representation of object because it different for different object instances,
-    but I want it to work without @singleton for the object instances with the same content
-    (this is wrapper object and contains id in str representation).
+    All instances of the same class would be the same for cache decorator if they has the same
+    attributes.
+    So the object do not need to be singleton to be cached.
+    For example:
+        obj = MyObject(1)
+        obj.my_func(2)
+        obj.my_func(2) # cached
+        obj2 = MyObject(1)
+        obj2.my_func(2) # also cached
+        obj3 = MyObject(2)
+        obj3.my_func(2) # not cached, if MyObject __init__ save something different in self
+                          # for different __init__ parameter
 
-    Decorator instance is one per decorated class, so we need to take in account only __dict__,
-    for other class will be other decorator instance.
+    It compares hash of all function's arguments (str representation),
+    and __dict__ of it's first argument if it is an object with one of it's methods the same
+    as decorated function.
+    So if you change something in the object (any self.<attribute>), the decorator also
+    would see that.
+    !!! Str representations for function arguments should be distinguishable.
+    That's true at list for python's list & dict.
+
+    Decorator instance is one per decorated function/method, so we do not need to take into account
+    function and object name (if this is object method), because for other functions/methods it will
+    be other decorator instance.
     """
 
     def __init__(self, cache_time_seconds, print_if_cached=None, evaluate_on_day_change=False):
@@ -42,8 +54,13 @@ class cached(object):
     def __call__(self, func):
         def cached_func(*args, **kw):
             if len(args) and hasattr(args[0], '__dict__') \
-                    and '__class__' in dir(args[0]) and func.__name__ in dir(args[0]):
-                hash_list = [str(args[0].__dict__), func.__name__, str(args[1:]), str(kw)] # object's attributes
+                    and '__class__' in dir(args[0]) and func.__name__ in dir(args[0])\
+                    and '__func__' in dir(getattr(args[0], func.__name__))\
+                    and getattr(args[0], func.__name__).__func__ == self.func:
+                # the first argument is 'self', this is objects's method so add the object attributes
+                # we do not use str representation because decorated object has id in it,
+                # but I need the same hash for different instances with the same attributes.
+                hash_list = [str(args[0].__dict__), str(args[1:]), str(kw)]
             else:
                 hash_list = ['', func.__name__, str(args), str(kw)]
             hash = hashlib.sha256('\n'.join(hash_list).encode('utf-8')).hexdigest()
@@ -63,6 +80,7 @@ class cached(object):
                     'time': now
                 }
             return self.cache[hash]['value']
+        self.func = cached_func
         return cached_func
 
     def __get__(self, obj, objtype):
