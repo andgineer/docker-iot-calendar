@@ -238,7 +238,7 @@ def draw_weather(weather, rect):
     plt.imshow(
         img,
         extent=[0.15, 0.85, 0.15, 0.85],
-        interpolation='bicubic'
+        interpolation='bilinear' #'bicubic'
     )
 
 
@@ -307,7 +307,10 @@ def test():
                'temp_max': [6.64, 6.38, 4.07, 6.91],
                'temp_min': [-0.58, -2.86, -1.87, -1.91],
                'images_folder': '../amazon-dash-private/images/'}
+    t0 = datetime.datetime.now()
     image = draw_calendar(grid, x, y, weather, dashboard, labels, style='seaborn-talk')
+    t1 = datetime.datetime.now()
+    print(t1 - t0)
     with open('test.png', 'wb') as png_file:
         png_file.write(image)
     plt.show()
