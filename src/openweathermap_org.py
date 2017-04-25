@@ -1,24 +1,34 @@
+"""
+ Loads weather from OpenWeatherMap.org.
+
+ Usage:
+    Weather(settings).get_weather(latitude, longitude)
+
+"""
+
 import requests
 import json
 import os.path
 import datetime
-from singleton_decorator import singleton
 from cached_decorator import cached
 
 WEATHER_KEY_PARAM = 'openweathermap_key_file_name'
 MIN_API_CALL_DELAY_SECONDS = 60 * 10
 
 
-@singleton
 class Weather(object):
     def __init__(self, settings):
+        """
+        :param settings:
+        settings['openweathermap_key_file_name'] - name and path of json file
+        with "key", like
+
+         {
+         "key": "your key from https://home.openweathermap.org/users/sign_up"
+         }
+        """
         self.settings = settings
         self.key = self.load_key()
-        print(self.key)
-        self.weather_last_call = {
-            'time': datetime.datetime.now() - datetime.timedelta(days=1),
-            'weather': None
-        }
 
     def load_key(self):
         if WEATHER_KEY_PARAM in self.settings \
@@ -30,10 +40,9 @@ class Weather(object):
 
     def openweathermap_icons(self, icon_code, condition_code):
         """
-        http://openweathermap.org/weather-conditions
-        :param icon_code:
-        :param condition_code:
-        :return:
+        Converts OpenWeatherMap icon code and condition code to icons I have.
+        Mostly we use icon code but for specific conditions use specific icon.
+        Full codes list: http://openweathermap.org/weather-conditions
         """
         icons_map = {
             '01': 'skc', # clear
@@ -146,7 +155,7 @@ if __name__ == '__main__':
     weather = Weather(settings)
     pprint(weather.get_weather('60.002228', '30.296947', days=4))
     import time
-    time.sleep(3)
+    time.sleep(2)
     weather = Weather(settings)
     pprint(weather.get_weather('60.002228', '30.296947', days=4))
 

@@ -9,13 +9,20 @@ class cached(object):
     If called later before cache_time_seconds passed with the same arguments, the cached value
     is returned, and not re-evaluated.
 
-    It compares hash of all function's arguments (str representation), and __init__ argumets of the
-    object instance if this is class method.
-    If you change something in object instance aside of function arguments and __init__ arguments,
-    the decorator would not see that.
+    It compares hash of all function's arguments (str representation), and __dict__ of the
+    first argument if it have __dict__ (we assume that this is object ref for object method in
+    this case).
+    So if you change something in the object __dict__ (like self.<attribute>),
+    the decorator also would see that.
+    !!! If we decorate just function (no object method) and first argument is object that has attribute
+    with the same name as decorated function, we will use __dict__ of it, not str representation!
+    At the moment I do not know how to check __hash__ - may be use decorator of decorator?
+    And I cannot use str representation of object because it different for different object instances,
+    but I want it to work without @singleton for the object instances with the same content
+    (this is wrapper object and contains id in str representation).
 
-    Decorator instance is one per decorated class, so we need to take in account only __init__
-    arguments, for other class will be other decorator instance.
+    Decorator instance is one per decorated class, so we need to take in account only __dict__,
+    for other class will be other decorator instance.
     """
 
     def __init__(self, cache_time_seconds, print_if_cached=None, evaluate_on_day_change=False):
@@ -34,10 +41,9 @@ class cached(object):
 
     def __call__(self, func):
         def cached_func(*args, **kw):
-            #todo if this is function (no object method) and first argument is object,
-            #we will use __dict__ of it - may be better to understand that this is not class method?
-            if len(args) and hasattr(args[0], '__dict__'):
-                hash_list = [str(args[0].__dict__), func.__name__, str(args[1:]), str(kw)] # __init__ params so we see if object created with different parameters
+            if len(args) and hasattr(args[0], '__dict__') \
+                    and '__class__' in dir(args[0]) and func.__name__ in dir(args[0]):
+                hash_list = [str(args[0].__dict__), func.__name__, str(args[1:]), str(kw)] # object's attributes
             else:
                 hash_list = ['', func.__name__, str(args), str(kw)]
             hash = hashlib.sha256('\n'.join(hash_list).encode('utf-8')).hexdigest()

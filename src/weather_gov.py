@@ -1,4 +1,11 @@
-# works for USA only (NDFD regions)
+"""
+ Loads weather from weather.gov.
+ Works for USA only (NDFD regions).
+
+ Usage:
+    Weather().get_weather(latitude, longitude)
+
+"""
 
 from xml.dom import minidom
 import datetime
@@ -6,10 +13,8 @@ from urllib.request import urlopen
 
 
 class Weather(object):
-    def __init__(self, settings):
-        self.settings = settings
 
-    def get_weather(latitude, longitude, days=1, units='m'):
+    def get_weather(self, latitude, longitude, days=1, units='m'):
         """
         :param latitude:
         :param longitude:
@@ -67,49 +72,6 @@ class Weather(object):
 
 if __name__ == '__main__':
     from pprint import pprint
-    from iot_calendar import load_settings
-    settings = load_settings()
-    weather = Weather(settings)
+    weather = Weather()
     pprint(weather.get_weather('39.3286', '-76.6169'))
 
-# freezing drizzle
-# freezing rain
-# snow showers
-# blowing snow
-# blowing dust
-# rain showers
-# ice pellets
-# frosts
-# rain
-# hail
-# snow
-# thunderstorms
-# drizzle
-# fog
-# haze
-# smoke
-
-# bkn
-# dust
-# few
-# fg
-# fzra
-# fzrara
-# hi_shwrs
-# hi_tsra
-# ip
-# mist
-# mix
-# nsurtsra
-# ovc
-# ra
-# ra1
-# raip
-# rasn
-# sct
-# shra
-# skc
-# smoke
-# sn
-# tsra
-# wind
