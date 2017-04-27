@@ -87,6 +87,7 @@ class DashboardImageHandler(tornado.web.RequestHandler):
         xkcd = int(self.get_argument('xkcd', 1))
         if not dashboard_name:
             dashboard_name = list(settings['dashboards'].keys())[0]
+        format = self.get_argument('format', 'png')
         calendar_events = calendar_events_list(settings, dashboard_name)
         events = collect_events(calendar_events, settings)
         grid = events_to_weeks_grid(events)
@@ -103,12 +104,13 @@ class DashboardImageHandler(tornado.web.RequestHandler):
             x, y,
             weather,
             dashboard,
+            calendar_events,
             style=style,
             xkcd=xkcd,
-            labels=calendar_events
+            format=format
         )
         self.write(image)
-        self.set_header("Content-type",  "image/png")
+        self.set_header("Content-type",  "image/{}".format(format))
         self.flush()
 
 
@@ -129,11 +131,13 @@ class DashboardListHandler(tornado.web.RequestHandler):
             xkcd = int(self.get_argument('xkcd', 1))
             if not style:
                 style = 'grayscale'
+            format = self.get_argument('format', 'png')
             self.render(
                 'dashboard.html',
                 dashboard_name=dashboard_name,
                 style=style,
                 xkcd=xkcd,
+                format=format,
                 page_title='Dashboard',
             )
         else:
@@ -169,6 +173,5 @@ if __name__ == '__main__':
     http_server = tornado.httpserver.HTTPServer(Application())
     print('Running on port {}'.format(options.port))
     http_server.listen(options.port)
-
 
     tornado.ioloop.IOLoop.instance().start()

@@ -10,7 +10,7 @@ guaranteed not to repeat would be fine.
 function updatePageImage() {
     var d = new Date();
 	//For some reason, the getTime() function made the Kindle browser quit after a few minutes. Changing this to getSeconds() seems fixed the problem...
-	$("#page_image").attr("src", "dashboard.png?b={{ dashboard_name }}&style={{ style }}&xkcd={{ xkcd }}&_d=" + d.getSeconds());
+	$("#page_image").attr("src", "dashboard.png?b={{ dashboard_name }}&style={{ style }}&xkcd={{ xkcd }}&format={{ format }}&_d=" + d.getSeconds());
 }
 
 $(document).ready(function () {

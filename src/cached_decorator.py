@@ -11,7 +11,7 @@ class cached(object):
         @cached(0.1)
         def function_to_cash_for_one_tenth_of_second():
 
-    ! For object method it should be the last decorator applied because it saves ref to decorated function
+    ! For object method it should be the only decorator applied because it saves ref to decorated function
     and if it changed by other decorator it would treat method call as function call, and
     in this case without @singleton for the class it would cache different instances with different hashes.
     And would not use the object attributes in hash.
@@ -56,12 +56,16 @@ class cached(object):
         self.time = datetime.datetime.now() - datetime.timedelta(seconds=cache_time_seconds + 1)
         self.cache = {}
 
+    def is_self_in_args(self, args, func):
+        first_arg_is_object = len(args) and hasattr(args[0], '__dict__') \
+            and '__class__' in dir(args[0])
+        return first_arg_is_object and func.__name__ in dir(args[0])\
+                and '__func__' in dir(getattr(args[0], func.__name__)) \
+                and getattr(args[0], func.__name__).__func__ == self.func
+
     def __call__(self, func):
         def cached_func(*args, **kw):
-            if len(args) and hasattr(args[0], '__dict__') \
-                    and '__class__' in dir(args[0]) and func.__name__ in dir(args[0])\
-                    and '__func__' in dir(getattr(args[0], func.__name__))\
-                    and getattr(args[0], func.__name__).__func__ == self.func:
+            if self.is_self_in_args(args, func):
                 # the first argument is 'self', this is objects's method so add the object attributes
                 # we do not use str representation because decorated object has id in it,
                 # but I need the same hash for different instances with the same attributes.
@@ -88,17 +92,30 @@ class cached(object):
         self.func = cached_func
         return cached_func
 
-    def __get__(self, obj, objtype):
+    def __get__(self, obj, objtype=None):
         return functools.partial(self.__call__, obj)
 
 
 def test():
     import time
+    from io import TextIOWrapper, BytesIO
+    import sys
+
+
+    class second(object):
+        def __init__(self, param):
+            pass
+
+        def __call__(self, func):
+            def second_func(*args, **kw):
+                return func(*args, **kw)
+            return second_func
 
     class F(object):
         def __init__(self, n):
             self.n = n
 
+        #@second(1) Now I do not know how to make it work together with other decorators
         @cached(cache_time_seconds=0.01, print_if_cached='returned cached f1 at {time}')
         def f1(self, n):
             if n in (0, 1):
@@ -126,6 +143,11 @@ def test():
             if n in (0, 1):
                 return n
             return (n-1) + (n-2)
+
+
+    buf = BytesIO()
+    sys.stdout = TextIOWrapper(buf, sys.stdout.encoding)
+    #sys.stdout.name = ''
 
     f = F(10)
     assert f.f1(1) == 1
@@ -156,8 +178,13 @@ def test():
     f = F3()
     assert f.f1(100) == 197
     assert f.f1(100) == 197 # should be cached
-    print('should be 8 cached calls')
 
+    sys.stdout.seek(0)
+    out = sys.stdout.read()
+    sys.stdout = sys.__stdout__
+    print(out)
+
+    assert len([line for line in out.split('\n') if line]) == 8
 
 if __name__ == '__main__':
     test()

@@ -247,7 +247,7 @@ def draw_weather(weather, rect):
     print_if_cached='Use stored imaged without rendering (from {time})',
     evaluate_on_day_change=True
 )
-def draw_calendar(grid, x, y, weather, dashboard, labels, xkcd=True, style='grayscale'):
+def draw_calendar(grid, x, y, weather, dashboard, labels, xkcd=True, style='grayscale', format='png'):
     plt.clf()
     plt.close()
     plt.figure(figsize=(picture_width, picture_height), dpi=dpi, facecolor='white')
@@ -272,8 +272,8 @@ def draw_calendar(grid, x, y, weather, dashboard, labels, xkcd=True, style='gray
             pad_inches=0,
             #bbox_inches='tight', # we want exact size specified for the picture, not the actual drawing size
             frameon=False,
-            #format='jpeg', # no gain here (117kB vs 113 with 70% jpeg compression quality) so better use loseless png
-            #jpeg_quality=70,
+            format=format,
+            #jpeg_quality=70, # no gain here (117kB vs 113 with 70% jpeg compression quality) so better use loseless png
             #cmap='gray',
         )
         return bytes_file.getvalue()
