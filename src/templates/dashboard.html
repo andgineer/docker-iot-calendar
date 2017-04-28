@@ -4,5 +4,5 @@
     <script type="text/javascript">
         {% include "update_image.js" %}
     </script>
-    <img id="page_image" src="dashboard.png?b={{ dashboard_name }}&style={{ style }}&xkcd={{ xkcd }}&format={{ format }}&rotate={{  rotate }}">
+    <img id="page_image" src="dashboard.{{ format }}?b={{ dashboard_name }}&style={{ style }}&xkcd={{ xkcd }}&rotate={{  rotate }}">
 {% end %}

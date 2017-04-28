@@ -11,9 +11,11 @@ import numpy as np
 import hashlib
 from cached_decorator import cached
 import PIL.Image
+from collections import namedtuple
 
 
 IMAGE_CACHED_SECONDS = 60 * 60 * 24 *30
+ImageParams = namedtuple('ImageParams', 'dashboard format style xkcd rotate')
 
 weeks = 4
 
@@ -248,13 +250,13 @@ def draw_weather(weather, rect):
     print_if_cached='Use stored imaged without rendering (from {time})',
     evaluate_on_day_change=True
 )
-def draw_calendar(grid, x, y, weather, dashboard, labels, xkcd=True, style='grayscale', format='png', rotate=0):
+def draw_calendar(grid, x, y, weather, dashboard, labels, params):
     plt.clf()
     plt.close()
     plt.figure(figsize=(picture_width, picture_height), dpi=dpi, facecolor='white')
     #plt.style.use(style) # that does not apply new style: https://github.com/matplotlib/matplotlib/issues/8348
-    with plt.style.context(style, after_reset=True):
-        if xkcd:
+    with plt.style.context(params.style, after_reset=True):
+        if int(params.xkcd):
             plt.xkcd()
         draw_weather(weather, rect=[0, plot_bottom, plot_left * 0.8, plot_height])
         draw_plot(x, y, labels, rect=[plot_left, plot_bottom, plot_width, plot_height])
@@ -269,10 +271,10 @@ def draw_calendar(grid, x, y, weather, dashboard, labels, xkcd=True, style='gray
         plt.gcf().canvas.draw()
         bitmap = np.fromstring(plt.gcf().canvas.tostring_rgb(), dtype=np.uint8, sep='') \
             .reshape(plt.gcf().canvas.get_width_height()[::-1] + (3,))
-        bitmap = np.rot90(bitmap, k=rotate // 90)
+        bitmap = np.rot90(bitmap, k=int(params.rotate) // 90)
         image = PIL.Image.fromarray(bitmap)
         bytes_file = BytesIO()
-        image.save(bytes_file, format=format)
+        image.save(bytes_file, format=params.format)
         # plt.savefig(
         #     bytes_file,
         #     dpi=dpi,
@@ -317,9 +319,13 @@ def test():
                'images_folder': '../amazon-dash-private/images/'}
     t0 = datetime.datetime.now()
     image_data = draw_calendar(grid, x, y, weather, dashboard, labels,
-                               style='seaborn-talk',
-                               format='gif',
-                               rotate=180
+                               ImageParams(
+                                   dashboard='',
+                                   format='gif',
+                                   style='seaborn-talk',
+                                   xkcd=1,
+                                   rotate=0
+                               )
                                )
     t1 = datetime.datetime.now()
     print(t1 - t0)

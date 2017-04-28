@@ -18,7 +18,7 @@ import pprint
 import json
 from tornado.escape import json_encode
 import datetime
-from calendar_image import draw_calendar
+from calendar_image import draw_calendar, ImageParams
 from calendar_data import events_to_weeks_grid, events_to_array, calendar_events_list
 from google_calendar import collect_events, GOOGLE_CREDENTIALS_PARAM
 from openweathermap_org import Weather, WEATHER_KEY_PARAM
@@ -70,7 +70,18 @@ def load_settings(secrets_folder=None):
     return settings
 
 
-class DashboardImageHandler(tornado.web.RequestHandler):
+class HandlerWithParams(tornado.web.RequestHandler):
+    def load_params(self, **kw):
+        defaults = ImageParams(
+            dashboard=kw.get('dashboard', ''),
+            format=kw.get('format', 'gif'),
+            style='grayscale',
+            xkcd=1,
+            rotate=90
+        )
+        params = [self.get_argument(param, self.get_argument(param[0], getattr(defaults, param))) for param in ImageParams._fields]
+        return ImageParams(*params)
+
     def disable_cache(self):
         self.set_header('Cache-Control', 'no-cache, must-revalidate')
         self.set_header('Expires', '0')
@@ -78,18 +89,13 @@ class DashboardImageHandler(tornado.web.RequestHandler):
         expiration = datetime.datetime(now.year-1, now.month, now.day)
         self.set_header('Last-Modified', expiration)
 
+
+class DashboardImageHandler(HandlerWithParams):
     #todo async decorators and calls to API
-    def get(self):
-        style = self.get_argument('style', '')
-        if not style:
-            style = 'grayscale'
-        dashboard_name = self.get_argument('b', '')
-        xkcd = int(self.get_argument('xkcd', 1))
-        rotate = int(self.get_argument('rotate', 0))
-        if not dashboard_name:
-            dashboard_name = list(settings['dashboards'].keys())[0]
-        format = self.get_argument('format', 'png')
-        calendar_events = calendar_events_list(settings, dashboard_name)
+    def get(self, image_format):
+        self.disable_cache()
+        params = self.load_params(format=image_format, dashboard=list(settings['dashboards'].keys())[0])
+        calendar_events = calendar_events_list(settings, params.dashboard)
         events = collect_events(calendar_events, settings)
         grid = events_to_weeks_grid(events)
         x, y = events_to_array(events)
@@ -97,7 +103,7 @@ class DashboardImageHandler(tornado.web.RequestHandler):
         weather = wth.get_weather(settings['latitude'], settings['longitude'])
         if weather:
             weather['images_folder'] = settings['images_folder']
-        dashboard = settings['dashboards'][dashboard_name]
+        dashboard = settings['dashboards'][params.dashboard]
         if 'images_folder' not in dashboard:
             dashboard['images_folder'] = settings['images_folder']
         image = draw_calendar(
@@ -106,42 +112,25 @@ class DashboardImageHandler(tornado.web.RequestHandler):
             weather,
             dashboard,
             calendar_events,
-            style=style,
-            xkcd=xkcd,
-            rotate=rotate,
-            format=format
+            params
         )
         self.write(image)
         self.set_header("Content-type",  "image/{}".format(format))
         self.flush()
 
 
-class DashboardListHandler(tornado.web.RequestHandler):
-    def disable_cache(self):
-        self.set_header('Cache-Control', 'no-cache, must-revalidate')
-        self.set_header('Expires', '0')
-        now = datetime.datetime.now()
-        expiration = datetime.datetime(now.year-1, now.month, now.day)
-        self.set_header('Last-Modified', expiration)
-
-    #todo async decorators and calls to API
+class DashboardListHandler(HandlerWithParams):
     def get(self):
         self.disable_cache()
-        dashboard_name = self.get_argument('b', '')
-        if dashboard_name:
-            style = self.get_argument('style', '')
-            xkcd = int(self.get_argument('xkcd', 1))
-            rotate = int(self.get_argument('rotate', 0))
-            if not style:
-                style = 'grayscale'
-            format = self.get_argument('format', 'png')
+        params = self.load_params()
+        if params.dashboard:
             self.render(
                 'dashboard.html',
-                dashboard_name=dashboard_name,
-                style=style,
-                xkcd=xkcd,
-                format=format,
-                rotate=rotate,
+                dashboard_name=params.dashboard,
+                style=params.style,
+                xkcd=params.xkcd,
+                format=params.format,
+                rotate=params.rotate,
                 page_title='Dashboard',
             )
         else:
@@ -161,7 +150,9 @@ class Application(tornado.web.Application):
         )
         handlers = [
             (r'/', DashboardListHandler),
-            (r'/dashboard.png', DashboardImageHandler),
+            (r'/index.html', DashboardListHandler),
+            (r'/dashboard\.(\w*)', DashboardImageHandler),
+            (r'/d\.(\w*)', DashboardImageHandler),
             (r'/img/(.*)', tornado.web.StaticFileHandler, {'path': os.path.join(os.path.dirname(__file__), 'static/img')}),
             (r'/styles/(.*)', tornado.web.StaticFileHandler, {'path': os.path.join(os.path.dirname(__file__), 'static/styles/')}),
             (r'/scripts/(.*)', tornado.web.StaticFileHandler, {'path': os.path.join(os.path.dirname(__file__), 'static/scripts/')})
