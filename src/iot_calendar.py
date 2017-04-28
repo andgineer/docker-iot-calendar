@@ -85,6 +85,7 @@ class DashboardImageHandler(tornado.web.RequestHandler):
             style = 'grayscale'
         dashboard_name = self.get_argument('b', '')
         xkcd = int(self.get_argument('xkcd', 1))
+        rotate = int(self.get_argument('rotate', 0))
         if not dashboard_name:
             dashboard_name = list(settings['dashboards'].keys())[0]
         format = self.get_argument('format', 'png')
@@ -107,6 +108,7 @@ class DashboardImageHandler(tornado.web.RequestHandler):
             calendar_events,
             style=style,
             xkcd=xkcd,
+            rotate=rotate,
             format=format
         )
         self.write(image)
@@ -129,6 +131,7 @@ class DashboardListHandler(tornado.web.RequestHandler):
         if dashboard_name:
             style = self.get_argument('style', '')
             xkcd = int(self.get_argument('xkcd', 1))
+            rotate = int(self.get_argument('rotate', 0))
             if not style:
                 style = 'grayscale'
             format = self.get_argument('format', 'png')
@@ -138,6 +141,7 @@ class DashboardListHandler(tornado.web.RequestHandler):
                 style=style,
                 xkcd=xkcd,
                 format=format,
+                rotate=rotate,
                 page_title='Dashboard',
             )
         else:

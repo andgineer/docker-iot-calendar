@@ -10,6 +10,7 @@ from io import BytesIO
 import numpy as np
 import hashlib
 from cached_decorator import cached
+import PIL.Image
 
 
 IMAGE_CACHED_SECONDS = 60 * 60 * 24 *30
@@ -247,7 +248,7 @@ def draw_weather(weather, rect):
     print_if_cached='Use stored imaged without rendering (from {time})',
     evaluate_on_day_change=True
 )
-def draw_calendar(grid, x, y, weather, dashboard, labels, xkcd=True, style='grayscale', format='png'):
+def draw_calendar(grid, x, y, weather, dashboard, labels, xkcd=True, style='grayscale', format='png', rotate=0):
     plt.clf()
     plt.close()
     plt.figure(figsize=(picture_width, picture_height), dpi=dpi, facecolor='white')
@@ -265,21 +266,28 @@ def draw_calendar(grid, x, y, weather, dashboard, labels, xkcd=True, style='gray
         #plt.tight_layout(pad=0)
         #plt.rcParams['savefig.pad_inches'] = 0
         #plt.rcParams['savefig.jpeg_quality'] = 80
+        plt.gcf().canvas.draw()
+        bitmap = np.fromstring(plt.gcf().canvas.tostring_rgb(), dtype=np.uint8, sep='') \
+            .reshape(plt.gcf().canvas.get_width_height()[::-1] + (3,))
+        bitmap = np.rot90(bitmap, k=rotate // 90)
+        image = PIL.Image.fromarray(bitmap)
         bytes_file = BytesIO()
-        plt.savefig(
-            bytes_file,
-            dpi=dpi,
-            pad_inches=0,
-            #bbox_inches='tight', # we want exact size specified for the picture, not the actual drawing size
-            frameon=False,
-            format=format,
-            #jpeg_quality=70, # no gain here (117kB vs 113 with 70% jpeg compression quality) so better use loseless png
-            #cmap='gray',
-        )
+        image.save(bytes_file, format=format)
+        # plt.savefig(
+        #     bytes_file,
+        #     dpi=dpi,
+        #     pad_inches=0,
+        #     #bbox_inches='tight', # we want exact size specified for the picture, not the actual drawing size
+        #     frameon=False,
+        #     format=format,
+        #     #jpeg_quality=70, # no gain here (117kB vs 113 with 70% jpeg compression quality) so better use loseless png
+        #     #cmap='gray',
+        # )
         return bytes_file.getvalue()
 
 
 def test():
+    from io import BytesIO
     x = [datetime.datetime(2017, 4, 6, 0, 0), datetime.datetime(2017, 4, 7, 0, 0), datetime.datetime(2017, 4, 8, 0, 0), datetime.datetime(2017, 4, 11, 0, 0), datetime.datetime(2017, 4, 12, 0, 0), datetime.datetime(2017, 4, 13, 0, 0), datetime.datetime(2017, 4, 14, 0, 0), datetime.datetime(2017, 4, 16, 0, 0), datetime.datetime(2017, 4, 17, 0, 0),
          datetime.datetime(2017, 4, 18, 0, 0), datetime.datetime(2017, 4, 19, 0, 0), datetime.datetime(2017, 4, 20, 0, 0), datetime.datetime(2017, 4, 22, 0, 0), datetime.datetime(2017, 4, 23, 0, 0)]
     y = [[0.0, 15.0, 9.0, 0.0, 9.0, 5.0, 6.0, 0.0, 11.0, 9.0, 5.0, 6.0, 0.0, 11.0],
@@ -308,12 +316,23 @@ def test():
                'temp_min': [-0.58, -2.86, -1.87, -1.91],
                'images_folder': '../amazon-dash-private/images/'}
     t0 = datetime.datetime.now()
-    image = draw_calendar(grid, x, y, weather, dashboard, labels, style='seaborn-talk')
+    image_data = draw_calendar(grid, x, y, weather, dashboard, labels,
+                               style='seaborn-talk',
+                               format='gif',
+                               rotate=180
+                               )
     t1 = datetime.datetime.now()
     print(t1 - t0)
-    with open('test.png', 'wb') as png_file:
-        png_file.write(image)
-    plt.show()
+    image_file = BytesIO(image_data)
+    image = PIL.Image.open(image_file)
+    image.show()
+    # with open('test.png', 'wb') as png_file:
+    #     png_file.write(image)
+    #plt.show()
+    #todo speed it up. too many rescalings as I see from profiling.
+    # may be using artists (http://stackoverflow.com/questions/41453902/is-it-possible-to-patch-an-image-in-matplotlib)
+    # will reduce number of rescaling?
+    # now it looks like matplotlib rescales after each operation
 
 
 if __name__ == '__main__':

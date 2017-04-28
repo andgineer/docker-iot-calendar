@@ -147,16 +147,19 @@ def test():
 
     buf = BytesIO()
     sys.stdout = TextIOWrapper(buf, sys.stdout.encoding)
-    #sys.stdout.name = ''
+
+    hits = 0
 
     f = F(10)
     assert f.f1(1) == 1
     assert f.f1(1) == 1 # should be cached
+    hits += 1
     assert f.f2(5) == 50
     time.sleep(0.2)
     assert f.f1(1) == 1
     assert f.f2(5) == 50
     assert f.f2(5) == 50 # should be cached
+    hits += 1
     time.sleep(0.1)
     assert f.f2(5) == 50
     f = F(20)
@@ -164,27 +167,33 @@ def test():
     assert f.f1(100) == 197
     f = F(20)
     assert f.f2(5) == 100 # should be cached
+    hits += 1
     assert f.f1(100) == 197 # should be cached
+    hits += 1
     f = F(10)
     assert f.f2(5) == 50 # should be cached
+    hits += 1
     assert f.f1(100) == 197
     assert f3(15) == 15
     assert f3(15) == 15 # should be cached
+    hits += 1
     f = F2(10)
     assert f.f2(5) == 50
     assert f.f2(5) == 50 # should be cached
+    hits += 1
     time.sleep(0.1)
     assert f.f2(5) == 50
     f = F3()
     assert f.f1(100) == 197
     assert f.f1(100) == 197 # should be cached
+    hits += 1
 
     sys.stdout.seek(0)
     out = sys.stdout.read()
     sys.stdout = sys.__stdout__
     print(out)
 
-    assert len([line for line in out.split('\n') if line]) == 8
+    assert len([line for line in out.split('\n') if line]) == hits
 
 if __name__ == '__main__':
     test()
