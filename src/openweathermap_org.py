@@ -109,8 +109,12 @@ class Weather(object):
         print('Got weather from openweathermap.org:', weather_response.text[:100])
         weather = weather_response.json()
 
-        if weather['cod'] != '200':
-            print('#'*5, 'ERROR:', weather['message'])
+        if str(weather['cod']) != '200':
+            if str(weather['cod']) == '401' and weather['message'].startswith('Invalid API key'):
+                print('#'*5, '''You should get your key from https://home.openweathermap.org/users/sign_up
+    and place it into {}'''.format(self.settings['openweathermap_key_file_name']))
+            else:
+                print('#'*5, 'ERROR:', weather['message'])
             return None
 
         highs = []

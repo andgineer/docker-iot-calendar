@@ -1,7 +1,11 @@
 import os
 import datetime
 import matplotlib
-matplotlib.use('TkAgg') # workaround for MacOS
+try:
+    import tkinter # check if tkinter is installed
+    matplotlib.use('TkAgg') # in MacOS we should have tkinter installed and use it as backend
+except ImportError:
+    pass # in Docker container (where no tkinter installed) we use default matplotlib backend
 from matplotlib.dates import date2num, DateFormatter
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
@@ -9,7 +13,6 @@ import matplotlib.patches as patches
 from dateutil.tz import tzoffset
 from io import BytesIO
 import numpy as np
-import hashlib
 from cached_decorator import cached
 import PIL.Image
 from collections import namedtuple
