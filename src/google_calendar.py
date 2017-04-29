@@ -10,6 +10,7 @@ import dateutil.parser
 import time
 from pprint import pprint
 from cached_decorator import cached
+import dateutil.tz
 
 
 GOOGLE_CREDENTIALS_PARAM = 'credentials_file_name'
@@ -79,6 +80,7 @@ You can get new one from https://console.developers.google.com/start/api?id=cale
         result = []
         if not self.service:
             return result
+        tzinfo = dateutil.tz.tzoffset(None, -time.timezone)
         page_token = None
         while True:
             events = self.service.events().list(
@@ -93,8 +95,15 @@ You can get new one from https://console.developers.google.com/start/api?id=cale
             ).execute()
             if len(events['items']) > 0:
                 for event in events['items']:
-                    start = self.parse_time(event['start']['dateTime'])
-                    end = self.parse_time(event['end']['dateTime'])
+                    if 'dateTime' in event['start']:
+                        start = self.parse_time(event['start']['dateTime'])
+                    else:
+                        start = self.parse_time(event['start']['date']).replace(tzinfo=tzinfo)
+                        print(event['start'])
+                    if 'dateTime' in event['end']:
+                        end = self.parse_time(event['end']['dateTime'])
+                    else:
+                        end = self.parse_time(event['end']['date']).replace(tzinfo=tzinfo) - datetime.timedelta(seconds=1)
                     result.append({'summary': event['summary'], 'start': start, 'end': end})
             page_token = events.get('nextPageToken')
             if not page_token:
@@ -115,22 +124,31 @@ You can get new one from https://console.developers.google.com/start/api?id=cale
     cache_time_seconds=MIN_GOOGLE_API_CALL_DELAY_SECONDS,
     print_if_cached='Use stored google calendar data (from {time})'
 )
-def collect_events(calendar_events, settings):
+def collect_events(calendar_events, absent_events, settings):
     calendars = {}
     events = []
+    absents = []
     for event in calendar_events:
         if event['calendar_id'] in calendars:
-            calendar = calendars[event['calendar_id']]
+            calendar_processed = True
         else:
-            calendar = Calendar(settings, event['calendar_id'])
+            calendar_processed = False
+            calendars[event['calendar_id']] = Calendar(settings, event['calendar_id'])
+        calendar = calendars[event['calendar_id']]
         events.append(calendar.get_last_events(event['summary']))
-    return events
+        if not calendar_processed:
+            for event in absent_events:
+                absents.append(calendar.get_last_events(event['summary']))
+    return events, absents
 
 
 if __name__ == "__main__":
     from iot_calendar import load_settings
-    from calendar_data import calendar_events_list
-    settings = load_settings()
+    from calendar_data import calendar_events_list, dashboard_absent_events_list
+    settings = load_settings(secrets_folder='../secrets')
     calendar_events = calendar_events_list(settings, 'anna_work_out')
-    events = collect_events(calendar_events)
+    absent_events = dashboard_absent_events_list(settings, 'anna_work_out')
+    pprint(absent_events)
+    events, absents = collect_events(calendar_events, absent_events, settings)
     pprint(events)
+    pprint(absents)

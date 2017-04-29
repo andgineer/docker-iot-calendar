@@ -19,7 +19,7 @@ import json
 from tornado.escape import json_encode
 import datetime
 from calendar_image import draw_calendar, ImageParams
-from calendar_data import events_to_weeks_grid, events_to_array, calendar_events_list
+from calendar_data import events_to_weeks_grid, events_to_array, calendar_events_list, dashboard_absent_events_list
 from google_calendar import collect_events, GOOGLE_CREDENTIALS_PARAM
 from openweathermap_org import Weather, WEATHER_KEY_PARAM
 import json
@@ -58,6 +58,9 @@ def load_settings(secrets_folder=None):
         images_folder = settings['images_folder']
         for dashboard in settings['dashboards']:
             set_folder(settings['dashboards'][dashboard], 'image', images_folder)
+            if 'absent' in settings['dashboards'][dashboard]:
+                for absent_event in settings['dashboards'][dashboard]['absent']:
+                    set_folder(absent_event, 'image', images_folder)
         for button in settings['actions']:
             if 'summary' in settings['actions'][button]:
                 for summary in settings['actions'][button]['summary']:
@@ -96,9 +99,10 @@ class DashboardImageHandler(HandlerWithParams):
         self.disable_cache()
         params = self.load_params(format=image_format, dashboard=list(settings['dashboards'].keys())[0])
         calendar_events = calendar_events_list(settings, params.dashboard)
-        events = collect_events(calendar_events, settings)
-        grid = events_to_weeks_grid(events)
-        x, y = events_to_array(events)
+        absent_events = dashboard_absent_events_list(settings, 'anna_work_out')
+        events, absents = collect_events(calendar_events, absent_events, settings)
+        grid = events_to_weeks_grid(events, absents)
+        x, y = events_to_array(events, absents)
         wth = Weather(settings)
         weather = wth.get_weather(settings['latitude'], settings['longitude'])
         if weather:
@@ -112,6 +116,7 @@ class DashboardImageHandler(HandlerWithParams):
             weather,
             dashboard,
             calendar_events,
+            absent_events,
             params
         )
         self.write(image)

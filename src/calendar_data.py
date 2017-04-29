@@ -49,7 +49,7 @@ def calendar_events_list(settings, dashboard_name):
     :param settings:
     :param dashboard_name:
     :return: list of calendar actions for the dashboard_name
-    [{'summary': summary, 'calendar_id': calendar_id}, ...]
+    [{'summary': summary, 'calendar_id': calendar_id, 'image': image_file_name}, ...]
     """
     result = []
     for button in settings['actions']:
@@ -72,12 +72,19 @@ def calendar_events_list(settings, dashboard_name):
                         result.append(copy.deepcopy(action))
     return result
 
+def dashboard_absent_events_list(settings, dashboard_name):
+    dashboards = settings['dashboards']
+    if dashboard_name in dashboards and 'absent' in dashboards[dashboard_name]:
+        return dashboards[dashboard_name]['absent']
+    else:
+        return []
+
 
 def event_duration(event):
     return int((event['end'] - event['start']).seconds / 60)
 
 
-def events_to_weeks_grid(events, weeks=4):
+def events_to_weeks_grid(events, absents, weeks=4):
     """
     events: list of events lists
     returns weeks list:
@@ -87,6 +94,7 @@ def events_to_weeks_grid(events, weeks=4):
         ...
         [{'date': week<weeks-1>_Monday_date, 'values': values_list}, {'date': week<weeks-1>_Tuesday_date, 'values': values_list}, ...]
     ]
+    Each day may contain 'absent' param with image filepath that should be shown if in values for this day all zeroes.
     """
     def get_tzinfo(events):
         """get tzinfo from any event"""
@@ -117,10 +125,23 @@ def events_to_weeks_grid(events, weeks=4):
                 week = int((time - first_date_in_grid).days // 7)
                 day = int((time - first_date_in_grid -datetime.timedelta(weeks=week)).days)
                 grid[week][day]['values'][event_list_idx] += event_duration(event)
+    for absent_list_idx, absent_list in enumerate(absents):
+        for absent in absent_list:
+            start = absent['start'].replace(hour=0, minute=0, second=0, microsecond=0)
+            end = absent['end'].replace(hour=0, minute=0, second=0, microsecond=0)
+            if first_date_in_grid <= start < tomorrow or first_date_in_grid <= end < tomorrow:
+                for absent_day in range((end - start).days + 1):
+                    absent_date = start + datetime.timedelta(days=absent_day)
+                    if first_date_in_grid <= absent_date < tomorrow:
+                        week = int((absent_date - first_date_in_grid).days // 7)
+                        day = int((absent_date - first_date_in_grid -datetime.timedelta(weeks=week)).days)
+                        if 'absents' not in grid[week][day]:
+                            grid[week][day]['absents'] = []
+                        grid[week][day]['absents'].append({'summary': absent['summary']})
     return grid
 
 
-def events_to_array(events):
+def events_to_array(events, absents):
     DATE_FMT = '%Y%m%d'
     by_date = {}
     for event_list_idx, event_list in enumerate(events):

@@ -1,6 +1,7 @@
 import os
 import datetime
 import matplotlib
+matplotlib.use('TkAgg') # workaround for MacOS
 from matplotlib.dates import date2num, DateFormatter
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
@@ -51,7 +52,7 @@ plot_bottom = 1 - plot_height - 0.025
 last_image = {
 }
 
-def draw_pies(grid, weeks=4, empty_image_file_name=None):
+def draw_pies(grid, weeks=4, absent_grid_images=None, empty_image_file_name=None):
     def find_max_total(grid):
         max_total = 0
         for week in range(len(grid)):
@@ -101,9 +102,16 @@ def draw_pies(grid, weeks=4, empty_image_file_name=None):
 
     def draw_empty_pie(week, day):
         image_padding = pie_width / 5
-        if grid[week][day]['date'] < tomorrow and empty_image_file_name:
+        if 'absents' in grid[week][day]:
+            image = mpimg.imread(absent_grid_images[grid[week][day]['absents'][0]['summary']])
+        else:
+            if empty_image_file_name:
+                image = empty_image
+            else:
+                image = None
+        if grid[week][day]['date'] < tomorrow and image is not None:
             plt.imshow(
-                img,
+                image,
                 extent=((pie_row_header_width + day * pie_width + image_padding) * width_aspect,
                         (pie_row_header_width + (day + 1) * pie_width - image_padding) * width_aspect,
                         week * pie_height + image_padding,
@@ -128,7 +136,7 @@ def draw_pies(grid, weeks=4, empty_image_file_name=None):
 
     max_total = find_max_total(grid)
     if empty_image_file_name:
-        img = mpimg.imread(empty_image_file_name)
+        empty_image = mpimg.imread(empty_image_file_name)
     today = datetime.datetime.now(grid[0][0]['date'].tzinfo).replace(hour=0, minute=0, second=0, microsecond=0)
     tomorrow = today + datetime.timedelta(days=1)
     ax = plt.gcf().add_axes(
@@ -168,6 +176,7 @@ def draw_plot(x, y, labels, rect, legend='inside'):
         ax.xaxis.set_major_formatter(shortFmt)
     legend_labels = [label['summary'] for label in labels]
     polies = ax.stackplot(x, y)
+    ax.xaxis.set_major_locator(plt.MaxNLocator(6))
     ax.patch.set_visible(False)
     if legend == 'rectangle':
         plt.legend([plt.Rectangle((0, 0), 1, 1, fc=poly.get_facecolor()[0]) for poly in polies], legend_labels)
@@ -250,7 +259,8 @@ def draw_weather(weather, rect):
     print_if_cached='Use stored imaged without rendering (from {time})',
     evaluate_on_day_change=True
 )
-def draw_calendar(grid, x, y, weather, dashboard, labels, params):
+def draw_calendar(grid, x, y, weather, dashboard, labels, absent_labels, params):
+    absent_grid_images = {absent['summary'] : absent['image_grid'] for absent in absent_labels}
     plt.clf()
     plt.close()
     plt.figure(figsize=(picture_width, picture_height), dpi=dpi, facecolor='white')
@@ -263,6 +273,7 @@ def draw_calendar(grid, x, y, weather, dashboard, labels, params):
         draw_pies(
             grid,
             weeks=weeks,
+            absent_grid_images=absent_grid_images,
             empty_image_file_name=dashboard['empty_image']
         )
         #plt.tight_layout(pad=0)
