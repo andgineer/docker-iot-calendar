@@ -1,16 +1,13 @@
 """
 Prepare data for calendar_image.py
 """
+
 import copy
 import datetime
 from dateutil.tz import tzoffset
 import collections
 import pprint
 
-
-# def dashboard_list(settings):
-#     result = [dashboard['summary'] for dashboard in settings['dashboards']]
-#     return result
 
 def preprocess_actions(button, button_settings):
     """
@@ -72,6 +69,7 @@ def calendar_events_list(settings, dashboard_name):
                         result.append(copy.deepcopy(action))
     return result
 
+
 def dashboard_absent_events_list(settings, dashboard_name):
     dashboards = settings['dashboards']
     if dashboard_name in dashboards and 'absent' in dashboards[dashboard_name]:
@@ -87,7 +85,7 @@ def event_duration(event):
 def events_to_weeks_grid(events, absents, weeks=4):
     """
     events: list of events lists
-    returns weeks list:
+    returns list of weeks:
     [
         [{'date': week0_Monday_date, 'values': values_list}, {'date': week0_Tuesday_date, 'values': values_list}, ...],
         [{'date': week1_Monday_date, 'values': values_list}, {'date': week1_Tuesday_date, 'values': values_list}, ...],

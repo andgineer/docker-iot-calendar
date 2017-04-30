@@ -1,7 +1,15 @@
+"""
+Draws IoT calendar as bitmap image.
+
+Usage
+    draw_calendar(parameters)
+    see details in the function description
+"""
+
 import os
 import datetime
 import matplotlib
-try:
+try: # !!! that should be before importing pyplot
     import tkinter # check if tkinter is installed
     matplotlib.use('TkAgg') # in MacOS we should have tkinter installed and use it as backend
 except ImportError:
@@ -14,6 +22,7 @@ from dateutil.tz import tzoffset
 from io import BytesIO
 import numpy as np
 from cached_decorator import cached
+from cached_image import CachedImage
 import PIL.Image
 from collections import namedtuple
 
@@ -24,8 +33,8 @@ ImageParams = namedtuple('ImageParams', 'dashboard format style xkcd rotate')
 weeks = 4
 
 dpi = 100
-picture_width = 8 # * dpi = 800  # I cannot remove padding around drawing so I have to manually
-picture_height = 6 #* (600 / 614) # * dpi = 600 # ajust image to be exactly 800x600. Not sure if that has good stability.
+picture_width = 800 // dpi
+picture_height = 600 // dpi
 
 left_gap = 0.01
 pies_height = 3.5 / 6 # vertical proportion between weeks grid and plot above it
@@ -55,207 +64,6 @@ plot_bottom = 1 - plot_height - 0.025
 last_image = {
 }
 
-def draw_pies(grid, weeks=4, absent_grid_images=None, empty_image_file_name=None):
-    def find_max_total(grid):
-        max_total = 0
-        for week in range(len(grid)):
-            for day in range(len(grid[week])):
-                total = sum(grid[week][day]['values'])
-                if total > max_total:
-                    max_total = total
-        return max_total
-
-    def draw_day_headers():
-        for day in range(WEEK_DAYS):
-            plt.text(
-                (pie_row_header_width + (day + 0.5) * pie_width) * width_aspect,
-                weeks * pie_height + 0.5 * pie_col_header_height,
-                grid[0][day]['date'].strftime('%A'),
-                horizontalalignment='center',
-                verticalalignment='center',
-                fontsize=12
-            )
-
-    def draw_week_headers():
-        for week in range(weeks):
-            plt.text(
-                pie_row_header_width * 0.5,
-                (week + 0.5) * pie_height,
-                grid[week][0]['date'].strftime('%d\n%b'),
-                horizontalalignment='center',
-                verticalalignment='center',
-                fontsize=14
-            )
-
-    def draw_pie(week, day, values):
-        radius = sum(values) / max_total * pie_height * pie_scale / 2
-        colours = ['C{}'.format(i) for i in range(len(values))]
-        explode = [0.007 for i in range(len(values))]
-        plt.pie(
-            values,
-            #shadow=True,
-            explode=explode,
-            radius=radius,
-            colors=colours,
-            center=(
-                (pie_row_header_width + (day + 0.5) * pie_width) * width_aspect,
-                (week + 0.5) * pie_height
-            )
-        )
-
-    def draw_empty_pie(week, day):
-        image_padding = pie_width / 5
-        if 'absents' in grid[week][day]:
-            image = mpimg.imread(absent_grid_images[grid[week][day]['absents'][0]['summary']])
-        else:
-            if empty_image_file_name:
-                image = empty_image
-            else:
-                image = None
-        if grid[week][day]['date'] < tomorrow and image is not None:
-            plt.imshow(
-                image,
-                extent=((pie_row_header_width + day * pie_width + image_padding) * width_aspect,
-                        (pie_row_header_width + (day + 1) * pie_width - image_padding) * width_aspect,
-                        week * pie_height + image_padding,
-                        (week + 1) * pie_height - image_padding),
-                interpolation='bicubic'
-            )
-
-    def draw_today(today):
-        grid_shift = (today - grid[0][0]['date']).days
-        day = grid_shift % WEEK_DAYS
-        week = grid_shift // WEEK_DAYS
-        plt.gca().add_patch(
-            patches.Rectangle(
-                ((pie_row_header_width + day * pie_width) * width_aspect, week * pie_height),
-                pie_width * width_aspect * 0.98,
-                pie_height,
-                edgecolor='black',
-                fill=False,
-                linewidth=2
-            )
-        )
-
-    max_total = find_max_total(grid)
-    if empty_image_file_name:
-        empty_image = mpimg.imread(empty_image_file_name)
-    today = datetime.datetime.now(grid[0][0]['date'].tzinfo).replace(hour=0, minute=0, second=0, microsecond=0)
-    tomorrow = today + datetime.timedelta(days=1)
-    ax = plt.gcf().add_axes(
-        [left_gap, 0, 1, pies_height], # left, bottom, width, height, in fractions of figure width and height
-        frameon=False,
-        autoscale_on=False,
-    )
-    plt.axis('off')
-    draw_today(today)
-    draw_day_headers()
-    draw_week_headers()
-    for week in range(weeks):
-        for day in range(len(grid[week])):
-            values = grid[week][day]['values']
-            if sum(values) <= 0:
-                draw_empty_pie(week, day)
-            else:
-                draw_pie(week, day, values)
-
-    ax.set_ylim(0, pies_height)
-    ax.set_xlim(0, width_aspect)
-    ax.patch.set_visible(False)
-    ax.set_xticklabels([])
-    ax.set_yticklabels([])
-
-
-def draw_plot(x, y, labels, rect, legend='inside'):
-    ax = plt.axes(rect)
-    if len(x) > 0:
-        days_on_plot = (x[-1] - x[0]).days
-        if days_on_plot < 5 * 30:
-            shortFmt = DateFormatter('%b %d')
-        elif days_on_plot < 5 * 365:
-            shortFmt = DateFormatter('%d')
-        else:
-            shortFmt = DateFormatter('%Y')
-        ax.xaxis.set_major_formatter(shortFmt)
-    legend_labels = [label['summary'] for label in labels]
-    polies = ax.stackplot(x, y)
-    ax.xaxis.set_major_locator(plt.MaxNLocator(6))
-    ax.patch.set_visible(False)
-    if legend == 'rectangle':
-        plt.legend([plt.Rectangle((0, 0), 1, 1, fc=poly.get_facecolor()[0]) for poly in polies], legend_labels)
-    elif legend == 'inside':
-        #y_sum = np.sum(np.array(y), axis=0)
-        #y_max = y_sum.max()
-        for region in range(len(labels)):
-            if len(y[region]) == 0:
-                return
-            max_idx, _ = max(enumerate(y[region]), key=lambda item: item[1])
-            x_pos = x[max_idx]
-            y_pos = y[region][max_idx]
-            ax.text(
-                x_pos,
-                y_pos,
-                labels[region]['summary'],
-                horizontalalignment='center',
-                verticalalignment='top'
-            )
-            if 'image' in labels[region]:
-                legend_text_height = 0.13
-                ylim = ax.get_ylim()
-                xlim = ax.get_xlim()
-                xsz = xlim[1] - xlim[0]
-                ysz = ylim[1] - ylim[0]
-                x_scale = 1 / plot_height # at the moment I do not understand why 1 and not plot_width
-                x_val = (date2num(x_pos) - xlim[0]) / xsz * x_scale
-                y_val = (y_pos - ylim[0]) / ysz
-                img = mpimg.imread(labels[region]['image'])
-                axes = plt.axes([plot_left, plot_bottom, plot_width, plot_height], label='2')
-                plt.axis('off')
-                axes.patch.set_visible(False)
-                axes.set_xticklabels([])
-                axes.set_yticklabels([])
-                axes.set_ylim((0, 1))
-                axes.set_xlim((0, x_scale))
-                imgplot = plt.imshow(
-                    img,
-                    extent=(x_val - legend_image_sz / 2, x_val + legend_image_sz / 2,
-                            y_val - legend_image_sz - legend_text_height, y_val - legend_text_height),
-                    interpolation='bicubic'
-                )
-                #imgplot.set_cmap('jet')
-
-
-def draw_weather(weather, rect):
-    ax = plt.axes(rect)
-    plt.axis('off')
-    ax.patch.set_visible(False)
-    ax.set_xticklabels([])
-    ax.set_yticklabels([])
-    ax.set_ylim(-0.03, 1.03)
-    ax.set_xlim(-0.03, 1.03)
-    ax.text(
-        0.5,
-        1,
-        datetime.datetime.now().strftime('%d %B'),
-        horizontalalignment='center',
-        verticalalignment='top'
-    )
-    if not weather:
-        return
-    ax.text(
-        0.5,
-        0,
-        '{} °C … {} °C'.format(round(weather['temp_min'][0], 1), round(weather['temp_max'][0], 1)),
-        horizontalalignment='center',
-        verticalalignment='bottom'
-    )
-    img = mpimg.imread(os.path.join(weather['images_folder'], weather['icon'][0] + '.png'))
-    plt.imshow(
-        img,
-        extent=[0.15, 0.85, 0.15, 0.85],
-        interpolation='bilinear' #'bicubic'
-    )
-
 
 @cached(
     cache_time_seconds=IMAGE_CACHED_SECONDS,
@@ -263,12 +71,231 @@ def draw_weather(weather, rect):
     evaluate_on_day_change=True
 )
 def draw_calendar(grid, x, y, weather, dashboard, labels, absent_labels, params):
-    absent_grid_images = {absent['summary'] : absent['image_grid'] for absent in absent_labels}
+    """
+    Draws IoT calendar as image, optimized for Amazon Kindle (600 x 800).
+    To prepare data see functions in calendar_data.py
+
+    :param grid:
+        grid[weeks][days]
+    :param x:
+    :param y:
+        y[event_list][x]
+    :param weather:
+        {'temp_min': [], 'temp_max': [], 'icon': [], 'day': []}
+    :param dashboard: {
+        'summary': summary,
+        'empty_image': full_path_to_empty_cell_image,
+        'absent': array of absence images descriptions}
+    :param labels: [
+            {'summary': label_summary, 'image': full_path_to_image_to_display_on_plot}
+        ]
+    :param absent_labels: [
+        {'summary': event_name_in_calendar, 'image_grid': full_path_to_cell_image,
+          'image_plot': full_path_to_plot_image}
+    :param params:
+        see ImageParams
+    :return:
+        image data in specified (in params) format (png, gif etc)
+    """
+
+    def draw_pies(grid, weeks=4, absent_grid_images=None, empty_image_file_name=None):
+        def find_max_total(grid):
+            max_total = 0
+            for week in range(len(grid)):
+                for day in range(len(grid[week])):
+                    total = sum(grid[week][day]['values'])
+                    if total > max_total:
+                        max_total = total
+            return max_total
+
+        def draw_day_headers():
+            for day in range(WEEK_DAYS):
+                plt.text(
+                    (pie_row_header_width + (day + 0.5) * pie_width) * width_aspect,
+                    weeks * pie_height + 0.5 * pie_col_header_height,
+                    grid[0][day]['date'].strftime('%A'),
+                    horizontalalignment='center',
+                    verticalalignment='center',
+                    fontsize=12
+                )
+
+        def draw_week_headers():
+            for week in range(weeks):
+                plt.text(
+                    pie_row_header_width * 0.5,
+                    (week + 0.5) * pie_height,
+                    grid[week][0]['date'].strftime('%d\n%b'),
+                    horizontalalignment='center',
+                    verticalalignment='center',
+                    fontsize=14
+                )
+
+        def draw_pie(week, day, values):
+            radius = sum(values) / max_total * pie_height * pie_scale / 2
+            colours = ['C{}'.format(i) for i in range(len(values))]
+            explode = [0.007 for i in range(len(values))]
+            plt.pie(
+                values,
+                #shadow=True,
+                explode=explode,
+                radius=radius,
+                colors=colours,
+                center=(
+                    (pie_row_header_width + (day + 0.5) * pie_width) * width_aspect,
+                    (week + 0.5) * pie_height
+                )
+            )
+
+        def draw_empty_pie(week, day):
+            image_padding = pie_width / 5
+            if 'absents' in grid[week][day]:
+                image = image_cache.by_file_name(absent_grid_images[grid[week][day]['absents'][0]['summary']])
+            else:
+                image = image_cache.by_file_name(empty_image_file_name)
+            if grid[week][day]['date'] < tomorrow:
+                plt.imshow(
+                    image,
+                    extent=((pie_row_header_width + day * pie_width + image_padding) * width_aspect,
+                            (pie_row_header_width + (day + 1) * pie_width - image_padding) * width_aspect,
+                            week * pie_height + image_padding,
+                            (week + 1) * pie_height - image_padding),
+                    interpolation='bicubic'
+                )
+
+        def draw_today(today):
+            grid_shift = (today - grid[0][0]['date']).days
+            day = grid_shift % WEEK_DAYS
+            week = grid_shift // WEEK_DAYS
+            plt.gca().add_patch(
+                patches.Rectangle(
+                    ((pie_row_header_width + day * pie_width) * width_aspect, week * pie_height),
+                    pie_width * width_aspect * 0.98,
+                    pie_height,
+                    edgecolor='black',
+                    fill=False,
+                    linewidth=2
+                )
+            )
+
+        max_total = find_max_total(grid)
+        today = datetime.datetime.now(grid[0][0]['date'].tzinfo).replace(hour=0, minute=0, second=0, microsecond=0)
+        tomorrow = today + datetime.timedelta(days=1)
+        ax = plt.gcf().add_axes(
+            [left_gap, 0, 1, pies_height], # left, bottom, width, height, in fractions of figure width and height
+            frameon=False,
+            autoscale_on=False,
+        )
+        plt.axis('off')
+        draw_today(today)
+        draw_day_headers()
+        draw_week_headers()
+        for week in range(weeks):
+            for day in range(len(grid[week])):
+                values = grid[week][day]['values']
+                if sum(values) <= 0:
+                    draw_empty_pie(week, day)
+                else:
+                    draw_pie(week, day, values)
+
+        ax.set_ylim(0, pies_height)
+        ax.set_xlim(0, width_aspect)
+        ax.patch.set_visible(False)
+        ax.set_xticklabels([])
+        ax.set_yticklabels([])
+
+    def draw_plot(x, y, labels, rect, legend='inside'):
+        ax = plt.axes(rect)
+        if len(x) > 0:
+            days_on_plot = (x[-1] - x[0]).days
+            if days_on_plot < 5 * 30:
+                shortFmt = DateFormatter('%b %d')
+            elif days_on_plot < 5 * 365:
+                shortFmt = DateFormatter('%d')
+            else:
+                shortFmt = DateFormatter('%Y')
+            ax.xaxis.set_major_formatter(shortFmt)
+        legend_labels = [label['summary'] for label in labels]
+        polies = ax.stackplot(x, y)
+        ax.xaxis.set_major_locator(plt.MaxNLocator(6))
+        ax.patch.set_visible(False)
+        if legend == 'rectangle':
+            plt.legend([plt.Rectangle((0, 0), 1, 1, fc=poly.get_facecolor()[0]) for poly in polies], legend_labels)
+        elif legend == 'inside':
+            #y_sum = np.sum(np.array(y), axis=0)
+            #y_max = y_sum.max()
+            for region in range(len(labels)):
+                if len(y[region]) == 0:
+                    return
+                max_idx, _ = max(enumerate(y[region]), key=lambda item: item[1])
+                x_pos = x[max_idx]
+                y_pos = y[region][max_idx]
+                ax.text(
+                    x_pos,
+                    y_pos,
+                    labels[region]['summary'],
+                    horizontalalignment='center',
+                    verticalalignment='top'
+                )
+                if 'image' in labels[region]:
+                    legend_text_height = 0.13
+                    ylim = ax.get_ylim()
+                    xlim = ax.get_xlim()
+                    xsz = xlim[1] - xlim[0]
+                    ysz = ylim[1] - ylim[0]
+                    x_scale = 1 / plot_height # at the moment I do not understand why 1 and not plot_width
+                    x_val = (date2num(x_pos) - xlim[0]) / xsz * x_scale
+                    y_val = (y_pos - ylim[0]) / ysz
+                    axes = plt.axes([plot_left, plot_bottom, plot_width, plot_height], label='2')
+                    plt.axis('off')
+                    axes.patch.set_visible(False)
+                    axes.set_xticklabels([])
+                    axes.set_yticklabels([])
+                    axes.set_ylim((0, 1))
+                    axes.set_xlim((0, x_scale))
+                    plt.imshow(
+                        image_cache.by_file_name(labels[region]['image']),
+                        extent=(x_val - legend_image_sz / 2, x_val + legend_image_sz / 2,
+                                y_val - legend_image_sz - legend_text_height, y_val - legend_text_height),
+                        interpolation='bicubic'
+                    )
+
+    def draw_weather(weather, rect):
+        ax = plt.axes(rect)
+        plt.axis('off')
+        ax.patch.set_visible(False)
+        ax.set_xticklabels([])
+        ax.set_yticklabels([])
+        ax.set_ylim(-0.03, 1.03)
+        ax.set_xlim(-0.03, 1.03)
+        ax.text(
+            0.5,
+            1,
+            datetime.datetime.now().strftime('%d %B'),
+            horizontalalignment='center',
+            verticalalignment='top'
+        )
+        if not weather:
+            return
+        ax.text(
+            0.5,
+            0,
+            '{} °C … {} °C'.format(round(weather['temp_min'][0], 1), round(weather['temp_max'][0], 1)),
+            horizontalalignment='center',
+            verticalalignment='bottom'
+        )
+        plt.imshow(
+            mpimg.imread(os.path.join(weather['images_folder'], weather['icon'][0] + '.png')),
+            extent=[0.15, 0.85, 0.15, 0.85],
+            interpolation='bilinear' #'bicubic'
+        )
+
     plt.clf()
-    plt.close()
+    #plt.close()
     plt.figure(figsize=(picture_width, picture_height), dpi=dpi, facecolor='white')
-    #plt.style.use(style) # that does not apply new style: https://github.com/matplotlib/matplotlib/issues/8348
+    absent_grid_images = {absent['summary'] : absent['image_grid'] for absent in absent_labels}
+    image_cache = CachedImage()
     with plt.style.context(params.style, after_reset=True):
+        #use style.context because plt.style.use(style) does not apply new style: https://github.com/matplotlib/matplotlib/issues/8348
         if int(params.xkcd):
             plt.xkcd()
         draw_weather(weather, rect=[0, plot_bottom, plot_left * 0.8, plot_height])
@@ -323,6 +350,14 @@ def test():
         {"summary": "Morning work-out", "image": "../amazon-dash-private/images/morning4.png"},
         {"summary": "Physiotherapy", "image": "../amazon-dash-private/images/evening2.png"}
     ]
+    absent_labels = [
+        {'image_grid': '../amazon-dash-private/images/absent_ill_grid.png',
+         'image_plot': '../amazon-dash-private/images/absent_ill_plot.png',
+        'summary': 'Sick'},
+        {'image_grid': '../amazon-dash-private/images/absent_vacation_grid.png',
+         'image_plot': '../amazon-dash-private/images/absent_vacation_plot.png',
+         'summary': 'Vacation'}
+    ]
     weather = {'day': [datetime.datetime(2017, 4, 22, 0, 0),
                        datetime.datetime(2017, 4, 23, 0, 0),
                        datetime.datetime(2017, 4, 24, 0, 0),
@@ -332,7 +367,7 @@ def test():
                'temp_min': [-0.58, -2.86, -1.87, -1.91],
                'images_folder': '../amazon-dash-private/images/'}
     t0 = datetime.datetime.now()
-    image_data = draw_calendar(grid, x, y, weather, dashboard, labels,
+    image_data = draw_calendar(grid, x, y, weather, dashboard, labels, absent_labels,
                                ImageParams(
                                    dashboard='',
                                    format='gif',

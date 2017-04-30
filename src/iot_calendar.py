@@ -94,7 +94,7 @@ class HandlerWithParams(tornado.web.RequestHandler):
 
 
 class DashboardImageHandler(HandlerWithParams):
-    #todo async decorators and calls to API
+    #todo async decorators and async version of draw_calendar
     def get(self, image_format):
         self.disable_cache()
         params = self.load_params(format=image_format, dashboard=list(settings['dashboards'].keys())[0])

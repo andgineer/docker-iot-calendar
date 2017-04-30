@@ -99,7 +99,6 @@ You can get new one from https://console.developers.google.com/start/api?id=cale
                         start = self.parse_time(event['start']['dateTime'])
                     else:
                         start = self.parse_time(event['start']['date']).replace(tzinfo=tzinfo)
-                        print(event['start'])
                     if 'dateTime' in event['end']:
                         end = self.parse_time(event['end']['dateTime'])
                     else:
