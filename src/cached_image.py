@@ -24,6 +24,6 @@ class CachedImage(object):
             try:
                 self._cache[image_file_name] = mpimg.imread(image_file_name)
             except Exception as e:
-                print('#'*5, ' Error readinf image from {}:\{}'.format(image_file_name, e))
+                print('#'*5, ' Error reading image from {}:\n{}'.format(image_file_name, e))
                 return self._empty
         return self._cache[image_file_name]
