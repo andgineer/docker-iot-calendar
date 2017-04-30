@@ -6,7 +6,7 @@ See [description in my blog](http://masterandrey.com/posts/en/iot_calendar_synol
 The image contains calendar with events from Google Calendar - supposedly events from your IoT
 (like [Smart wifi button (Amazon Dash Button hack)](http://masterandrey.com/posts/en/amazon_dash_button_hack/)).
 
-Also it has html-page that just serves new version of that image every 10 seconds (link to
+Also it has html-page that just serves new version of that image every minute (link to
 this page in index.html).
 
 Run in the `docker-iot-calendar` folder:
@@ -21,8 +21,9 @@ At first I thought it would be great idea to use
 and [cairosvg](http://cairosvg.org/documentation/), but then decided otherwise
 and use [matplotlib](http://matplotlib.org) instead.
 
-To install system dependencies in OSX (if you want to run it outside docker container):
-'''
+To install system dependencies in Mac OSX (if you want to run it outside docker container):
+```
 brew update
 brew install cairo
-'''
+```
+

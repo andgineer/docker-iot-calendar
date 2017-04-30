@@ -284,7 +284,7 @@ def draw_calendar(grid, x, y, weather, dashboard, labels, absent_labels, params)
             verticalalignment='bottom'
         )
         plt.imshow(
-            mpimg.imread(os.path.join(weather['images_folder'], weather['icon'][0] + '.png')),
+            image_cache.by_file_name(os.path.join(weather['images_folder'], weather['icon'][0] + '.png')),
             extent=[0.15, 0.85, 0.15, 0.85],
             interpolation='bilinear' #'bicubic'
         )
