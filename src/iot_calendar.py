@@ -46,7 +46,7 @@ def load_settings(secrets_folder=None):
     if not os.path.isfile(SETTINGS_FILE_NAME):
         print(NO_SETTINGS_FILE.format(SETTINGS_FILE_NAME))
         exit(1)
-    with open(SETTINGS_FILE_NAME, 'r') as settings_file:
+    with open(SETTINGS_FILE_NAME, 'r', encoding='utf-8-sig') as settings_file:
         settings = json.loads(settings_file.read())
 
     if secrets_folder:
