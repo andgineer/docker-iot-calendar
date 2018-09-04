@@ -98,6 +98,17 @@ def draw_calendar(grid, x, y, weather, dashboard, labels, absent_labels, params)
         image data in specified (in params) format (png, gif etc)
     """
 
+    #todo speed it up. too many rescalings as I see from profiling.
+    # may be using artists (http://stackoverflow.com/questions/41453902/is-it-possible-to-patch-an-image-in-matplotlib)
+    # will reduce number of rescaling?
+    # now it looks like matplotlib rescales after each operation
+
+    # Save params for test:
+    # call_params = dict(grid=grid, x=x, y=y, weather=weather, dashboard=dashboard, labels=labels,
+    #     absent_labels=absent_labels, params=params)
+    # import json
+    # json.dump(call_params, open('draw_calendar_params.json', 'w'), default=str)
+
     def draw_pies(grid, weeks=4, absent_grid_images=None, empty_image_file_name=None):
         def find_max_total(grid):
             max_total = 0
@@ -290,12 +301,11 @@ def draw_calendar(grid, x, y, weather, dashboard, labels, absent_labels, params)
         )
 
     plt.clf()
-    #plt.close()
     plt.figure(figsize=(picture_width, picture_height), dpi=dpi, facecolor='white')
     absent_grid_images = {absent['summary'] : absent['image_grid'] for absent in absent_labels}
     image_cache = CachedImage()
+    plt.rcParams.update(plt.rcParamsDefault)
     with plt.style.context(params.style, after_reset=True):
-        #use style.context because plt.style.use(style) does not apply new style: https://github.com/matplotlib/matplotlib/issues/8348
         if int(params.xkcd):
             plt.xkcd()
         draw_weather(weather, rect=[0, plot_bottom, plot_left * 0.8, plot_height])
@@ -306,9 +316,6 @@ def draw_calendar(grid, x, y, weather, dashboard, labels, absent_labels, params)
             absent_grid_images=absent_grid_images,
             empty_image_file_name=dashboard['empty_image']
         )
-        #plt.tight_layout(pad=0)
-        #plt.rcParams['savefig.pad_inches'] = 0
-        #plt.rcParams['savefig.jpeg_quality'] = 80
         plt.gcf().canvas.draw()
         bitmap = np.fromstring(plt.gcf().canvas.tostring_rgb(), dtype=np.uint8, sep='') \
             .reshape(plt.gcf().canvas.get_width_height()[::-1] + (3,))
@@ -316,78 +323,34 @@ def draw_calendar(grid, x, y, weather, dashboard, labels, absent_labels, params)
         image = PIL.Image.fromarray(bitmap)
         bytes_file = BytesIO()
         image.save(bytes_file, format=params.format)
-        # plt.savefig(
-        #     bytes_file,
-        #     dpi=dpi,
-        #     pad_inches=0,
-        #     #bbox_inches='tight', # we want exact size specified for the picture, not the actual drawing size
-        #     frameon=False,
-        #     format=format,
-        #     #jpeg_quality=70, # no gain here (117kB vs 113 with 70% jpeg compression quality) so better use loseless png
-        #     #cmap='gray',
-        # )
         return bytes_file.getvalue()
 
 
 def test():
-    from io import BytesIO
-    x = [datetime.datetime(2017, 4, 6, 0, 0), datetime.datetime(2017, 4, 7, 0, 0), datetime.datetime(2017, 4, 8, 0, 0), datetime.datetime(2017, 4, 11, 0, 0), datetime.datetime(2017, 4, 12, 0, 0), datetime.datetime(2017, 4, 13, 0, 0), datetime.datetime(2017, 4, 14, 0, 0), datetime.datetime(2017, 4, 16, 0, 0), datetime.datetime(2017, 4, 17, 0, 0),
-         datetime.datetime(2017, 4, 18, 0, 0), datetime.datetime(2017, 4, 19, 0, 0), datetime.datetime(2017, 4, 20, 0, 0), datetime.datetime(2017, 4, 22, 0, 0), datetime.datetime(2017, 4, 23, 0, 0)]
-    y = [[0.0, 15.0, 9.0, 0.0, 9.0, 5.0, 6.0, 0.0, 11.0, 9.0, 5.0, 6.0, 0.0, 11.0],
-         [15.0, 17.0, 0.0, 20.0, 20.0, 19.0, 30.0, 32.0, 23.0, 20.0, 19.0, 30.0, 32.0, 23.0]]
-    grid = [
-        [{'date': datetime.datetime(2017, 4, 3, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [ 0.,  0.]}, {'date': datetime.datetime(2017, 4, 4, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [ 0.,  0.]}, {'date': datetime.datetime(2017, 4, 5, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [ 0.,  0.]}, {'date': datetime.datetime(2017, 4, 6, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [  0.,  15.]}, {'date': datetime.datetime(2017, 4, 7, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [ 15.,  17.]}, {'date': datetime.datetime(2017, 4, 8, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [ 9.,  0.]}, {'date': datetime.datetime(2017, 4, 9, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [ 0.,  0.]}],
-        [{'date': datetime.datetime(2017, 4, 10, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [ 0.,  0.]}, {'date': datetime.datetime(2017, 4, 11, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [  0.,  20.]}, {'date': datetime.datetime(2017, 4, 12, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [  9.,  20.]}, {'date': datetime.datetime(2017, 4, 13, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [  5.,  19.]}, {'date': datetime.datetime(2017, 4, 14, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [  6.,  30.]}, {'date': datetime.datetime(2017, 4, 15, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [ 0.,  0.]}, {'date': datetime.datetime(2017, 4, 16, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [  0.,  32.]}],
-        [{'date': datetime.datetime(2017, 4, 17, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [ 11.,  23.]}, {'date': datetime.datetime(2017, 4, 18, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [ 0.,  0.]}, {'date': datetime.datetime(2017, 4, 19, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [ 0.,  0.]}, {'date': datetime.datetime(2017, 4, 20, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [ 0.,  0.]}, {'date': datetime.datetime(2017, 4, 21, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [ 0.,  0.]}, {'date': datetime.datetime(2017, 4, 22, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [ 0.,  0.]}, {'date': datetime.datetime(2017, 4, 23, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [ 0.,  0.]}],
-        [{'date': datetime.datetime(2017, 4, 24, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [ 11.,  23.]}, {'date': datetime.datetime(2017, 4, 25, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [ 0.,  0.]}, {'date': datetime.datetime(2017, 4, 26, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [ 0.,  0.]}, {'date': datetime.datetime(2017, 4, 27, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [ 0.,  0.]}, {'date': datetime.datetime(2017, 4, 28, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [ 0.,  0.]}, {'date': datetime.datetime(2017, 4, 29, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [ 0.,  0.]}, {'date': datetime.datetime(2017, 4, 30, 0, 0, tzinfo=tzoffset(None, 10800)), 'values': [ 0.,  0.]}]
-            ]
-    dashboard = {
-        "summary": "Anna work-out",
-        "empty_image": "../amazon-dash-private/images/old-woman.png",
-        "images_folder": "../amazon-dash-private/images/"
-    }
-    labels = [
-        {"summary": "Morning work-out", "image": "../amazon-dash-private/images/morning4.png"},
-        {"summary": "Physiotherapy", "image": "../amazon-dash-private/images/evening2.png"}
-    ]
-    absent_labels = [
-        {'image_grid': '../amazon-dash-private/images/absent_ill_grid.png',
-         'image_plot': '../amazon-dash-private/images/absent_ill_plot.png',
-        'summary': 'Sick'},
-        {'image_grid': '../amazon-dash-private/images/absent_vacation_grid.png',
-         'image_plot': '../amazon-dash-private/images/absent_vacation_plot.png',
-         'summary': 'Vacation'}
-    ]
-    weather = {'day': [datetime.datetime(2017, 4, 22, 0, 0),
-                       datetime.datetime(2017, 4, 23, 0, 0),
-                       datetime.datetime(2017, 4, 24, 0, 0),
-                       datetime.datetime(2017, 4, 25, 0, 0)],
-               'icon': ['sct', 'ovc', 'hi_shwrs', 'sn'],
-               'temp_max': [6.64, 6.38, 4.07, 6.91],
-               'temp_min': [-0.58, -2.86, -1.87, -1.91],
-               'images_folder': '../amazon-dash-private/images/'}
+    import json
+    import dateutil
+    call_params = json.load(open('draw_calendar_params_1.json', 'r'))
+    for row in call_params['grid']:
+        for col in row:
+            col['date'] = dateutil.parser.parse(col['date'])
+    for i, day in enumerate(call_params['x']):
+        call_params['x'][i] = dateutil.parser.parse(call_params['x'][i])
     t0 = datetime.datetime.now()
-    image_data = draw_calendar(grid, x, y, weather, dashboard, labels, absent_labels,
-                               ImageParams(
-                                   dashboard='',
-                                   format='gif',
-                                   style='seaborn-talk',
-                                   xkcd=1,
-                                   rotate=0
-                               )
-                               )
+    image_data = draw_calendar(
+        call_params['grid'],
+        call_params['x'],
+        call_params['y'],
+        call_params['weather'],
+        call_params['dashboard'],
+        call_params['labels'],
+        call_params['absent_labels'],
+        ImageParams(*call_params['params'])
+    )
     t1 = datetime.datetime.now()
     print(t1 - t0)
     image_file = BytesIO(image_data)
     image = PIL.Image.open(image_file)
     image.show()
-    # with open('test.png', 'wb') as png_file:
-    #     png_file.write(image)
-    #plt.show()
-    #todo speed it up. too many rescalings as I see from profiling.
-    # may be using artists (http://stackoverflow.com/questions/41453902/is-it-possible-to-patch-an-image-in-matplotlib)
-    # will reduce number of rescaling?
-    # now it looks like matplotlib rescales after each operation
 
 
 if __name__ == '__main__':

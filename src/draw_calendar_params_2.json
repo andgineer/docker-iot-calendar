@@ -1,0 +1,319 @@
+{
+  "grid": [
+    [
+      {
+        "date": "2018-08-13 00:00:00+03:00",
+        "values": [
+          0,
+          0
+        ]
+      },
+      {
+        "date": "2018-08-14 00:00:00+03:00",
+        "values": [
+          0,
+          0
+        ]
+      },
+      {
+        "date": "2018-08-15 00:00:00+03:00",
+        "values": [
+          0,
+          0
+        ]
+      },
+      {
+        "date": "2018-08-16 00:00:00+03:00",
+        "values": [
+          0,
+          0
+        ]
+      },
+      {
+        "date": "2018-08-17 00:00:00+03:00",
+        "values": [
+          0,
+          0
+        ]
+      },
+      {
+        "date": "2018-08-18 00:00:00+03:00",
+        "values": [
+          0,
+          0
+        ]
+      },
+      {
+        "date": "2018-08-19 00:00:00+03:00",
+        "values": [
+          0,
+          0
+        ]
+      }
+    ],
+    [
+      {
+        "date": "2018-08-20 00:00:00+03:00",
+        "values": [
+          0,
+          0
+        ]
+      },
+      {
+        "date": "2018-08-21 00:00:00+03:00",
+        "values": [
+          0,
+          0
+        ]
+      },
+      {
+        "date": "2018-08-22 00:00:00+03:00",
+        "values": [
+          14,
+          0
+        ]
+      },
+      {
+        "date": "2018-08-23 00:00:00+03:00",
+        "values": [
+          32,
+          0
+        ]
+      },
+      {
+        "date": "2018-08-24 00:00:00+03:00",
+        "values": [
+          20,
+          0
+        ]
+      },
+      {
+        "date": "2018-08-25 00:00:00+03:00",
+        "values": [
+          0,
+          0
+        ]
+      },
+      {
+        "date": "2018-08-26 00:00:00+03:00",
+        "values": [
+          0,
+          0
+        ]
+      }
+    ],
+    [
+      {
+        "date": "2018-08-27 00:00:00+03:00",
+        "values": [
+          15,
+          0
+        ]
+      },
+      {
+        "date": "2018-08-28 00:00:00+03:00",
+        "values": [
+          27,
+          0
+        ]
+      },
+      {
+        "date": "2018-08-29 00:00:00+03:00",
+        "values": [
+          0,
+          0
+        ]
+      },
+      {
+        "date": "2018-08-30 00:00:00+03:00",
+        "values": [
+          16,
+          0
+        ]
+      },
+      {
+        "date": "2018-08-31 00:00:00+03:00",
+        "values": [
+          10,
+          0
+        ]
+      },
+      {
+        "date": "2018-09-01 00:00:00+03:00",
+        "values": [
+          10,
+          0
+        ]
+      },
+      {
+        "date": "2018-09-02 00:00:00+03:00",
+        "values": [
+          0,
+          0
+        ]
+      }
+    ],
+    [
+      {
+        "date": "2018-09-03 00:00:00+03:00",
+        "values": [
+          0,
+          15
+        ]
+      },
+      {
+        "date": "2018-09-04 00:00:00+03:00",
+        "values": [
+          0,
+          0
+        ]
+      },
+      {
+        "date": "2018-09-05 00:00:00+03:00",
+        "values": [
+          0,
+          0
+        ]
+      },
+      {
+        "date": "2018-09-06 00:00:00+03:00",
+        "values": [
+          0,
+          0
+        ]
+      },
+      {
+        "date": "2018-09-07 00:00:00+03:00",
+        "values": [
+          0,
+          0
+        ]
+      },
+      {
+        "date": "2018-09-08 00:00:00+03:00",
+        "values": [
+          0,
+          0
+        ]
+      },
+      {
+        "date": "2018-09-09 00:00:00+03:00",
+        "values": [
+          0,
+          0
+        ]
+      }
+    ]
+  ],
+  "x": [
+    "2018-08-22 00:00:00",
+    "2018-08-23 00:00:00",
+    "2018-08-24 00:00:00",
+    "2018-08-27 00:00:00",
+    "2018-08-28 00:00:00",
+    "2018-08-30 00:00:00",
+    "2018-08-31 00:00:00",
+    "2018-09-01 00:00:00",
+    "2018-09-02 00:00:00",
+    "2018-09-03 00:00:00"
+  ],
+  "y": [
+    [
+      14,
+      32,
+      20,
+      15,
+      27,
+      16,
+      10,
+      10,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      15
+    ]
+  ],
+  "weather": {
+    "temp_min": [
+      14.14
+    ],
+    "temp_max": [
+      16.03
+    ],
+    "icon": [
+      "ra1"
+    ],
+    "day": [
+      "2018-09-04 00:00:00"
+    ],
+    "images_folder": "../amazon-dash-private/images/"
+  },
+  "dashboard": {
+    "summary": "Anna work-out",
+    "empty_image": "../amazon-dash-private/images/old-woman.png",
+    "absent": [
+      {
+        "summary": "Sick",
+        "image_grid": "../amazon-dash-private/images/absent_ill_grid.png",
+        "image_plot": "../amazon-dash-private/images/absent_ill_plot.png"
+      },
+      {
+        "summary": "Vacation",
+        "image_grid": "../amazon-dash-private/images/absent_vacation_grid.png",
+        "image_plot": "../amazon-dash-private/images/absent_vacation_plot.png"
+      }
+    ],
+    "images_folder": "../amazon-dash-private/images/"
+  },
+  "labels": [
+    {
+      "type": "calendar",
+      "calendar_id": "eo2n7ip8p1tm6dgseh3e7p19no@group.calendar.google.com",
+      "dashboard": "anna_work_out",
+      "restart": 15,
+      "autoclose": 10800,
+      "default": 900,
+      "summary": "Morning work-out",
+      "image": "../amazon-dash-private/images/morning.png"
+    },
+    {
+      "type": "calendar",
+      "calendar_id": "eo2n7ip8p1tm6dgseh3e7p19no@group.calendar.google.com",
+      "dashboard": "anna_work_out",
+      "restart": 15,
+      "autoclose": 10800,
+      "default": 900,
+      "summary": "Physiotherapy",
+      "image": "../amazon-dash-private/images/evening2.png"
+    }
+  ],
+  "absent_labels": [
+    {
+      "summary": "Sick",
+      "image_grid": "../amazon-dash-private/images/absent_ill_grid.png",
+      "image_plot": "../amazon-dash-private/images/absent_ill_plot.png"
+    },
+    {
+      "summary": "Vacation",
+      "image_grid": "../amazon-dash-private/images/absent_vacation_grid.png",
+      "image_plot": "../amazon-dash-private/images/absent_vacation_plot.png"
+    }
+  ],
+  "params": [
+    "anna_work_out",
+    "png",
+    "seaborn-talk",
+    "0",
+    "0"
+  ]
+}

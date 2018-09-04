@@ -21,6 +21,22 @@
           "image_plot": "absent_vacation_plot.png"
         }
       ]
+    },
+    "anna_english": {
+      "summary": "Anna English",
+      "empty_image": "old-woman.png",
+      "absent": [
+        {
+          "summary": "Sick",
+          "image_grid": "absent_ill_grid.png",
+          "image_plot": "absent_ill_plot.png"
+        },
+        {
+          "summary": "Vacation",
+          "image_grid": "absent_vacation_grid.png",
+          "image_plot": "absent_vacation_plot.png"
+        }
+      ]
     }
   },
   "actions": {
