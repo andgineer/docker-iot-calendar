@@ -4,12 +4,13 @@ from oauth2client.service_account import ServiceAccountCredentials
 from googleapiclient import discovery
 import httplib2
 import datetime
+from datetime import timedelta
 import os
 import os.path
 import dateutil.parser
 import time
 from pprint import pprint
-from .cached_decorator import cached
+from cached_decorator import cached
 import dateutil.tz
 
 
@@ -70,7 +71,7 @@ You can get new one from https://console.developers.google.com/start/api?id=cale
         s = t.strftime(GCAL_TIME_FORMAT) + '%+03d:%02d' % (tz / 100, abs(tz % 100))
         return s
 
-    def get_last_events(self, summary, days=31):
+    def get_last_events(self, summary, days=31, default_length=900):
         """
         :param summary: text to search
         :param days: days from today to collect events
@@ -87,7 +88,12 @@ You can get new one from https://console.developers.google.com/start/api?id=cale
                     return self.parse_time(timepoint['dateTime'])
                 else:
                     return self.parse_time(timepoint['date']).replace(tzinfo=tzinfo)
-            return get_timepoint(event['start']), get_timepoint(event['end'])
+
+            start = get_timepoint(event['start'])
+            end = get_timepoint(event['end'])
+            if start == end:
+                end = start + timedelta(seconds=default_length)
+            return start, end
 
         result = []
         if not self.service:
@@ -139,7 +145,7 @@ def collect_events(calendar_events, absent_events, settings):
             calendar_processed = False
             calendars[event['calendar_id']] = Calendar(settings, event['calendar_id'])
         calendar = calendars[event['calendar_id']]
-        events.append(calendar.get_last_events(event['summary']))
+        events.append(calendar.get_last_events(event['summary'], default_length=event.get('default', 900)))
         if not calendar_processed:
             for event in absent_events:
                 absents.append(calendar.get_last_events(event['summary']))

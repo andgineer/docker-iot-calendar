@@ -79,7 +79,7 @@ def dashboard_absent_events_list(settings, dashboard_name):
 
 
 def event_duration(event):
-    return int((event['end'] - event['start']).seconds / 60)
+    return (event['end'] - event['start']).seconds // 60
 
 
 def events_to_weeks_grid(events, absents, weeks=4):
