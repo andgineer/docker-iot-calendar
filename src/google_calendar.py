@@ -9,7 +9,7 @@ import os.path
 import dateutil.parser
 import time
 from pprint import pprint
-from cached_decorator import cached
+from .cached_decorator import cached
 import dateutil.tz
 
 
@@ -77,6 +77,18 @@ You can get new one from https://console.developers.google.com/start/api?id=cale
         :return:
         [ {'summary': summary, 'start': start, 'end': end} ]
         """
+        def get_event_interval(event):
+            """
+            :param event: with ['start'] and ['end']
+            :return: start and end calculated from dateTime or date formats of google calendar
+            """
+            def get_timepoint(timepoint):
+                if 'dateTime' in timepoint:
+                    return self.parse_time(timepoint['dateTime'])
+                else:
+                    return self.parse_time(timepoint['date']).replace(tzinfo=tzinfo)
+            return get_timepoint(event['start']), get_timepoint(event['end'])
+
         result = []
         if not self.service:
             return result
@@ -95,14 +107,7 @@ You can get new one from https://console.developers.google.com/start/api?id=cale
             ).execute()
             if len(events['items']) > 0:
                 for event in events['items']:
-                    if 'dateTime' in event['start']:
-                        start = self.parse_time(event['start']['dateTime'])
-                    else:
-                        start = self.parse_time(event['start']['date']).replace(tzinfo=tzinfo)
-                    if 'dateTime' in event['end']:
-                        end = self.parse_time(event['end']['dateTime'])
-                    else:
-                        end = self.parse_time(event['end']['date']).replace(tzinfo=tzinfo) - datetime.timedelta(seconds=1)
+                    start, end = get_event_interval(event)
                     result.append({'summary': event['summary'], 'start': start, 'end': end})
             page_token = events.get('nextPageToken')
             if not page_token:
@@ -142,8 +147,8 @@ def collect_events(calendar_events, absent_events, settings):
 
 
 if __name__ == "__main__":
-    from iot_calendar import load_settings
-    from calendar_data import calendar_events_list, dashboard_absent_events_list
+    from .iot_calendar import load_settings
+    from .calendar_data import calendar_events_list, dashboard_absent_events_list
     settings = load_settings(secrets_folder='../secrets')
     calendar_events = calendar_events_list(settings, 'anna_work_out')
     absent_events = dashboard_absent_events_list(settings, 'anna_work_out')
