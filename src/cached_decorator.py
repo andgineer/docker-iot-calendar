@@ -13,7 +13,7 @@ class cached(object):
 
     ! For object method it should be the only decorator applied because it saves ref to decorated function
     and if it changed by other decorator it would treat method call as function call, and
-    in this case without @singleton for the class it would cache different instances with different hashes.
+    in this case if the class is not singleton it would cache different instances with different hashes.
     And would not use the object attributes in hash.
 
     All instances of the same class would be the same for cache decorator if they has the same
