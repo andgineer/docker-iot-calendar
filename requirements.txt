@@ -5,4 +5,3 @@ oauth2client
 google-api-python-client
 pillow
 cairosvg
-python-tk
