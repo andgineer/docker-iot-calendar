@@ -1,8 +1,8 @@
 FROM masterandrey/docker-matplotlib
 
-COPY pip.requirements.txt /pip.requirements.txt
+COPY requirements.txt /requirements.txt
 
-RUN pip install -r pip.requirements.txt \
+RUN pip install -r requirements.txt \
     && rm -rf ~/.pip/cache/ \
     && rm -rf /var/cache/apk/*
 
