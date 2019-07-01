@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/masterandrey/docker-iot-calendar.png)](https://travis-ci.org/masterandrey/docker-iot-calendar)
+[![Build Status](https://travis-ci.org/andgineer/docker-iot-calendar.png)](https://travis-ci.org/andgineer/docker-iot-calendar)
 
 [Docker Hub container](https://cloud.docker.com/repository/docker/andgineer/iot-calendar) 
 with python http server (Tornado) that generates image for Amazon Kindle.
