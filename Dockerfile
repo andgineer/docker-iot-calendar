@@ -1,4 +1,4 @@
-FROM masterandrey/docker-matplotlib
+FROM andgineer/matplotlib
 
 COPY requirements.txt /requirements.txt
 
