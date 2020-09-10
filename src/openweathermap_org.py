@@ -90,10 +90,10 @@ class Weather(object):
         if not self.key:
             return None
 
-        if units == 'm':
-            units_code = 'metric'
-        elif units == 'e':
+        if units == 'e':
             units_code = 'imperial'
+        elif units == 'm':
+            units_code = 'metric'
         else:
             units_code = ''
 
@@ -129,7 +129,7 @@ class Weather(object):
             icon_code = weather_day['weather'][0]['icon']
             condition_code = weather_day['weather'][0]['id']
             icon = self.openweathermap_icons(icon_code, condition_code)
-            if len(dates) > 0 and dates[-1] == date:
+            if dates and dates[-1] == date:
                 if highs[-1] < temp_max:
                     highs[-1] = temp_max
                 if lows[-1] > temp_min:

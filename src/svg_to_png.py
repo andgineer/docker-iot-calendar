@@ -32,6 +32,7 @@ def test():
     with open('output.png', 'wb') as png_file:
         png_file.write(svg_to_png(svg))
 
+
 def convert(folder):
     for subdir, dirs, files in os.walk(folder):
         for file_name in files:
@@ -41,6 +42,7 @@ def convert(folder):
                 png_name = file_name.replace('.svg', '.png')
                 with open(os.path.join(subdir, png_name), 'wb') as png_file:
                     png_file.write(png)
+
 
 if __name__ == '__main__':
     #test()
