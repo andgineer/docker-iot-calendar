@@ -29,7 +29,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install flake8 pytest
         pip install --upgrade setuptools
-        pip --no-cache-dir install cairocffi
+        pip --no-cache-dir install cffi cairocffi
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Lint with flake8
       run: |
