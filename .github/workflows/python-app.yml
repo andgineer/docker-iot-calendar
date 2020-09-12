@@ -23,7 +23,7 @@ jobs:
         sudo rm /usr/bin/python
         sudo ln -s /usr/bin/python3.7 /usr/bin/python
         sudo apt-get install xvfb
-        sudo apt-get python3-tornado
+        sudo apt-get install python3-tornado
 
     - name: Install dependencies
       run: |
