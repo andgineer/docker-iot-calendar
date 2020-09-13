@@ -11,3 +11,4 @@ import sys
 
 
 sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
+sys.path.append(os.path.join(os.path.dirname(__file__), 'iot_calendar'))  # if we are inside Docker container

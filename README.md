@@ -1,4 +1,4 @@
-[![Build Status](https://github.com/andgineer/docker-iot-calendar/workflows/Python%20application/badge.svg)](https://github.com/andgineer/docker-iot-calendar/actions)
+[![Build Status](https://github.com/andgineer/docker-iot-calendar/workflows/ci/badge.svg)](https://github.com/andgineer/docker-iot-calendar/actions)
 
 [Docker Hub container](https://cloud.docker.com/repository/docker/andgineer/iot-calendar) 
 with python http server (Tornado) that generates image for Amazon Kindle.

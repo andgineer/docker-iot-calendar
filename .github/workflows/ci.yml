@@ -1,0 +1,36 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: ci
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+    container:
+      image: andgineer/matplotlib
+      ports:
+        - 4444
+      volumes:
+        - amazon-dash-private:/amazon-dash-private:ro
+        - src:/iot_calendar
+      options: --cpus 1
+
+build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checking out
+        uses: actions/checkout@v2
+        with:
+            ref: master
+
+      - name: Build Docker image
+        run: docker build . -t iot-calendar
+
+      - name: Test
+        run: |
+            docker run -p 4444:4444 -v $PWD/amazon-dash-private:/amazon-dash-private:ro --rm iot-calendar /test.sh
+
