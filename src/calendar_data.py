@@ -5,7 +5,7 @@ Prepare data for calendar_image.py
 import copy
 import datetime
 from dateutil.tz import tzoffset
-import collections
+import collections.abc
 import pprint
 
 
@@ -17,12 +17,12 @@ def preprocess_actions(button, button_settings):
     def subst(param):
         if isinstance(param, str):
             return param.format(button=button)
-        if isinstance(param, collections.Mapping):
+        if isinstance(param, collections.abc.Mapping):
             result = {}
             for item in param:
                 result[item] = subst(param[item])
             return result
-        if isinstance(param, collections.Iterable):
+        if isinstance(param, collections.abc.Iterable):
             result = []
             for item in param:
                 result.append(subst(item))
