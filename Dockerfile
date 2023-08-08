@@ -1,6 +1,7 @@
 FROM andgineer/matplotlib
 
 COPY requirements.txt /requirements.txt
+COPY requirements.dev.txt /requirements.dev.txt
 
 RUN apk --no-cache --update add build-base cairo-dev cairo cairo-tools jpeg-dev zlib-dev \
                                         freetype-dev lcms2-dev openjpeg-dev tiff-dev tk-dev tcl-dev \
