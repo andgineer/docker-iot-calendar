@@ -1,0 +1,9 @@
+tornado
+requests
+python-dateutil
+oauth2client
+google-api-python-client
+pillow
+setuptools
+cairosvg
+matplotlib

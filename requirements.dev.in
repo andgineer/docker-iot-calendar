@@ -1,0 +1,10 @@
+pytest
+
+pip-tools
+
+pre-commit
+pylint
+mypy
+pydocstyle
+black
+pytest-cov
