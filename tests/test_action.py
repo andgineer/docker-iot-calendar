@@ -1,5 +1,6 @@
 import pytest
-from datetime import datetime, timedelta
+from datetime import timedelta
+import json
 
 # Assuming calendar_data.py includes preprocess_actions function
 from calendar_data import preprocess_actions, dashboard_absent_events_list
@@ -151,10 +152,17 @@ def test_events_to_weeks_grid_multiple_weeks():
     assert result[0][0]['values'] == [0]  # no events for the first day of the first week
     assert 'absents' in result[2][0]  # Confirming the presence of an absence in the third week
 
+
+with open('amazon-dash-private/settings.json', 'r') as f:
+    SETTINGS_DICT = json.load(f)
+
+def mock_load_settings(*args, **kwargs):
+    return SETTINGS_DICT
+
 # 1. Setup a fixture
 @pytest.fixture
 def test_data():
-    settings = load_settings()
+    settings = mock_load_settings()
 
     events = [
         [{'end': datetime(2017, 4, 14, 8, 22, 30, tzinfo=tzoffset(None, 10800)),
