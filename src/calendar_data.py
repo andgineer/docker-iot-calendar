@@ -10,11 +10,12 @@ import pprint
 
 
 def preprocess_actions(button, button_settings):
-    """
-    Add summary (with button name value) if there is no one.
+    """Add summary (with button name value) if there is no one.
+
     Substitutes {button} with button name in parameters.
     """
     def subst(param):
+        """Substitute {button} with button name in parameters."""
         if isinstance(param, str):
             return param.format(button=button)
         if isinstance(param, collections.abc.Mapping):
@@ -42,7 +43,8 @@ def preprocess_actions(button, button_settings):
 
 
 def calendar_events_list(settings, dashboard_name):
-    """
+    """List of calendar events for the dashboard_name.
+
     :param settings:
     :param dashboard_name:
     :return: list of calendar actions for the dashboard_name
@@ -71,6 +73,7 @@ def calendar_events_list(settings, dashboard_name):
 
 
 def dashboard_absent_events_list(settings, dashboard_name):
+    """List of calendar absent events for the dashboard_name."""
     dashboards = settings['dashboards']
     if dashboard_name in dashboards and 'absent' in dashboards[dashboard_name]:
         return dashboards[dashboard_name]['absent']
@@ -79,12 +82,14 @@ def dashboard_absent_events_list(settings, dashboard_name):
 
 
 def event_duration(event):
+    """Duration of event in minutes."""
     delta = event['end'] - event['start']
     return (delta.days * 24 * 60) + (delta.seconds // 60)
 
 
 def events_to_weeks_grid(events, absents, weeks=4):
-    """
+    """Convert list of events to weeks grid.
+
     events: list of events lists
     returns list of weeks:
     [
@@ -96,7 +101,7 @@ def events_to_weeks_grid(events, absents, weeks=4):
     Each day may contain 'absent' param with image filepath that should be shown if in values for this day all zeroes.
     """
     def get_tzinfo(events):
-        """get tzinfo from any event"""
+        """Get tzinfo from any event."""
         for event_list in events:
             for event in event_list:
                 return event['start'].tzinfo
@@ -141,6 +146,7 @@ def events_to_weeks_grid(events, absents, weeks=4):
 
 
 def events_to_array(events, absents):
+    """Convert list of events to array."""
     DATE_FMT = '%Y%m%d'
     by_date = {}
     for event_list_idx, event_list in enumerate(events):
@@ -151,7 +157,7 @@ def events_to_array(events, absents):
                 by_date[date_str] = [0 for _ in range(len(events))]
             by_date[date_str][event_list_idx] += event_duration(event)
     # for all absences add days with zeroes to see the gap on plot
-    for absent_list_idx, absent_list in enumerate(absents):
+    for absent_list in absents:
         for absent in absent_list:
             start = absent['start'].replace(hour=0, minute=0, second=0, microsecond=0)
             end = absent['end'].replace(hour=0, minute=0, second=0, microsecond=0)
@@ -161,13 +167,18 @@ def events_to_array(events, absents):
                 if date_str not in by_date:
                     by_date[date_str] = [0 for _ in range(len(events))]
     x = [datetime.datetime.strptime(date_str, DATE_FMT) for date_str in sorted(by_date.keys())]
-    y = []
-    for event_list_idx in range(len(events)):
-        y.append([by_date[date_str][event_list_idx] for date_str in sorted(by_date.keys())])
+    y = [
+        [
+            by_date[date_str][event_list_idx]
+            for date_str in sorted(by_date.keys())
+        ]
+        for event_list_idx in range(len(events))
+    ]
     return x, y
 
 
 def check():
+    """Debug function."""
     from iot_calendar import load_settings
     settings = load_settings()
     print(calendar_events_list(settings, 'anna_work_out'))

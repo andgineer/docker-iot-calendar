@@ -2,8 +2,10 @@ import pytest
 from datetime import datetime, timedelta
 
 # Assuming calendar_data.py includes preprocess_actions function
-from calendar_data import preprocess_actions, calendar_events_list, events_to_weeks_grid, events_to_array, \
-    dashboard_absent_events_list
+from calendar_data import preprocess_actions, dashboard_absent_events_list
+from datetime import datetime
+from dateutil.tz import tzoffset
+from iot_calendar import load_settings, calendar_events_list, events_to_array, events_to_weeks_grid
 
 
 def test_preprocess_actions(button_settings):
@@ -148,3 +150,114 @@ def test_events_to_weeks_grid_multiple_weeks():
     assert result[-1][start_date.weekday()]['values'] == [1440]  # Confirming the event's duration for the first day
     assert result[0][0]['values'] == [0]  # no events for the first day of the first week
     assert 'absents' in result[2][0]  # Confirming the presence of an absence in the third week
+
+# 1. Setup a fixture
+@pytest.fixture
+def test_data():
+    settings = load_settings()
+
+    events = [
+        [{'end': datetime(2017, 4, 14, 8, 22, 30, tzinfo=tzoffset(None, 10800)),
+                'start': datetime(2017, 4, 14, 8, 15, 39, tzinfo=tzoffset(None, 10800)),
+                'summary': 'Morning work-out'},
+               {'end': datetime(2017, 4, 17, 8, 27, 43, tzinfo=tzoffset(None, 10800)),
+                'start': datetime(2017, 4, 17, 8, 16, 35, tzinfo=tzoffset(None, 10800)),
+                'summary': 'Morning work-out'},
+               {'end': datetime(2017, 4, 18, 8, 18, tzinfo=tzoffset(None, 10800)),
+                'start': datetime(2017, 4, 18, 8, 12, 9, tzinfo=tzoffset(None, 10800)),
+                'summary': 'Morning work-out'},
+               {'end': datetime(2017, 4, 19, 8, 24, 26, tzinfo=tzoffset(None, 10800)),
+                'start': datetime(2017, 4, 19, 8, 17, 8, tzinfo=tzoffset(None, 10800)),
+                'summary': 'Morning work-out'},
+               {'end': datetime(2017, 4, 20, 8, 22, 24, tzinfo=tzoffset(None, 10800)),
+                'start': datetime(2017, 4, 20, 8, 16, 34, tzinfo=tzoffset(None, 10800)),
+                'summary': 'Morning work-out'},
+               {'end': datetime(2017, 4, 21, 8, 25, 27, tzinfo=tzoffset(None, 10800)),
+                'start': datetime(2017, 4, 21, 8, 20, 26, tzinfo=tzoffset(None, 10800)),
+                'summary': 'Morning work-out'},
+               {'end': datetime(2017, 4, 22, 10, 16, 5, tzinfo=tzoffset(None, 10800)),
+                'start': datetime(2017, 4, 22, 10, 10, 7, tzinfo=tzoffset(None, 10800)),
+                'summary': 'Morning work-out'},
+               {'end': datetime(2017, 4, 23, 10, 43, 37, tzinfo=tzoffset(None, 10800)),
+                'start': datetime(2017, 4, 23, 10, 38, 45, tzinfo=tzoffset(None, 10800)),
+                'summary': 'Morning work-out'},
+               {'end': datetime(2017, 4, 24, 8, 22, tzinfo=tzoffset(None, 10800)),
+                'start': datetime(2017, 4, 24, 8, 14, 47, tzinfo=tzoffset(None, 10800)),
+                'summary': 'Morning work-out'},
+               {'end': datetime(2017, 4, 25, 8, 15, 7, tzinfo=tzoffset(None, 10800)),
+                'start': datetime(2017, 4, 25, 8, 10, 58, tzinfo=tzoffset(None, 10800)),
+                'summary': 'Morning work-out'}
+         ],
+        [{'end': datetime(2017, 4, 13, 20, 23, tzinfo=tzoffset(None, 10800)),
+                'start': datetime(2017, 4, 13, 20, 3, 5, tzinfo=tzoffset(None, 10800)),
+                'summary': 'Physiotherapy'},
+               {'end': datetime(2017, 4, 14, 17, 26, 47, tzinfo=tzoffset(None, 10800)),
+                'start': datetime(2017, 4, 14, 16, 55, 56, tzinfo=tzoffset(None, 10800)),
+                'summary': 'Physiotherapy'},
+               {'end': datetime(2017, 4, 16, 18, 20, tzinfo=tzoffset(None, 10800)),
+                'start': datetime(2017, 4, 16, 17, 48, tzinfo=tzoffset(None, 10800)),
+                'summary': 'Physiotherapy'},
+               {'end': datetime(2017, 4, 17, 17, 51, 35, tzinfo=tzoffset(None, 10800)),
+                'start': datetime(2017, 4, 17, 17, 28, 31, tzinfo=tzoffset(None, 10800)),
+                'summary': 'Physiotherapy'},
+               {'end': datetime(2017, 4, 19, 17, 21, 57, tzinfo=tzoffset(None, 10800)),
+                'start': datetime(2017, 4, 19, 16, 49, 55, tzinfo=tzoffset(None, 10800)),
+                'summary': 'Physiotherapy'},
+               {'end': datetime(2017, 4, 21, 17, 5, 4, tzinfo=tzoffset(None, 10800)),
+                'start': datetime(2017, 4, 21, 16, 26, 51, tzinfo=tzoffset(None, 10800)),
+                'summary': 'Physiotherapy'},
+               {'end': datetime(2017, 4, 23, 19, 18, 49, tzinfo=tzoffset(None, 10800)),
+                'start': datetime(2017, 4, 23, 18, 58, 12, tzinfo=tzoffset(None, 10800)),
+                'summary': 'Physiotherapy'},
+               {'end': datetime(2017, 4, 25, 20, 17, 14, tzinfo=tzoffset(None, 10800)),
+                'start': datetime(2017, 4, 25, 20, 3, 25, tzinfo=tzoffset(None, 10800)),
+                'summary': 'Physiotherapy'},
+               {'end': datetime(2017, 5, 10, 17, 59, 18, tzinfo=tzoffset(None, 10800)),
+                'start': datetime(2017, 5, 10, 17, 36, 51, tzinfo=tzoffset(None, 10800)),
+                'summary': 'Physiotherapy'},
+               {'end': datetime(2017, 5, 12, 20, 49, 9, tzinfo=tzoffset(None, 10800)),
+                'start': datetime(2017, 5, 12, 20, 9, 32, tzinfo=tzoffset(None, 10800)),
+                'summary': 'Physiotherapy'}
+         ]
+    ]
+    absents = [[{'end': datetime(2017, 5, 7, 23, 59, 59, tzinfo=tzoffset(None, 10800)),
+                 'start': datetime(2017, 4, 26, 0, 0, tzinfo=tzoffset(None, 10800)),
+                 'summary': 'Sick'}]]
+
+    return settings, events, absents
+
+def test_load_settings(test_data):
+    settings, _, _ = test_data
+    # This will check if settings is not None or empty
+    assert settings
+
+def test_calendar_events_list(test_data):
+    settings, _, _ = test_data
+    result = calendar_events_list(settings, 'anna_work_out')
+    # For now, just ensuring it's not None or empty
+    assert result is not None and len(result) > 0
+
+def test_events_to_array(test_data):
+    _, events, absents = test_data
+    x, y = events_to_array(events, absents)
+
+    # Add assertions based on expected output
+    assert x is not None
+    assert y is not None
+    assert len(x) == 25
+    assert len(y) == len(events)
+
+    # You might add more specific assertions here based on expected values
+
+def test_events_to_weeks_grid(test_data):
+    _, events, absents = test_data
+    weeks_num = 4
+    grid = events_to_weeks_grid(events, absents, weeks=weeks_num)
+
+    # Add assertions based on expected output
+    assert grid is not None
+    # For now, checking grid length. Depending on how events_to_weeks_grid works,
+    # you might want more specific checks.
+    assert len(grid) == weeks_num
+
+    # You might add more specific assertions here based on expected values
