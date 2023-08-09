@@ -79,7 +79,8 @@ def dashboard_absent_events_list(settings, dashboard_name):
 
 
 def event_duration(event):
-    return (event['end'] - event['start']).seconds // 60
+    delta = event['end'] - event['start']
+    return (delta.days * 24 * 60) + (delta.seconds // 60)
 
 
 def events_to_weeks_grid(events, absents, weeks=4):
@@ -166,7 +167,7 @@ def events_to_array(events, absents):
     return x, y
 
 
-def test():
+def check():
     from iot_calendar import load_settings
     settings = load_settings()
     print(calendar_events_list(settings, 'anna_work_out'))
@@ -246,5 +247,5 @@ def test():
 
 
 if __name__ == '__main__':
-    test()
+    check()
 
