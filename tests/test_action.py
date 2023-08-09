@@ -2,7 +2,9 @@ import pytest
 from datetime import datetime, timedelta
 
 # Assuming calendar_data.py includes preprocess_actions function
-from calendar_data import preprocess_actions, calendar_events_list, events_to_weeks_grid, events_to_array
+from calendar_data import preprocess_actions, calendar_events_list, events_to_weeks_grid, events_to_array, \
+    dashboard_absent_events_list
+
 
 def test_preprocess_actions(button_settings):
     button = 'My Button'
@@ -55,7 +57,7 @@ def test_events_to_weeks_grid_empty():
             assert day['values'] == []
 
 
-def test_events_to_array_basic():
+def test_events_to_array_full_day():
     start_date = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
     end_date = start_date + timedelta(days=1)
     events = [
@@ -65,6 +67,19 @@ def test_events_to_array_basic():
     x, y = events_to_array(events, absents)
     assert x == [start_date]
     assert y == [[24*60]]  # Duration in minutes for a full day
+
+
+def test_events_to_array_basic():
+    start_date = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+    end_date = start_date + timedelta(minutes=1)
+    events = [
+        [{'start': start_date, 'end': end_date}],
+    ]
+    absents = []
+    x, y = events_to_array(events, absents)
+    assert x == [start_date]
+    assert y == [[1]]  # Duration in minutes
+
 
 @pytest.mark.parametrize("button,button_settings,expected", [
     ("MyButton", {
@@ -80,3 +95,56 @@ def test_events_to_array_basic():
 ])
 def test_preprocess_actions_parametrized(button, button_settings, expected):
     assert preprocess_actions(button, button_settings) == expected
+
+
+def test_preprocess_actions_substitution():
+    button = 'TestButton'
+    settings = {
+        'actions': [
+            {'message': '{button} clicked'},
+            {'details': {'info': 'You clicked {button}'}}
+        ]
+    }
+    expected_actions = [
+        {'message': 'TestButton clicked', 'summary': 'TestButton'},
+        {'details': {'info': 'You clicked TestButton'}, 'summary': 'TestButton'}
+    ]
+    assert preprocess_actions(button, settings) == expected_actions
+
+
+def test_calendar_events_list_default():
+    settings = {
+        'actions': {
+            '__DEFAULT__': {
+                'actions': [
+                    {'type': 'calendar', 'dashboard': 'AnotherDashboard', 'summary': 'Default action'}
+                ]
+            }
+        }
+    }
+    dashboard_name = 'TestDashboard'
+    assert calendar_events_list(settings, dashboard_name) == []
+
+
+def test_dashboard_absent_events_list_no_absent():
+    settings = {
+        'dashboards': {
+            'TestDashboard': {}
+        }
+    }
+    dashboard_name = 'TestDashboard'
+    assert dashboard_absent_events_list(settings, dashboard_name) == []
+
+
+def test_events_to_weeks_grid_multiple_weeks():
+    start_date = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+    end_date = start_date + timedelta(days=1)
+    events = [
+        [{'start': start_date, 'end': end_date}],
+    ]
+    absents = [[{'start': start_date - timedelta(days=14), 'end': start_date - timedelta(days=1), 'summary': 'Vacation'}]]
+    result = events_to_weeks_grid(events, absents, weeks=3)
+    assert len(result) == 3  # Confirming 3 weeks
+    assert result[-1][start_date.weekday()]['values'] == [1440]  # Confirming the event's duration for the first day
+    assert result[0][0]['values'] == [0]  # no events for the first day of the first week
+    assert 'absents' in result[2][0]  # Confirming the presence of an absence in the third week
