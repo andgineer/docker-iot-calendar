@@ -8,6 +8,8 @@ Usage
 
 import os
 import datetime
+from typing import List, Dict
+
 import matplotlib
 try: # !!! that should be before importing pyplot
     import tkinter # check if tkinter is installed
@@ -65,6 +67,113 @@ last_image = {
 }
 
 
+def get_daily_max(grid: List[List[Dict[str, List[int]]]]) -> int:
+    """Maximum sum of 'values' for a day."""
+    return max((sum(day['values']) for week in grid for day in week), default=0)
+
+
+def draw_day_headers(grid):
+    for day in range(WEEK_DAYS):
+        plt.text(
+            (pie_row_header_width + (day + 0.5) * pie_width) * width_aspect,
+            weeks * pie_height + 0.5 * pie_col_header_height,
+            grid[0][day]['date'].strftime('%A'),
+            horizontalalignment='center',
+            verticalalignment='center',
+            fontsize=12
+        )
+
+
+def draw_week_headers(grid):
+    for week in range(weeks):
+        plt.text(
+            pie_row_header_width * 0.5,
+            (week + 0.5) * pie_height,
+            grid[week][0]['date'].strftime('%d\n%b'),
+            horizontalalignment='center',
+            verticalalignment='center',
+            fontsize=14
+        )
+
+
+def draw_pie(week, day, values, daily_max):
+    radius = sum(values) / daily_max * pie_height * pie_scale / 2
+    colours = [f'C{i}' for i in range(len(values))]
+    explode = [0.007 for _ in range(len(values))]
+    plt.pie(
+        values,
+        # shadow=True,
+        explode=explode,
+        radius=radius,
+        colors=colours,
+        center=(
+            (pie_row_header_width + (day + 0.5) * pie_width) * width_aspect,
+            (week + 0.5) * pie_height
+        )
+    )
+
+
+def draw_empty_pie(grid, image_cache, week, day, absent_grid_images, empty_image_file_name, tomorrow):
+    image_padding = pie_width / 5
+    if 'absents' in grid[week][day]:
+        image = image_cache.by_file_name(absent_grid_images[grid[week][day]['absents'][0]['summary']])
+    else:
+        image = image_cache.by_file_name(empty_image_file_name)
+    if grid[week][day]['date'] < tomorrow:
+        plt.imshow(
+            image,
+            extent=((pie_row_header_width + day * pie_width + image_padding) * width_aspect,
+                    (pie_row_header_width + (day + 1) * pie_width - image_padding) * width_aspect,
+                    week * pie_height + image_padding,
+                    (week + 1) * pie_height - image_padding),
+            interpolation='bicubic'
+        )
+
+
+def draw_today(grid, today):
+    grid_shift = (today - grid[0][0]['date']).days
+    day = grid_shift % WEEK_DAYS
+    week = grid_shift // WEEK_DAYS
+    plt.gca().add_patch(
+        patches.Rectangle(
+            ((pie_row_header_width + day * pie_width) * width_aspect, week * pie_height),
+            pie_width * width_aspect * 0.98,
+            pie_height,
+            edgecolor='black',
+            fill=False,
+            linewidth=2
+        )
+    )
+
+
+def draw_pies(grid, image_cache, weeks=4, absent_grid_images=None, empty_image_file_name=None):
+    daily_max = get_daily_max(grid)
+    today = datetime.datetime.now(grid[0][0]['date'].tzinfo).replace(hour=0, minute=0, second=0, microsecond=0)
+    tomorrow = today + datetime.timedelta(days=1)
+    ax = plt.gcf().add_axes(
+        [left_gap, 0, 1, pies_height],  # left, bottom, width, height, in fractions of figure width and height
+        frameon=False,
+        autoscale_on=False,
+    )
+    plt.axis('off')
+    draw_today(grid, today)
+    draw_day_headers(grid)
+    draw_week_headers(grid)
+    for week in range(weeks):
+        for day in range(len(grid[week])):
+            values = grid[week][day]['values']
+            if sum(values) <= 0:
+                draw_empty_pie(grid, image_cache, week, day, absent_grid_images, empty_image_file_name, tomorrow)
+            else:
+                draw_pie(week, day, values, daily_max)
+
+    ax.set_ylim(0, pies_height)
+    ax.set_xlim(0, width_aspect)
+    ax.patch.set_visible(False)
+    ax.set_xticklabels([])
+    ax.set_yticklabels([])
+
+
 @cached(
     cache_time_seconds=IMAGE_CACHED_SECONDS,
     print_if_cached='Use stored imaged without rendering (from {time})',
@@ -97,122 +206,11 @@ def draw_calendar(grid, x, y, weather, dashboard, labels, absent_labels, params)
     :return:
         image data in specified (in params) format (png, gif etc)
     """
-
-    #todo speed it up. too many rescalings as I see from profiling.
-    # may be using artists (http://stackoverflow.com/questions/41453902/is-it-possible-to-patch-an-image-in-matplotlib)
-    # will reduce number of rescaling?
-    # now it looks like matplotlib rescales after each operation
-
     # Save params for test:
     # call_params = dict(grid=grid, x=x, y=y, weather=weather, dashboard=dashboard, labels=labels,
     #     absent_labels=absent_labels, params=params)
     # import json
     # json.dump(call_params, open('draw_calendar_params.json', 'w'), default=str)
-
-    def draw_pies(grid, weeks=4, absent_grid_images=None, empty_image_file_name=None):
-        def find_max_total(grid):
-            max_total = 0
-            for week in range(len(grid)):
-                for day in range(len(grid[week])):
-                    total = sum(grid[week][day]['values'])
-                    if total > max_total:
-                        max_total = total
-            return max_total
-
-        def draw_day_headers():
-            for day in range(WEEK_DAYS):
-                plt.text(
-                    (pie_row_header_width + (day + 0.5) * pie_width) * width_aspect,
-                    weeks * pie_height + 0.5 * pie_col_header_height,
-                    grid[0][day]['date'].strftime('%A'),
-                    horizontalalignment='center',
-                    verticalalignment='center',
-                    fontsize=12
-                )
-
-        def draw_week_headers():
-            for week in range(weeks):
-                plt.text(
-                    pie_row_header_width * 0.5,
-                    (week + 0.5) * pie_height,
-                    grid[week][0]['date'].strftime('%d\n%b'),
-                    horizontalalignment='center',
-                    verticalalignment='center',
-                    fontsize=14
-                )
-
-        def draw_pie(week, day, values):
-            radius = sum(values) / max_total * pie_height * pie_scale / 2
-            colours = ['C{}'.format(i) for i in range(len(values))]
-            explode = [0.007 for i in range(len(values))]
-            plt.pie(
-                values,
-                #shadow=True,
-                explode=explode,
-                radius=radius,
-                colors=colours,
-                center=(
-                    (pie_row_header_width + (day + 0.5) * pie_width) * width_aspect,
-                    (week + 0.5) * pie_height
-                )
-            )
-
-        def draw_empty_pie(week, day):
-            image_padding = pie_width / 5
-            if 'absents' in grid[week][day]:
-                image = image_cache.by_file_name(absent_grid_images[grid[week][day]['absents'][0]['summary']])
-            else:
-                image = image_cache.by_file_name(empty_image_file_name)
-            if grid[week][day]['date'] < tomorrow:
-                plt.imshow(
-                    image,
-                    extent=((pie_row_header_width + day * pie_width + image_padding) * width_aspect,
-                            (pie_row_header_width + (day + 1) * pie_width - image_padding) * width_aspect,
-                            week * pie_height + image_padding,
-                            (week + 1) * pie_height - image_padding),
-                    interpolation='bicubic'
-                )
-
-        def draw_today(today):
-            grid_shift = (today - grid[0][0]['date']).days
-            day = grid_shift % WEEK_DAYS
-            week = grid_shift // WEEK_DAYS
-            plt.gca().add_patch(
-                patches.Rectangle(
-                    ((pie_row_header_width + day * pie_width) * width_aspect, week * pie_height),
-                    pie_width * width_aspect * 0.98,
-                    pie_height,
-                    edgecolor='black',
-                    fill=False,
-                    linewidth=2
-                )
-            )
-
-        max_total = find_max_total(grid)
-        today = datetime.datetime.now(grid[0][0]['date'].tzinfo).replace(hour=0, minute=0, second=0, microsecond=0)
-        tomorrow = today + datetime.timedelta(days=1)
-        ax = plt.gcf().add_axes(
-            [left_gap, 0, 1, pies_height], # left, bottom, width, height, in fractions of figure width and height
-            frameon=False,
-            autoscale_on=False,
-        )
-        plt.axis('off')
-        draw_today(today)
-        draw_day_headers()
-        draw_week_headers()
-        for week in range(weeks):
-            for day in range(len(grid[week])):
-                values = grid[week][day]['values']
-                if sum(values) <= 0:
-                    draw_empty_pie(week, day)
-                else:
-                    draw_pie(week, day, values)
-
-        ax.set_ylim(0, pies_height)
-        ax.set_xlim(0, width_aspect)
-        ax.patch.set_visible(False)
-        ax.set_xticklabels([])
-        ax.set_yticklabels([])
 
     def draw_plot(x, y, labels, rect, legend='inside'):
         ax = plt.axes(rect)
@@ -312,6 +310,7 @@ def draw_calendar(grid, x, y, weather, dashboard, labels, absent_labels, params)
         draw_plot(x, y, labels, rect=[plot_left, plot_bottom, plot_width, plot_height])
         draw_pies(
             grid,
+            image_cache=image_cache,
             weeks=weeks,
             absent_grid_images=absent_grid_images,
             empty_image_file_name=dashboard['empty_image']
@@ -326,10 +325,11 @@ def draw_calendar(grid, x, y, weather, dashboard, labels, absent_labels, params)
         return bytes_file.getvalue()
 
 
-def test():
+def check():
+    """Debugging function."""
     import json
     import dateutil
-    call_params = json.load(open('draw_calendar_params_1.json', 'r'))
+    call_params = json.load(open('tests/resources/draw_calendar_params_2.json', 'r'))
     for row in call_params['grid']:
         for col in row:
             col['date'] = dateutil.parser.parse(col['date'])
@@ -354,4 +354,4 @@ def test():
 
 
 if __name__ == '__main__':
-    test()
+    check()
