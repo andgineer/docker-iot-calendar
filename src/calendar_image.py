@@ -7,7 +7,7 @@ Usage
 """
 
 import os
-import datetime
+from datetime import datetime, timedelta
 from typing import List, Dict, Any, Union
 
 import matplotlib
@@ -194,8 +194,8 @@ def highlight_today(grid: List[List[Dict[str, Any]]], today: datetime) -> None:
 
 def draw_pies(grid, image_cache, weeks=4, absent_grid_images=None, empty_image_file_name=None):
     daily_max = get_daily_max(grid)
-    today = datetime.datetime.now(grid[0][0]['date'].tzinfo).replace(hour=0, minute=0, second=0, microsecond=0)
-    tomorrow = today + datetime.timedelta(days=1)
+    today = datetime.now(grid[0][0]['date'].tzinfo).replace(hour=0, minute=0, second=0, microsecond=0)
+    tomorrow = today + timedelta(days=1)
     ax = plt.gcf().add_axes(
         [left_gap, 0, 1, pies_height],  # left, bottom, width, height, in fractions of figure width and height
         frameon=False,
@@ -319,7 +319,7 @@ def draw_calendar(grid, x, y, weather, dashboard, labels, absent_labels, params)
         ax.text(
             0.5,
             1,
-            datetime.datetime.now().strftime('%d %B'),
+            datetime.now().strftime('%d %B'),
             horizontalalignment='center',
             verticalalignment='top'
         )
@@ -383,7 +383,7 @@ def check():
             col['date'] = dateutil.parser.parse(col['date'])
     for i, day in enumerate(call_params['x']):
         call_params['x'][i] = dateutil.parser.parse(call_params['x'][i])
-    t0 = datetime.datetime.now()
+    t0 = datetime.now()
     image_data = draw_calendar(
         call_params['grid'],
         call_params['x'],
@@ -394,7 +394,7 @@ def check():
         call_params['absent_labels'],
         ImageParams(*call_params['params'])
     )
-    t1 = datetime.datetime.now()
+    t1 = datetime.now()
     print(t1 - t0)
     image_file = BytesIO(image_data)
     image = PIL.Image.open(image_file)
