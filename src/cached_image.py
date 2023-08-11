@@ -1,6 +1,4 @@
-"""
-Read matplotlib images from file, cache images that already read.
-"""
+"""Read matplotlib images from file, cache images that already read."""
 
 
 import matplotlib.image as mpimg

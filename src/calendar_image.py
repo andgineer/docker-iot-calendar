@@ -8,7 +8,7 @@ Usage
 
 import os
 import datetime
-from typing import List, Dict
+from typing import List, Dict, Any, Union
 
 import matplotlib
 try: # !!! that should be before importing pyplot
@@ -72,7 +72,12 @@ def get_daily_max(grid: List[List[Dict[str, List[int]]]]) -> int:
     return max((sum(day['values']) for week in grid for day in week), default=0)
 
 
-def draw_day_headers(grid):
+def draw_day_headers(grid: List[List[Dict[str, Any]]]) -> None:
+    """Draws the day headers for a grid.
+
+    Args:
+    - grid (List[List[Dict[str, Any]]]): A 2D grid [week][day]
+    """
     for day in range(WEEK_DAYS):
         plt.text(
             (pie_row_header_width + (day + 0.5) * pie_width) * width_aspect,
@@ -84,7 +89,12 @@ def draw_day_headers(grid):
         )
 
 
-def draw_week_headers(grid):
+def draw_week_headers(grid: List[List[Dict[str, any]]]) -> None:
+    """Draw headers for each week on the grid using the date from the first day of each week.
+
+    Args:
+    - grid (List[List[Dict[str, Any]]]): A 2D grid [week][day]
+    """
     for week in range(weeks):
         plt.text(
             pie_row_header_width * 0.5,
@@ -96,7 +106,15 @@ def draw_week_headers(grid):
         )
 
 
-def draw_pie(week, day, values, daily_max):
+def draw_pie(week: int, day: int, values: List[Union[int, float]], daily_max: Union[int, float]) -> None:
+    """Draws a pie chart for a specific day of a week based on the given values.
+
+    Parameters:
+    - week (int): The index of the week.
+    - day (int): The index of the day within the week.
+    - values (List[Union[int, float]]): A list of numerical values for each slice of the pie chart.
+    - daily_max (Union[int, float]): The maximum value for the day, used to determine the pie's radius.
+    """
     radius = sum(values) / daily_max * pie_height * pie_scale / 2
     colours = [f'C{i}' for i in range(len(values))]
     explode = [0.007 for _ in range(len(values))]
@@ -113,7 +131,29 @@ def draw_pie(week, day, values, daily_max):
     )
 
 
-def draw_empty_pie(grid, image_cache, week, day, absent_grid_images, empty_image_file_name, tomorrow):
+def draw_empty_pie(
+        grid: List[List[Dict[str, Union[datetime, List[Dict[str, Any]]]]]],
+        image_cache: CachedImage,
+        week: int,
+        day: int,
+        absent_grid_images: Dict[str, str],
+        empty_image_file_name: str,
+        tomorrow: datetime
+) -> None:
+    """Draw an empty pie (or use an absent image) for a given week and day on the grid.
+
+    Do not fill cells for a days in the future (after `tomorrow`).
+
+    Args:
+    - grid: The grid representing the schedule [week][day]["date"].
+    - image_cache: Cache containing the necessary images.
+    - week: The week index for which to draw the pie.
+    - day: The day index for which to draw the pie.
+    - absent_grid_images: Dictionary mapping absent summary to image file names
+        - "image_grid" from "absent" array in the settings.
+    - empty_image_file_name: Name of the file to use for the empty image.
+    - tomorrow: The datetime representing the start of the next day.
+    """
     image_padding = pie_width / 5
     if 'absents' in grid[week][day]:
         image = image_cache.by_file_name(absent_grid_images[grid[week][day]['absents'][0]['summary']])
@@ -206,12 +246,6 @@ def draw_calendar(grid, x, y, weather, dashboard, labels, absent_labels, params)
     :return:
         image data in specified (in params) format (png, gif etc)
     """
-    # Save params for test:
-    # call_params = dict(grid=grid, x=x, y=y, weather=weather, dashboard=dashboard, labels=labels,
-    #     absent_labels=absent_labels, params=params)
-    # import json
-    # json.dump(call_params, open('draw_calendar_params.json', 'w'), default=str)
-
     def draw_plot(x, y, labels, rect, legend='inside'):
         ax = plt.axes(rect)
         if len(x) > 0:
@@ -326,7 +360,15 @@ def draw_calendar(grid, x, y, weather, dashboard, labels, absent_labels, params)
 
 
 def check():
-    """Debugging function."""
+    """Debugging function.
+
+    To create the file with parameters for the check(), add the following code to the draw_calendar()
+
+        call_params = dict(grid=grid, x=x, y=y, weather=weather, dashboard=dashboard, labels=labels,
+            absent_labels=absent_labels, params=params)
+        import json
+        json.dump(call_params, open('draw_calendar_params.json', 'w'), default=str)
+    """
     import json
     import dateutil
     call_params = json.load(open('tests/resources/draw_calendar_params_2.json', 'r'))
