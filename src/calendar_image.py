@@ -366,7 +366,16 @@ def draw_plot(x: List[datetime],
     print_if_cached='Use stored imaged without rendering (from {time})',
     evaluate_on_day_change=True
 )
-def draw_calendar(grid, x, y, weather, dashboard, labels, absent_labels, params):
+def draw_calendar(
+    grid: List[List[Dict[str, Union[datetime, List[int]]]]],
+    x: List[datetime],
+    y: List[List[int]],
+    weather: Dict[str, List[Union[float, str, datetime]]],
+    dashboard: Dict[str, Union[str, List[Dict[str, str]]]],
+    labels: List[Dict[str, str]],
+    absent_labels: List[Dict[str, str]],
+    params: 'ImageParams'
+) -> bytes:
     """
     Draws IoT calendar as image, optimized for Amazon Kindle (600 x 800).
     To prepare data see functions in calendar_data.py

@@ -3,7 +3,7 @@ import os
 from unittest.mock import patch, call, MagicMock, Mock
 from datetime import datetime
 from calendar_image import pie_row_header_width, pie_width, pie_height, pie_col_header_height, weeks, draw_day_headers, \
-    width_aspect, draw_week_headers, pie_scale, draw_pie, draw_empty_pie, highlight_today, draw_pies, draw_weather, CachedImage, draw_plot
+    width_aspect, draw_week_headers, pie_scale, draw_pie, draw_empty_pie, highlight_today, draw_pies, draw_weather, CachedImage, draw_plot, draw_calendar
 
 
 @pytest.mark.parametrize('input_grid', [
@@ -278,4 +278,51 @@ def test_draw_plot():
          call(x[2], y[1][2], 'Label2', horizontalalignment='center', verticalalignment='top')])
 
     # Assuming you have other mockable functions, you can add similar assertions
+
+
+def test_draw_calendar():
+    # Mock data
+    grid = [[{'date': datetime(2023, 8, 7), 'values': [10, 20]}]]
+    x = [datetime(2023, 8, 7)]
+    y = [[10]]
+    weather = {'temp_min': [15.0], 'temp_max': [20.0], 'icon': ['cloudy'], 'day': [datetime(2023, 8, 7)]}
+    dashboard = {'summary': 'Summary', 'empty_image': 'path/to/image.jpg', 'absent': [{'summary': 'Holiday', 'image_grid': 'path/to/holiday.jpg'}]}
+    labels = [{'summary': 'Summary', 'image': 'path/to/image.jpg'}]
+    absent_labels = [{'summary': 'Holiday', 'image_grid': 'path/to/holiday.jpg', 'image_plot': 'path/to/holiday_plot.jpg'}]
+    params = Mock()  # This will need to be an instance of ImageParams or a Mock object representing it
+    params.xkcd = "0"
+    params.rotate = "0"
+
+    # Mocking plt and other external calls
+    with patch("matplotlib.pyplot.clf"), \
+            patch("matplotlib.pyplot.figure"), \
+            patch("matplotlib.pyplot.rcParams.update"), \
+            patch("matplotlib.pyplot.style.context"), \
+            patch("calendar_image.draw_weather") as mock_draw_weather, \
+            patch("calendar_image.draw_plot") as mock_draw_plot, \
+            patch("calendar_image.draw_pies") as mock_draw_pies, \
+            patch("calendar_image.CachedImage") as mock_cached_image, \
+            patch("numpy.fromstring") as mock_np_fromstring, \
+            patch("numpy.rot90") as mock_np_rot90, \
+            patch("PIL.Image.fromarray") as mock_fromarray:
+
+        # Assign return values to mocked objects if needed
+        mock_cached_image.return_value = Mock()
+        mock_np_fromstring.return_value = Mock()
+        mock_np_rot90.return_value = Mock()
+        mock_fromarray.return_value = Mock(save=Mock())
+
+        # Call the function
+        result = draw_calendar(grid, x, y, weather, dashboard, labels, absent_labels, params)
+
+        mock_draw_weather.assert_called_once_with(weather, rect=[0, 0.6833333333333333, 0.24, 0.29166666666666663], image_cache=mock_cached_image.return_value)
+        mock_draw_plot.assert_called_once_with(x, y, labels, rect=[0.3, 0.6833333333333333, 0.6749999999999999, 0.29166666666666663], image_cache=mock_cached_image.return_value)
+        mock_draw_pies.assert_called_once_with(grid, image_cache=mock_cached_image.return_value, weeks=4, absent_grid_images={'Holiday': 'path/to/holiday.jpg'}, empty_image_file_name='path/to/image.jpg')
+
+        assert isinstance(result, bytes)
+        mock_cached_image.assert_called_once()
+        mock_np_fromstring.assert_called_once()
+        mock_np_rot90.assert_called_once()
+        mock_fromarray.assert_called_once()
+
 
