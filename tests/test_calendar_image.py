@@ -1,8 +1,9 @@
 import pytest
+import os
 from unittest.mock import patch, call, MagicMock, Mock
 from datetime import datetime
 from calendar_image import pie_row_header_width, pie_width, pie_height, pie_col_header_height, weeks, draw_day_headers, \
-    width_aspect, draw_week_headers, pie_scale, draw_pie, draw_empty_pie, highlight_today, draw_pies
+    width_aspect, draw_week_headers, pie_scale, draw_pie, draw_empty_pie, highlight_today, draw_pies, draw_weather, CachedImage
 
 
 @pytest.mark.parametrize('input_grid', [
@@ -215,3 +216,34 @@ def test_draw_pies():
     for idx, call in enumerate(mock_draw_pie.call_args_list):
         args, _ = call
         assert args[2] == expected_values[idx]
+
+
+def test_draw_weather():
+    # Sample data
+    weather_data = {
+        'temp_min': [15.5],
+        'temp_max': [25.8],
+        'images_folder': 'path_to_folder',
+        'icon': ['sample_icon']
+    }
+    rect = [0, 0, 1, 1]
+
+    mock_image_cache = Mock(spec=CachedImage)
+    mock_image_cache.by_file_name.return_value = "test_image_path"
+
+    # Mock plt functions
+    import matplotlib.pyplot as plt
+    with patch.object(plt, 'axes', return_value=Mock()), \
+            patch.object(plt, 'axis'), \
+            patch.object(plt, 'imshow') as mock_imshow:
+        draw_weather(weather_data, rect, mock_image_cache)
+
+    # Asserts
+    # Check if the image cache was called with the expected path
+    expected_path = os.path.join(weather_data['images_folder'], weather_data['icon'][0] + '.png')
+    mock_image_cache.by_file_name.assert_called_with(expected_path)
+
+    # Assert the image was drawn at the expected extent
+    mock_imshow.assert_called_once_with("test_image_path", extent=[0.15, 0.85, 0.15, 0.85], interpolation='bilinear')
+
+    # Additional asserts can be added depending on the logic or behavior that you want to validate.

@@ -177,7 +177,7 @@ def events_to_array(events, absents):
     return x, y
 
 
-def check():
+def check():  # pragma: no cover
     """Debug function."""
     from iot_calendar import load_settings
     settings = load_settings()

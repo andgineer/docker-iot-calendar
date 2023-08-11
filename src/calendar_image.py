@@ -234,6 +234,36 @@ def draw_pies(grid: List[List[Dict[str, Any]]],
     ax.set_xticklabels([])
     ax.set_yticklabels([])
 
+def draw_weather(weather, rect, image_cache: CachedImage):
+    ax = plt.axes(rect)
+    plt.axis('off')
+    ax.patch.set_visible(False)
+    ax.set_xticklabels([])
+    ax.set_yticklabels([])
+    ax.set_ylim(-0.03, 1.03)
+    ax.set_xlim(-0.03, 1.03)
+    ax.text(
+        0.5,
+        1,
+        datetime.now().strftime('%d %B'),
+        horizontalalignment='center',
+        verticalalignment='top'
+    )
+    if not weather:
+        return
+    ax.text(
+        0.5,
+        0,
+        '{} °C … {} °C'.format(round(weather['temp_min'][0], 1), round(weather['temp_max'][0], 1)),
+        horizontalalignment='center',
+        verticalalignment='bottom'
+    )
+    plt.imshow(
+        image_cache.by_file_name(os.path.join(weather['images_folder'], weather['icon'][0] + '.png')),
+        extent=[0.15, 0.85, 0.15, 0.85],
+        interpolation='bilinear' #'bicubic'
+    )
+
 
 @cached(
     cache_time_seconds=IMAGE_CACHED_SECONDS,
@@ -323,36 +353,6 @@ def draw_calendar(grid, x, y, weather, dashboard, labels, absent_labels, params)
                         interpolation='bicubic'
                     )
 
-    def draw_weather(weather, rect):
-        ax = plt.axes(rect)
-        plt.axis('off')
-        ax.patch.set_visible(False)
-        ax.set_xticklabels([])
-        ax.set_yticklabels([])
-        ax.set_ylim(-0.03, 1.03)
-        ax.set_xlim(-0.03, 1.03)
-        ax.text(
-            0.5,
-            1,
-            datetime.now().strftime('%d %B'),
-            horizontalalignment='center',
-            verticalalignment='top'
-        )
-        if not weather:
-            return
-        ax.text(
-            0.5,
-            0,
-            '{} °C … {} °C'.format(round(weather['temp_min'][0], 1), round(weather['temp_max'][0], 1)),
-            horizontalalignment='center',
-            verticalalignment='bottom'
-        )
-        plt.imshow(
-            image_cache.by_file_name(os.path.join(weather['images_folder'], weather['icon'][0] + '.png')),
-            extent=[0.15, 0.85, 0.15, 0.85],
-            interpolation='bilinear' #'bicubic'
-        )
-
     plt.clf()
     plt.figure(figsize=(picture_width, picture_height), dpi=dpi, facecolor='white')
     absent_grid_images = {absent['summary'] : absent['image_grid'] for absent in absent_labels}
@@ -361,7 +361,7 @@ def draw_calendar(grid, x, y, weather, dashboard, labels, absent_labels, params)
     with plt.style.context(params.style, after_reset=True):
         if int(params.xkcd):
             plt.xkcd()
-        draw_weather(weather, rect=[0, plot_bottom, plot_left * 0.8, plot_height])
+        draw_weather(weather, rect=[0, plot_bottom, plot_left * 0.8, plot_height], image_cache=image_cache)
         draw_plot(x, y, labels, rect=[plot_left, plot_bottom, plot_width, plot_height])
         draw_pies(
             grid,
@@ -380,7 +380,7 @@ def draw_calendar(grid, x, y, weather, dashboard, labels, absent_labels, params)
         return bytes_file.getvalue()
 
 
-def check():
+def check():  # pragma: no cover
     """Debugging function.
 
     To create the file with parameters for the check(), add the following code to the draw_calendar()
