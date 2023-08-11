@@ -152,7 +152,7 @@ def collect_events(calendar_events, absent_events, settings):
     return events, absents
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     from .iot_calendar import load_settings
     from .calendar_data import calendar_events_list, dashboard_absent_events_list
     settings = load_settings(secrets_folder='../secrets')

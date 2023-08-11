@@ -150,7 +150,7 @@ class Weather(object):
         }
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     from pprint import pprint
     from iot_calendar import load_settings
     settings = load_settings(secrets_folder='../secrets')

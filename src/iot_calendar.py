@@ -165,7 +165,7 @@ class Application(tornado.web.Application):
         tornado.web.Application.__init__(self, handlers, **settings)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     define('port', default=4444, help='run on the given port', type=int)
     define('secrets', default=None, help='path to files with secrets', type=str)
     tornado.options.parse_command_line()

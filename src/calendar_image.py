@@ -237,8 +237,7 @@ def draw_pies(grid: List[List[Dict[str, Any]]],
 def draw_weather(weather: Optional[Dict[str, Union[str, List[float]]]],
                  rect: List[float],
                  image_cache: CachedImage) -> None:
-    """
-    Renders the weather data onto a specified rectangle using matplotlib.
+    """Render the weather data onto a specified rectangle using matplotlib.
 
     Parameters:
     - weather (Optional[Dict[str, Union[str, List[float]]]]):
@@ -287,6 +286,81 @@ def draw_weather(weather: Optional[Dict[str, Union[str, List[float]]]],
     )
 
 
+def draw_plot(x: List[datetime],
+              y: List[List[float]],
+              labels: List[Dict[str, Union[str, float]]],
+              rect: List[float],
+              image_cache: CachedImage,
+              legend: str = 'inside') -> None:
+    """Render a stacked plot using matplotlib.
+
+    Parameters:
+    - x (List[datetime]): List of datetime objects representing the X-axis data.
+    - y (List[List[float]]): 2D list where each sublist represents a dataset to be stacked in the plot.
+    - labels (List[Dict[str, Union[str, float]]]): Labels for each dataset in `y`. Each dictionary may contain:
+        - 'summary': Summary or name of the dataset.
+        - 'image': (optional) Path to the image representing the dataset.
+    - rect (List[float]): A list of four float numbers specifying the [left, bottom, width, height] of the rectangle
+      where the plot should be rendered.
+    - image_cache (CachedImage): An instance of CachedImage to fetch images by file name.
+    - legend (str, default 'inside'): Defines the style of the legend. It can be 'inside', 'rectangle' or any other value
+      which will result in no legend.
+    """
+    ax = plt.axes(rect)
+    if len(x) > 0:
+        days_on_plot = (x[-1] - x[0]).days
+        if days_on_plot < 5 * 30:
+            shortFmt = DateFormatter('%b %d')
+        elif days_on_plot < 5 * 365:
+            shortFmt = DateFormatter('%d')
+        else:
+            shortFmt = DateFormatter('%Y')
+        ax.xaxis.set_major_formatter(shortFmt)
+    legend_labels = [label['summary'] for label in labels]
+    polies = ax.stackplot(x, y)
+    ax.xaxis.set_major_locator(plt.MaxNLocator(6))
+    ax.patch.set_visible(False)
+    if legend == 'rectangle':
+        plt.legend([plt.Rectangle((0, 0), 1, 1, fc=poly.get_facecolor()[0]) for poly in polies], legend_labels)
+    elif legend == 'inside':
+        #y_sum = np.sum(np.array(y), axis=0)
+        #y_max = y_sum.max()
+        for region in range(len(labels)):
+            if len(y[region]) == 0:
+                return
+            max_idx, _ = max(enumerate(y[region]), key=lambda item: item[1])
+            x_pos = x[max_idx]
+            y_pos = y[region][max_idx]
+            ax.text(
+                x_pos,
+                y_pos,
+                labels[region]['summary'],
+                horizontalalignment='center',
+                verticalalignment='top'
+            )
+            if 'image' in labels[region]:
+                legend_text_height = 0.13
+                ylim = ax.get_ylim()
+                xlim = ax.get_xlim()
+                xsz = xlim[1] - xlim[0]
+                ysz = ylim[1] - ylim[0]
+                x_scale = 1 / plot_height # at the moment I do not understand why 1 and not plot_width
+                x_val = (date2num(x_pos) - xlim[0]) / xsz * x_scale
+                y_val = (y_pos - ylim[0]) / ysz
+                axes = plt.axes([plot_left, plot_bottom, plot_width, plot_height], label='2')
+                plt.axis('off')
+                axes.patch.set_visible(False)
+                axes.set_xticklabels([])
+                axes.set_yticklabels([])
+                axes.set_ylim((0, 1))
+                axes.set_xlim((0, x_scale))
+                plt.imshow(
+                    image_cache.by_file_name(labels[region]['image']),
+                    extent=(x_val - legend_image_sz / 2, x_val + legend_image_sz / 2,
+                            y_val - legend_image_sz - legend_text_height, y_val - legend_text_height),
+                    interpolation='bicubic'
+                )
+
 @cached(
     cache_time_seconds=IMAGE_CACHED_SECONDS,
     print_if_cached='Use stored imaged without rendering (from {time})',
@@ -319,62 +393,6 @@ def draw_calendar(grid, x, y, weather, dashboard, labels, absent_labels, params)
     :return:
         image data in specified (in params) format (png, gif etc)
     """
-    def draw_plot(x, y, labels, rect, legend='inside'):
-        ax = plt.axes(rect)
-        if len(x) > 0:
-            days_on_plot = (x[-1] - x[0]).days
-            if days_on_plot < 5 * 30:
-                shortFmt = DateFormatter('%b %d')
-            elif days_on_plot < 5 * 365:
-                shortFmt = DateFormatter('%d')
-            else:
-                shortFmt = DateFormatter('%Y')
-            ax.xaxis.set_major_formatter(shortFmt)
-        legend_labels = [label['summary'] for label in labels]
-        polies = ax.stackplot(x, y)
-        ax.xaxis.set_major_locator(plt.MaxNLocator(6))
-        ax.patch.set_visible(False)
-        if legend == 'rectangle':
-            plt.legend([plt.Rectangle((0, 0), 1, 1, fc=poly.get_facecolor()[0]) for poly in polies], legend_labels)
-        elif legend == 'inside':
-            #y_sum = np.sum(np.array(y), axis=0)
-            #y_max = y_sum.max()
-            for region in range(len(labels)):
-                if len(y[region]) == 0:
-                    return
-                max_idx, _ = max(enumerate(y[region]), key=lambda item: item[1])
-                x_pos = x[max_idx]
-                y_pos = y[region][max_idx]
-                ax.text(
-                    x_pos,
-                    y_pos,
-                    labels[region]['summary'],
-                    horizontalalignment='center',
-                    verticalalignment='top'
-                )
-                if 'image' in labels[region]:
-                    legend_text_height = 0.13
-                    ylim = ax.get_ylim()
-                    xlim = ax.get_xlim()
-                    xsz = xlim[1] - xlim[0]
-                    ysz = ylim[1] - ylim[0]
-                    x_scale = 1 / plot_height # at the moment I do not understand why 1 and not plot_width
-                    x_val = (date2num(x_pos) - xlim[0]) / xsz * x_scale
-                    y_val = (y_pos - ylim[0]) / ysz
-                    axes = plt.axes([plot_left, plot_bottom, plot_width, plot_height], label='2')
-                    plt.axis('off')
-                    axes.patch.set_visible(False)
-                    axes.set_xticklabels([])
-                    axes.set_yticklabels([])
-                    axes.set_ylim((0, 1))
-                    axes.set_xlim((0, x_scale))
-                    plt.imshow(
-                        image_cache.by_file_name(labels[region]['image']),
-                        extent=(x_val - legend_image_sz / 2, x_val + legend_image_sz / 2,
-                                y_val - legend_image_sz - legend_text_height, y_val - legend_text_height),
-                        interpolation='bicubic'
-                    )
-
     plt.clf()
     plt.figure(figsize=(picture_width, picture_height), dpi=dpi, facecolor='white')
     absent_grid_images = {absent['summary'] : absent['image_grid'] for absent in absent_labels}
@@ -384,7 +402,7 @@ def draw_calendar(grid, x, y, weather, dashboard, labels, absent_labels, params)
         if int(params.xkcd):
             plt.xkcd()
         draw_weather(weather, rect=[0, plot_bottom, plot_left * 0.8, plot_height], image_cache=image_cache)
-        draw_plot(x, y, labels, rect=[plot_left, plot_bottom, plot_width, plot_height])
+        draw_plot(x, y, labels, rect=[plot_left, plot_bottom, plot_width, plot_height], image_cache=image_cache)
         draw_pies(
             grid,
             image_cache=image_cache,
@@ -438,5 +456,5 @@ def check():  # pragma: no cover
     image.show()
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     check()

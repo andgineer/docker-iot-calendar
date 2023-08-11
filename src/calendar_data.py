@@ -257,6 +257,6 @@ def check():  # pragma: no cover
     pprint.pprint(grid)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     check()
 

@@ -12,7 +12,7 @@ def svg_to_png(svg):
     return in_mem_file.getvalue()
 
 
-def test():
+def test():  # pragma: no cover
     svg = '''<?xml version="1.0" standalone="no"?>
         <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
                 "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
@@ -44,7 +44,7 @@ def convert(folder):
                     png_file.write(png)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     #test()
     convert('static/img')
 

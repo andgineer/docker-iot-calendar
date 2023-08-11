@@ -3,7 +3,7 @@ import os
 from unittest.mock import patch, call, MagicMock, Mock
 from datetime import datetime
 from calendar_image import pie_row_header_width, pie_width, pie_height, pie_col_header_height, weeks, draw_day_headers, \
-    width_aspect, draw_week_headers, pie_scale, draw_pie, draw_empty_pie, highlight_today, draw_pies, draw_weather, CachedImage
+    width_aspect, draw_week_headers, pie_scale, draw_pie, draw_empty_pie, highlight_today, draw_pies, draw_weather, CachedImage, draw_plot
 
 
 @pytest.mark.parametrize('input_grid', [
@@ -81,9 +81,7 @@ def test_draw_pie(week, day, values, daily_max, expected_call):
             [
                 {'date': datetime(2023, 8, 10)},
                 {'date': datetime(2023, 8, 11), 'absents': [{'summary': 'AbsentA'}]},
-                # ... other days
             ],
-            # ... other weeks
         ],
         0, 1,
         {'AbsentA': 'absent_imageA.jpg'},
@@ -137,14 +135,11 @@ def test_draw_today():
         [
             {'date': datetime(2023, 8, 9)},
             {'date': datetime(2023, 8, 10)},
-            # ... other days
         ],
         [
             {'date': datetime(2023, 8, 16)},
             {'date': datetime(2023, 8, 17)},
-            # ... other days
         ]
-        # ... other weeks
     ]
 
     # Mocking required objects
@@ -246,4 +241,41 @@ def test_draw_weather():
     # Assert the image was drawn at the expected extent
     mock_imshow.assert_called_once_with("test_image_path", extent=[0.15, 0.85, 0.15, 0.85], interpolation='bilinear')
 
-    # Additional asserts can be added depending on the logic or behavior that you want to validate.
+
+def test_draw_plot():
+    x = [datetime(2023, 1, 1), datetime(2023, 1, 2), datetime(2023, 1, 3)]
+    y = [[1, 2, 3], [1, 2, 3]]
+    labels = [{'summary': 'Label1', 'image': 'image1.png'}, {'summary': 'Label2', 'image': 'image2.png'}]
+    rect = [0.1, 0.1, 0.8, 0.8]
+    mock_image_cache = Mock()
+    mock_image_cache.by_file_name.return_value = "some_image.png"
+
+    mock_axes = Mock()
+    mock_axes.get_xlim.return_value = (0, 10)  # Sample xlim values
+    mock_axes.get_ylim.return_value = (0, 20)  # Sample ylim values
+
+    import matplotlib.pyplot as plt
+    with patch.object(plt, "axes", return_value=mock_axes), \
+            patch.object(plt, "axis", return_value=Mock()), \
+            patch.object(plt, "imshow", return_value=Mock()), \
+            patch.object(plt, "legend", return_value=Mock()), \
+            patch.object(plt, "text", return_value=Mock()):
+        draw_plot(x, y, labels, rect, mock_image_cache)
+
+    # Assert that xlim and ylim were accessed twice each
+    mock_axes.get_xlim.assert_called()
+    assert mock_axes.get_xlim.call_count == 2
+
+    mock_axes.get_ylim.assert_called()
+    assert mock_axes.get_ylim.call_count == 2
+
+    # Assert image cache was called with the provided image file names
+    mock_image_cache.by_file_name.assert_has_calls([call('image1.png'), call('image2.png')])
+
+    # Assert text was called for the labels
+    mock_axes.text.assert_has_calls(
+        [call(x[2], y[0][2], 'Label1', horizontalalignment='center', verticalalignment='top'),
+         call(x[2], y[1][2], 'Label2', horizontalalignment='center', verticalalignment='top')])
+
+    # Assuming you have other mockable functions, you can add similar assertions
+
