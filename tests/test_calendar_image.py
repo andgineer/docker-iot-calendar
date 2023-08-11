@@ -2,7 +2,7 @@ import pytest
 from unittest.mock import patch, call, MagicMock
 from datetime import datetime
 from calendar_image import pie_row_header_width, pie_width, pie_height, pie_col_header_height, weeks, draw_day_headers, \
-    width_aspect, draw_week_headers, pie_scale, draw_pie, draw_empty_pie
+    width_aspect, draw_week_headers, pie_scale, draw_pie, draw_empty_pie, highlight_today
 
 
 @pytest.mark.parametrize('input_grid', [
@@ -128,3 +128,39 @@ def test_draw_empty_pie(grid, week, day, absent_grid_images, empty_image_file_na
 
         # Asserting the expected call to image_cache.by_file_name
         image_cache.by_file_name.assert_called_once_with(expected_image_filename)
+
+
+def test_draw_today():
+    # Sample grid
+    grid = [
+        [
+            {'date': datetime(2023, 8, 9)},
+            {'date': datetime(2023, 8, 10)},
+            # ... other days
+        ],
+        [
+            {'date': datetime(2023, 8, 16)},
+            {'date': datetime(2023, 8, 17)},
+            # ... other days
+        ]
+        # ... other weeks
+    ]
+
+    # Mocking required objects
+    with patch('matplotlib.pyplot.gca') as mock_gca:
+        ax_mock = MagicMock()
+        mock_gca.return_value = ax_mock
+
+        # Call the function
+        highlight_today(grid, datetime(2023, 8, 17))
+
+        # Assert if add_patch was called on the Axes object
+        ax_mock.add_patch.assert_called_once()
+
+        # Extract the first argument passed (which should be a Rectangle) and check its properties
+        rect = ax_mock.add_patch.call_args[0][0]
+
+        # Here we only check a few properties, but more can be added as needed
+        assert rect.get_xy() == ((pie_row_header_width + 1 * pie_width) * width_aspect, 1 * pie_height)
+        assert rect.get_width() == pie_width * width_aspect * 0.98
+        assert rect.get_height() == pie_height

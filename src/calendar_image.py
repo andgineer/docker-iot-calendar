@@ -170,7 +170,13 @@ def draw_empty_pie(
         )
 
 
-def draw_today(grid, today):
+def highlight_today(grid: List[List[Dict[str, Any]]], today: datetime) -> None:
+    """Draw a rectangle around the current day in the grid to highlight it.
+
+    Parameters:
+    - grid: The grid representing the schedule [week][day]["date"].
+    - today: A datetime object representing the current day.
+    """
     grid_shift = (today - grid[0][0]['date']).days
     day = grid_shift % WEEK_DAYS
     week = grid_shift // WEEK_DAYS
@@ -196,7 +202,7 @@ def draw_pies(grid, image_cache, weeks=4, absent_grid_images=None, empty_image_f
         autoscale_on=False,
     )
     plt.axis('off')
-    draw_today(grid, today)
+    highlight_today(grid, today)
     draw_day_headers(grid)
     draw_week_headers(grid)
     for week in range(weeks):
