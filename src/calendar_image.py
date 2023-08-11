@@ -8,7 +8,7 @@ Usage
 
 import os
 from datetime import datetime, timedelta
-from typing import List, Dict, Any, Union
+from typing import List, Dict, Any, Union, Optional
 
 import matplotlib
 try: # !!! that should be before importing pyplot
@@ -192,7 +192,22 @@ def highlight_today(grid: List[List[Dict[str, Any]]], today: datetime) -> None:
     )
 
 
-def draw_pies(grid, image_cache, weeks=4, absent_grid_images=None, empty_image_file_name=None):
+def draw_pies(grid: List[List[Dict[str, Any]]],
+              image_cache: CachedImage,
+              weeks: int = 4,
+              absent_grid_images: Optional[Dict[str, str]] = None,
+              empty_image_file_name: Optional[str] = None) -> None:
+    """
+    Draws pie charts or images for each day in the provided grid based on the data provided.
+
+    Parameters:
+    - grid: The grid representing the schedule [week][day]["date"]/["values"].
+    - image_cache: A cache object used to fetch images.
+    - weeks: Number of weeks to consider. Default is 4.
+    - absent_grid_images: Dictionary mapping absent summary to image file names
+        - "image_grid" from "absent" array in the settings. Optional.
+    - empty_image_file_name: File name of the image to use when there's no data. Optional.
+    """
     daily_max = get_daily_max(grid)
     today = datetime.now(grid[0][0]['date'].tzinfo).replace(hour=0, minute=0, second=0, microsecond=0)
     tomorrow = today + timedelta(days=1)

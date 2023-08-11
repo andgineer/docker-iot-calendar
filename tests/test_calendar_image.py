@@ -1,8 +1,8 @@
 import pytest
-from unittest.mock import patch, call, MagicMock
+from unittest.mock import patch, call, MagicMock, Mock
 from datetime import datetime
 from calendar_image import pie_row_header_width, pie_width, pie_height, pie_col_header_height, weeks, draw_day_headers, \
-    width_aspect, draw_week_headers, pie_scale, draw_pie, draw_empty_pie, highlight_today
+    width_aspect, draw_week_headers, pie_scale, draw_pie, draw_empty_pie, highlight_today, draw_pies
 
 
 @pytest.mark.parametrize('input_grid', [
@@ -164,3 +164,54 @@ def test_draw_today():
         assert rect.get_xy() == ((pie_row_header_width + 1 * pie_width) * width_aspect, 1 * pie_height)
         assert rect.get_width() == pie_width * width_aspect * 0.98
         assert rect.get_height() == pie_height
+
+
+def test_draw_pies():
+    sample_grid = [
+        [
+            {'date': datetime(2023, 8, 7), 'values': [10, 20]},
+            {'date': datetime(2023, 8, 8), 'values': [0], 'absents': [{'summary': 'AbsentA'}]},
+            {'date': datetime(2023, 8, 9), 'values': [15]},
+            {'date': datetime(2023, 8, 10), 'values': [0]},
+            {'date': datetime(2023, 8, 11), 'values': [10]},
+            {'date': datetime(2023, 8, 12), 'values': [25]},
+            {'date': datetime(2023, 8, 13), 'values': [0]},
+        ],
+        [
+            {'date': datetime(2023, 8, 14), 'values': [10, 20]},
+            {'date': datetime(2023, 8, 15), 'values': [0]},
+            {'date': datetime(2023, 8, 9), 'values': [15]},
+            {'date': datetime(2023, 8, 10), 'values': [0]},
+            {'date': datetime(2023, 8, 11), 'values': [10]},
+            {'date': datetime(2023, 8, 12), 'values': [25]},
+            {'date': datetime(2023, 8, 13), 'values': [0]},
+        ]
+    ]
+    mock_image_cache = Mock()
+    mock_image_cache.by_file_name = Mock(return_value="test_image")
+    absent_images = {"AbsentA": "file1.jpg"}
+    empty_image = "empty.jpg"
+
+    # Mocking plt functions and your draw_pie and draw_empty_pie functions
+    import matplotlib.pyplot as plt
+    with patch.object(plt, "gcf", return_value=Mock()), \
+            patch("calendar_image.draw_pie") as mock_draw_pie, \
+            patch("calendar_image.draw_empty_pie") as mock_draw_empty_pie, \
+            patch("calendar_image.highlight_today") as mock_highlight_today, \
+            patch("calendar_image.draw_day_headers") as mock_draw_day_headers, \
+            patch("calendar_image.draw_week_headers") as mock_draw_week_headers:
+        draw_pies(sample_grid, mock_image_cache, absent_grid_images=absent_images, empty_image_file_name=empty_image, weeks=2)
+
+    assert mock_draw_pie.call_count == 8
+
+    # Assert draw_empty_pie was called for days with zero values
+    assert mock_draw_empty_pie.call_count == 6
+
+    mock_highlight_today.assert_called_once()
+    mock_draw_day_headers.assert_called_once()
+    mock_draw_week_headers.assert_called_once()
+
+    expected_values = [[10, 20], [15], [10], [25], [10, 20], [15], [10], [25]]
+    for idx, call in enumerate(mock_draw_pie.call_args_list):
+        args, _ = call
+        assert args[2] == expected_values[idx]
