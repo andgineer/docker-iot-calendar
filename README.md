@@ -7,14 +7,14 @@
 | src/cached\_decorator.py   |       34 |        1 |     97% |        96 |
 | src/cached\_image.py       |       15 |        9 |     40% |     19-27 |
 | src/calendar\_data.py      |      118 |        1 |     99% |        79 |
-| src/calendar\_image.py     |      165 |       26 |     84% |17-18, 274, 314-317, 324, 330, 396-420 |
+| src/calendar\_image.py     |      165 |        9 |     95% |17-18, 274, 314-317, 324, 330, 412 |
 | src/google\_calendar.py    |       89 |       63 |     29% |22-26, 29-48, 51-54, 63, 66-72, 81-120, 123, 126, 129, 138-152 |
 | src/iot\_calendar.py       |      103 |       67 |     35% |40-73, 78-86, 89-93, 99-124, 129-143, 152-165 |
 | src/openweathermap\_org.py |       61 |       48 |     21% |30-31, 34-39, 47-73, 90-145 |
 | src/singleton.py           |        6 |        3 |     50% |     10-12 |
 | src/svg\_to\_png.py        |       16 |       11 |     31% |10-12, 37-44 |
 | src/weather\_gov.py        |       30 |       25 |     17% |     28-65 |
-|                  **TOTAL** |  **637** |  **254** | **60%** |           |
+|                  **TOTAL** |  **637** |  **237** | **63%** |           |
 
 
 ## Setup coverage badge
