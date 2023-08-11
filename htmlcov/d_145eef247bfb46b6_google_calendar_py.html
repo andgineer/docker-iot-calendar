@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Coverage for src/google_calendar.py: 27%</title>
+    <title>Coverage for src/google_calendar.py: 29%</title>
     <link rel="icon" sizes="32x32" href="favicon_32.png">
     <link rel="stylesheet" href="style.css" type="text/css">
     <script type="text/javascript" src="coverage_html.js" defer></script>
@@ -12,7 +12,7 @@
     <div class="content">
         <h1>
             <span class="text">Coverage for </span><b>src/google_calendar.py</b>:
-            <span class="pc_cov">27%</span>
+            <span class="pc_cov">29%</span>
         </h1>
         <aside id="help_panel_wrapper">
             <input id="help_panel_state" type="checkbox">
@@ -54,10 +54,10 @@
             </div>
         </aside>
         <h2>
-            <span class="text">99 statements &nbsp;</span>
-            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">27<span class="text"> run</span></button>
-            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">72<span class="text"> missing</span></button>
-            <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">0<span class="text"> excluded</span></button>
+            <span class="text">89 statements &nbsp;</span>
+            <button type="button" class="run button_toggle_run" value="run" data-shortcut="r" title="Toggle lines run">26<span class="text"> run</span></button>
+            <button type="button" class="mis show_mis button_toggle_mis" value="mis" data-shortcut="m" title="Toggle lines missing">63<span class="text"> missing</span></button>
+            <button type="button" class="exc show_exc button_toggle_exc" value="exc" data-shortcut="x" title="Toggle lines excluded">10<span class="text"> excluded</span></button>
         </h2>
         <p class="text">
             <a id="prevFileLink" class="nav" href="d_145eef247bfb46b6_calendar_image_py.html">&#xab; prev</a> &nbsp; &nbsp;
@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="d_145eef247bfb46b6_iot_calendar_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.2.7">coverage.py v7.2.7</a>,
-            created at 2023-08-11 08:38 +0000
+            created at 2023-08-11 08:53 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"/>
@@ -234,16 +234,16 @@
     <p class="mis show_mis"><span class="n"><a id="t152" href="#t152">152</a></span><span class="t">    <span class="key">return</span> <span class="nam">events</span><span class="op">,</span> <span class="nam">absents</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t153" href="#t153">153</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t154" href="#t154">154</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t155" href="#t155">155</a></span><span class="t"><span class="key">if</span> <span class="nam">__name__</span> <span class="op">==</span> <span class="str">"__main__"</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t156" href="#t156">156</a></span><span class="t">    <span class="key">from</span> <span class="op">.</span><span class="nam">iot_calendar</span> <span class="key">import</span> <span class="nam">load_settings</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t157" href="#t157">157</a></span><span class="t">    <span class="key">from</span> <span class="op">.</span><span class="nam">calendar_data</span> <span class="key">import</span> <span class="nam">calendar_events_list</span><span class="op">,</span> <span class="nam">dashboard_absent_events_list</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t158" href="#t158">158</a></span><span class="t">    <span class="nam">settings</span> <span class="op">=</span> <span class="nam">load_settings</span><span class="op">(</span><span class="nam">secrets_folder</span><span class="op">=</span><span class="str">'../secrets'</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t159" href="#t159">159</a></span><span class="t">    <span class="nam">calendar_events</span> <span class="op">=</span> <span class="nam">calendar_events_list</span><span class="op">(</span><span class="nam">settings</span><span class="op">,</span> <span class="str">'anna_work_out'</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t160" href="#t160">160</a></span><span class="t">    <span class="nam">absent_events</span> <span class="op">=</span> <span class="nam">dashboard_absent_events_list</span><span class="op">(</span><span class="nam">settings</span><span class="op">,</span> <span class="str">'anna_work_out'</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t161" href="#t161">161</a></span><span class="t">    <span class="nam">pprint</span><span class="op">(</span><span class="nam">absent_events</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t162" href="#t162">162</a></span><span class="t">    <span class="nam">events</span><span class="op">,</span> <span class="nam">absents</span> <span class="op">=</span> <span class="nam">collect_events</span><span class="op">(</span><span class="nam">calendar_events</span><span class="op">,</span> <span class="nam">absent_events</span><span class="op">,</span> <span class="nam">settings</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t163" href="#t163">163</a></span><span class="t">    <span class="nam">pprint</span><span class="op">(</span><span class="nam">events</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="mis show_mis"><span class="n"><a id="t164" href="#t164">164</a></span><span class="t">    <span class="nam">pprint</span><span class="op">(</span><span class="nam">absents</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="exc show_exc"><span class="n"><a id="t155" href="#t155">155</a></span><span class="t"><span class="key">if</span> <span class="nam">__name__</span> <span class="op">==</span> <span class="str">"__main__"</span><span class="op">:</span>  <span class="com"># pragma: no cover</span>&nbsp;</span><span class="r"></span></p>
+    <p class="exc show_exc"><span class="n"><a id="t156" href="#t156">156</a></span><span class="t">    <span class="key">from</span> <span class="op">.</span><span class="nam">iot_calendar</span> <span class="key">import</span> <span class="nam">load_settings</span>&nbsp;</span><span class="r"></span></p>
+    <p class="exc show_exc"><span class="n"><a id="t157" href="#t157">157</a></span><span class="t">    <span class="key">from</span> <span class="op">.</span><span class="nam">calendar_data</span> <span class="key">import</span> <span class="nam">calendar_events_list</span><span class="op">,</span> <span class="nam">dashboard_absent_events_list</span>&nbsp;</span><span class="r"></span></p>
+    <p class="exc show_exc"><span class="n"><a id="t158" href="#t158">158</a></span><span class="t">    <span class="nam">settings</span> <span class="op">=</span> <span class="nam">load_settings</span><span class="op">(</span><span class="nam">secrets_folder</span><span class="op">=</span><span class="str">'../secrets'</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="exc show_exc"><span class="n"><a id="t159" href="#t159">159</a></span><span class="t">    <span class="nam">calendar_events</span> <span class="op">=</span> <span class="nam">calendar_events_list</span><span class="op">(</span><span class="nam">settings</span><span class="op">,</span> <span class="str">'anna_work_out'</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="exc show_exc"><span class="n"><a id="t160" href="#t160">160</a></span><span class="t">    <span class="nam">absent_events</span> <span class="op">=</span> <span class="nam">dashboard_absent_events_list</span><span class="op">(</span><span class="nam">settings</span><span class="op">,</span> <span class="str">'anna_work_out'</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="exc show_exc"><span class="n"><a id="t161" href="#t161">161</a></span><span class="t">    <span class="nam">pprint</span><span class="op">(</span><span class="nam">absent_events</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="exc show_exc"><span class="n"><a id="t162" href="#t162">162</a></span><span class="t">    <span class="nam">events</span><span class="op">,</span> <span class="nam">absents</span> <span class="op">=</span> <span class="nam">collect_events</span><span class="op">(</span><span class="nam">calendar_events</span><span class="op">,</span> <span class="nam">absent_events</span><span class="op">,</span> <span class="nam">settings</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="exc show_exc"><span class="n"><a id="t163" href="#t163">163</a></span><span class="t">    <span class="nam">pprint</span><span class="op">(</span><span class="nam">events</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="exc show_exc"><span class="n"><a id="t164" href="#t164">164</a></span><span class="t">    <span class="nam">pprint</span><span class="op">(</span><span class="nam">absents</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
 </main>
 <footer>
     <div class="content">
@@ -253,7 +253,7 @@
             <a id="nextFileLink" class="nav" href="d_145eef247bfb46b6_iot_calendar_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.2.7">coverage.py v7.2.7</a>,
-            created at 2023-08-11 08:38 +0000
+            created at 2023-08-11 08:53 +0000
         </p>
     </div>
 </footer>
