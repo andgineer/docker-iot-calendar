@@ -234,7 +234,29 @@ def draw_pies(grid: List[List[Dict[str, Any]]],
     ax.set_xticklabels([])
     ax.set_yticklabels([])
 
-def draw_weather(weather, rect, image_cache: CachedImage):
+def draw_weather(weather: Optional[Dict[str, Union[str, List[float]]]],
+                 rect: List[float],
+                 image_cache: CachedImage) -> None:
+    """
+    Renders the weather data onto a specified rectangle using matplotlib.
+
+    Parameters:
+    - weather (Optional[Dict[str, Union[str, List[float]]]]):
+        A dictionary containing weather data.
+        It should have the following keys:
+        - 'temp_min': List containing minimum temperature (only first element is used).
+        - 'temp_max': List containing maximum temperature (only first element is used).
+        - 'images_folder': Path to the folder containing weather icons.
+        - 'icon': List containing the name of the icon file (without extension, only first element is used).
+        If weather is None, it renders the date only.
+
+    - rect (List[float]):
+        A list of four float numbers specifying the [left, bottom, width, height]
+        of the rectangle where the weather data should be rendered.
+
+    - image_cache (CachedImage):
+        An instance of CachedImage to fetch images by file name.
+    """
     ax = plt.axes(rect)
     plt.axis('off')
     ax.patch.set_visible(False)
@@ -254,9 +276,9 @@ def draw_weather(weather, rect, image_cache: CachedImage):
     ax.text(
         0.5,
         0,
-        '{} °C … {} °C'.format(round(weather['temp_min'][0], 1), round(weather['temp_max'][0], 1)),
+        f"{round(weather['temp_min'][0], 1)} °C … {round(weather['temp_max'][0], 1)} °C",
         horizontalalignment='center',
-        verticalalignment='bottom'
+        verticalalignment='bottom',
     )
     plt.imshow(
         image_cache.by_file_name(os.path.join(weather['images_folder'], weather['icon'][0] + '.png')),
