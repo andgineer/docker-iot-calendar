@@ -3,7 +3,7 @@ import os
 from unittest.mock import patch, call, MagicMock, Mock
 from datetime import datetime
 from calendar_image import pie_row_header_width, pie_width, pie_height, pie_col_header_height, weeks, draw_day_headers, \
-    width_aspect, draw_week_headers, pie_scale, draw_pie, draw_empty_pie, highlight_today, draw_pies, draw_weather, CachedImage, draw_plot, draw_calendar
+    width_aspect, draw_week_headers, pie_scale, draw_pie, draw_empty_pie, highlight_today, draw_pies, draw_weather, ImageLoader, draw_plot, draw_calendar
 
 
 @pytest.mark.parametrize('input_grid', [
@@ -106,12 +106,12 @@ def test_draw_pie(week, day, values, daily_max, expected_call):
     ),
 ])
 def test_draw_empty_pie(grid, week, day, absent_grid_images, empty_image_file_name, tomorrow, expected_image_filename):
-    image_cache = MagicMock()
+    image_loader = MagicMock()
     image_mock = MagicMock()
-    image_cache.by_file_name.return_value = image_mock
+    image_loader.by_file_name.return_value = image_mock
 
     with patch('matplotlib.pyplot.imshow') as mock_imshow:
-        draw_empty_pie(grid, image_cache, week, day, absent_grid_images, empty_image_file_name, tomorrow)
+        draw_empty_pie(grid, image_loader, week, day, absent_grid_images, empty_image_file_name, tomorrow)
 
         # Asserting the expected call to plt.imshow
         mock_imshow.assert_called_once_with(
@@ -125,8 +125,8 @@ def test_draw_empty_pie(grid, week, day, absent_grid_images, empty_image_file_na
             interpolation='bicubic'
         )
 
-        # Asserting the expected call to image_cache.by_file_name
-        image_cache.by_file_name.assert_called_once_with(expected_image_filename)
+        # Asserting the expected call to image_loader.by_file_name
+        image_loader.by_file_name.assert_called_once_with(expected_image_filename)
 
 
 def test_draw_today():
@@ -183,8 +183,8 @@ def test_draw_pies():
             {'date': datetime(2023, 8, 13), 'values': [0]},
         ]
     ]
-    mock_image_cache = Mock()
-    mock_image_cache.by_file_name = Mock(return_value="test_image")
+    mock_image_loader = Mock()
+    mock_image_loader.by_file_name = Mock(return_value="test_image")
     absent_images = {"AbsentA": "file1.jpg"}
     empty_image = "empty.jpg"
 
@@ -196,7 +196,7 @@ def test_draw_pies():
             patch("calendar_image.highlight_today") as mock_highlight_today, \
             patch("calendar_image.draw_day_headers") as mock_draw_day_headers, \
             patch("calendar_image.draw_week_headers") as mock_draw_week_headers:
-        draw_pies(sample_grid, mock_image_cache, absent_grid_images=absent_images, empty_image_file_name=empty_image, weeks=2)
+        draw_pies(sample_grid, mock_image_loader, absent_grid_images=absent_images, empty_image_file_name=empty_image, weeks=2)
 
     assert mock_draw_pie.call_count == 8
 
@@ -223,20 +223,20 @@ def test_draw_weather():
     }
     rect = [0, 0, 1, 1]
 
-    mock_image_cache = Mock(spec=CachedImage)
-    mock_image_cache.by_file_name.return_value = "test_image_path"
+    mock_image_loader = Mock(spec=ImageLoader)
+    mock_image_loader.by_file_name.return_value = "test_image_path"
 
     # Mock plt functions
     import matplotlib.pyplot as plt
     with patch.object(plt, 'axes', return_value=Mock()), \
             patch.object(plt, 'axis'), \
             patch.object(plt, 'imshow') as mock_imshow:
-        draw_weather(weather_data, rect, mock_image_cache)
+        draw_weather(weather_data, rect, mock_image_loader)
 
     # Asserts
     # Check if the image cache was called with the expected path
     expected_path = os.path.join(weather_data['images_folder'], weather_data['icon'][0] + '.png')
-    mock_image_cache.by_file_name.assert_called_with(expected_path)
+    mock_image_loader.by_file_name.assert_called_with(expected_path)
 
     # Assert the image was drawn at the expected extent
     mock_imshow.assert_called_once_with("test_image_path", extent=[0.15, 0.85, 0.15, 0.85], interpolation='bilinear')
@@ -247,8 +247,8 @@ def test_draw_plot():
     y = [[1, 2, 3], [1, 2, 3]]
     labels = [{'summary': 'Label1', 'image': 'image1.png'}, {'summary': 'Label2', 'image': 'image2.png'}]
     rect = [0.1, 0.1, 0.8, 0.8]
-    mock_image_cache = Mock()
-    mock_image_cache.by_file_name.return_value = "some_image.png"
+    mock_image_loader = Mock()
+    mock_image_loader.by_file_name.return_value = "some_image.png"
 
     mock_axes = Mock()
     mock_axes.get_xlim.return_value = (0, 10)  # Sample xlim values
@@ -260,7 +260,7 @@ def test_draw_plot():
             patch.object(plt, "imshow", return_value=Mock()), \
             patch.object(plt, "legend", return_value=Mock()), \
             patch.object(plt, "text", return_value=Mock()):
-        draw_plot(x, y, labels, rect, mock_image_cache)
+        draw_plot(x, y, labels, rect, mock_image_loader)
 
     # Assert that xlim and ylim were accessed twice each
     mock_axes.get_xlim.assert_called()
@@ -270,7 +270,7 @@ def test_draw_plot():
     assert mock_axes.get_ylim.call_count == 2
 
     # Assert image cache was called with the provided image file names
-    mock_image_cache.by_file_name.assert_has_calls([call('image1.png'), call('image2.png')])
+    mock_image_loader.by_file_name.assert_has_calls([call('image1.png'), call('image2.png')])
 
     # Assert text was called for the labels
     mock_axes.text.assert_has_calls(
@@ -301,13 +301,13 @@ def test_draw_calendar():
             patch("calendar_image.draw_weather") as mock_draw_weather, \
             patch("calendar_image.draw_plot") as mock_draw_plot, \
             patch("calendar_image.draw_pies") as mock_draw_pies, \
-            patch("calendar_image.CachedImage") as mock_cached_image, \
+            patch("calendar_image.ImageLoader") as mock_image_loader, \
             patch("numpy.fromstring") as mock_np_fromstring, \
             patch("numpy.rot90") as mock_np_rot90, \
             patch("PIL.Image.fromarray") as mock_fromarray:
 
         # Assign return values to mocked objects if needed
-        mock_cached_image.return_value = Mock()
+        mock_image_loader.return_value = Mock()
         mock_np_fromstring.return_value = Mock()
         mock_np_rot90.return_value = Mock()
         mock_fromarray.return_value = Mock(save=Mock())
@@ -315,12 +315,12 @@ def test_draw_calendar():
         # Call the function
         result = draw_calendar(grid, x, y, weather, dashboard, labels, absent_labels, params)
 
-        mock_draw_weather.assert_called_once_with(weather, rect=[0, 0.6833333333333333, 0.24, 0.29166666666666663], image_cache=mock_cached_image.return_value)
-        mock_draw_plot.assert_called_once_with(x, y, labels, rect=[0.3, 0.6833333333333333, 0.6749999999999999, 0.29166666666666663], image_cache=mock_cached_image.return_value)
-        mock_draw_pies.assert_called_once_with(grid, image_cache=mock_cached_image.return_value, weeks=4, absent_grid_images={'Holiday': 'path/to/holiday.jpg'}, empty_image_file_name='path/to/image.jpg')
+        mock_draw_weather.assert_called_once_with(weather, rect=[0, 0.6833333333333333, 0.24, 0.29166666666666663], image_loader=mock_image_loader.return_value)
+        mock_draw_plot.assert_called_once_with(x, y, labels, rect=[0.3, 0.6833333333333333, 0.6749999999999999, 0.29166666666666663], image_loader=mock_image_loader.return_value)
+        mock_draw_pies.assert_called_once_with(grid, image_loader=mock_image_loader.return_value, weeks=4, absent_grid_images={'Holiday': 'path/to/holiday.jpg'}, empty_image_file_name='path/to/image.jpg')
 
         assert isinstance(result, bytes)
-        mock_cached_image.assert_called_once()
+        mock_image_loader.assert_called_once()
         mock_np_fromstring.assert_called_once()
         mock_np_rot90.assert_called_once()
         mock_fromarray.assert_called_once()

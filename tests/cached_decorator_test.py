@@ -6,6 +6,7 @@ from cached_decorator import cached
 
 def test_cashed_decorator():
 
+
     class second(object):
         def __init__(self, param):
             pass
@@ -16,6 +17,8 @@ def test_cashed_decorator():
 
             return second_func
 
+
+
     class F(object):
         def __init__(self, n):
             self.n = n
@@ -23,13 +26,12 @@ def test_cashed_decorator():
         # @second(1) Now I do not know how to make it work together with other decorators
         @cached(cache_time_seconds=0.01, print_if_cached='returned cached f1 at {time}')
         def f1(self, n):
-            if n in (0, 1):
-                return n
-            return (n - 1) + (n - 2)
+            return n if n in (0, 1) else (n - 1) + (n - 2)
 
         @cached(cache_time_seconds=0.05, print_if_cached='returned cached f2 at {time}')
         def f2(self, n):
             return n * self.n
+
 
     @cached(cache_time_seconds=0.07, print_if_cached='returned cached f3 at {time}')
     def f3(n):
@@ -43,12 +45,13 @@ def test_cashed_decorator():
         def f2(self, n):
             return n * self.n
 
+
+
     class F3(object):
         @cached(cache_time_seconds=0.05, print_if_cached='returned cached F3.f2 at {time}')
         def f1(self, n):
-            if n in (0, 1):
-                return n
-            return (n - 1) + (n - 2)
+            return n if n in (0, 1) else (n - 1) + (n - 2)
+
 
     buf = BytesIO()
     sys.stdout = TextIOWrapper(buf, sys.stdout.encoding)

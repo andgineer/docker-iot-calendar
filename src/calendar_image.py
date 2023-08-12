@@ -24,7 +24,7 @@ from dateutil.tz import tzoffset
 from io import BytesIO
 import numpy as np
 from cached_decorator import cached
-from cached_image import CachedImage
+from cached_image import ImageLoader
 import PIL.Image
 from collections import namedtuple
 
@@ -133,7 +133,7 @@ def draw_pie(week: int, day: int, values: List[Union[int, float]], daily_max: Un
 
 def draw_empty_pie(
         grid: List[List[Dict[str, Union[datetime, List[Dict[str, Any]]]]]],
-        image_cache: CachedImage,
+        image_loader: ImageLoader,
         week: int,
         day: int,
         absent_grid_images: Dict[str, str],
@@ -146,7 +146,7 @@ def draw_empty_pie(
 
     Args:
     - grid: The grid representing the schedule [week][day]["date"].
-    - image_cache: Cache containing the necessary images.
+    - image_loader: Image loader.
     - week: The week index for which to draw the pie.
     - day: The day index for which to draw the pie.
     - absent_grid_images: Dictionary mapping absent summary to image file names
@@ -156,9 +156,9 @@ def draw_empty_pie(
     """
     image_padding = pie_width / 5
     if 'absents' in grid[week][day]:
-        image = image_cache.by_file_name(absent_grid_images[grid[week][day]['absents'][0]['summary']])
+        image = image_loader.by_file_name(absent_grid_images[grid[week][day]['absents'][0]['summary']])
     else:
-        image = image_cache.by_file_name(empty_image_file_name)
+        image = image_loader.by_file_name(empty_image_file_name)
     if grid[week][day]['date'] < tomorrow:
         plt.imshow(
             image,
@@ -193,7 +193,7 @@ def highlight_today(grid: List[List[Dict[str, Any]]], today: datetime) -> None:
 
 
 def draw_pies(grid: List[List[Dict[str, Any]]],
-              image_cache: CachedImage,
+              image_loader: ImageLoader,
               weeks: int = 4,
               absent_grid_images: Optional[Dict[str, str]] = None,
               empty_image_file_name: Optional[str] = None) -> None:
@@ -202,7 +202,7 @@ def draw_pies(grid: List[List[Dict[str, Any]]],
 
     Parameters:
     - grid: The grid representing the schedule [week][day]["date"]/["values"].
-    - image_cache: A cache object used to fetch images.
+    - image_loader: Image loader.
     - weeks: Number of weeks to consider. Default is 4.
     - absent_grid_images: Dictionary mapping absent summary to image file names
         - "image_grid" from "absent" array in the settings. Optional.
@@ -224,7 +224,7 @@ def draw_pies(grid: List[List[Dict[str, Any]]],
         for day in range(len(grid[week])):
             values = grid[week][day]['values']
             if sum(values) <= 0:
-                draw_empty_pie(grid, image_cache, week, day, absent_grid_images, empty_image_file_name, tomorrow)
+                draw_empty_pie(grid, image_loader, week, day, absent_grid_images, empty_image_file_name, tomorrow)
             else:
                 draw_pie(week, day, values, daily_max)
 
@@ -236,7 +236,7 @@ def draw_pies(grid: List[List[Dict[str, Any]]],
 
 def draw_weather(weather: Optional[Dict[str, Union[str, List[float]]]],
                  rect: List[float],
-                 image_cache: CachedImage) -> None:
+                 image_loader: ImageLoader) -> None:
     """Render the weather data onto a specified rectangle using matplotlib.
 
     Parameters:
@@ -253,8 +253,8 @@ def draw_weather(weather: Optional[Dict[str, Union[str, List[float]]]],
         A list of four float numbers specifying the [left, bottom, width, height]
         of the rectangle where the weather data should be rendered.
 
-    - image_cache (CachedImage):
-        An instance of CachedImage to fetch images by file name.
+    - image_loader (ImageLoader):
+        Image loader.
     """
     ax = plt.axes(rect)
     plt.axis('off')
@@ -280,7 +280,7 @@ def draw_weather(weather: Optional[Dict[str, Union[str, List[float]]]],
         verticalalignment='bottom',
     )
     plt.imshow(
-        image_cache.by_file_name(os.path.join(weather['images_folder'], weather['icon'][0] + '.png')),
+        image_loader.by_file_name(os.path.join(weather['images_folder'], weather['icon'][0] + '.png')),
         extent=[0.15, 0.85, 0.15, 0.85],
         interpolation='bilinear' #'bicubic'
     )
@@ -290,7 +290,7 @@ def draw_plot(x: List[datetime],
               y: List[List[float]],
               labels: List[Dict[str, Union[str, float]]],
               rect: List[float],
-              image_cache: CachedImage,
+              image_loader: ImageLoader,
               legend: str = 'inside') -> None:
     """Render a stacked plot using matplotlib.
 
@@ -302,7 +302,7 @@ def draw_plot(x: List[datetime],
         - 'image': (optional) Path to the image representing the dataset.
     - rect (List[float]): A list of four float numbers specifying the [left, bottom, width, height] of the rectangle
       where the plot should be rendered.
-    - image_cache (CachedImage): An instance of CachedImage to fetch images by file name.
+    - image_loader (ImageLoader): Image loader.
     - legend (str, default 'inside'): Defines the style of the legend. It can be 'inside', 'rectangle' or any other value
       which will result in no legend.
     """
@@ -355,7 +355,7 @@ def draw_plot(x: List[datetime],
                 axes.set_ylim((0, 1))
                 axes.set_xlim((0, x_scale))
                 plt.imshow(
-                    image_cache.by_file_name(labels[region]['image']),
+                    image_loader.by_file_name(labels[region]['image']),
                     extent=(x_val - legend_image_sz / 2, x_val + legend_image_sz / 2,
                             y_val - legend_image_sz - legend_text_height, y_val - legend_text_height),
                     interpolation='bicubic'
@@ -405,16 +405,16 @@ def draw_calendar(
     plt.clf()
     plt.figure(figsize=(picture_width, picture_height), dpi=dpi, facecolor='white')
     absent_grid_images = {absent['summary'] : absent['image_grid'] for absent in absent_labels}
-    image_cache = CachedImage()
+    image_loader = ImageLoader()
     plt.rcParams.update(plt.rcParamsDefault)
     with plt.style.context(params.style, after_reset=True):
         if int(params.xkcd):
             plt.xkcd()
-        draw_weather(weather, rect=[0, plot_bottom, plot_left * 0.8, plot_height], image_cache=image_cache)
-        draw_plot(x, y, labels, rect=[plot_left, plot_bottom, plot_width, plot_height], image_cache=image_cache)
+        draw_weather(weather, rect=[0, plot_bottom, plot_left * 0.8, plot_height], image_loader=image_loader)
+        draw_plot(x, y, labels, rect=[plot_left, plot_bottom, plot_width, plot_height], image_loader=image_loader)
         draw_pies(
             grid,
-            image_cache=image_cache,
+            image_loader=image_loader,
             weeks=weeks,
             absent_grid_images=absent_grid_images,
             empty_image_file_name=dashboard['empty_image']
