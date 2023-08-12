@@ -18,13 +18,11 @@ except ImportError:
     pass # in Docker container (where no tkinter installed) we use default matplotlib backend
 from matplotlib.dates import date2num, DateFormatter
 import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
 import matplotlib.patches as patches
-from dateutil.tz import tzoffset
 from io import BytesIO
 import numpy as np
 from cached_decorator import cached
-from cached_image import ImageLoader
+from image_loader import ImageLoader
 import PIL.Image
 from collections import namedtuple
 

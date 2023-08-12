@@ -1,3 +1,8 @@
+"""Cache function or object method return value.
+
+lru_cache was not used due to its lack of support for cache duration.
+To be honest, this was implemented primarily for educational purposes.
+"""
 import datetime
 import functools
 import hashlib
@@ -5,6 +10,7 @@ import hashlib
 
 class cached(object):
     """Decorator that caches a function's or class method's return value for cache_time_seconds.
+
     If called later before cache_time_seconds passed with the same arguments, the cached value
     is returned, and not re-evaluated.
     Example of usage:
@@ -43,7 +49,8 @@ class cached(object):
     """
 
     def __init__(self, cache_time_seconds, print_if_cached=None, evaluate_on_day_change=False):
-        """
+        """Init.
+
         :param cache_time_seconds: cache time
         :param evaluate_on_day_change: re-evaluate if current day is not the same as cached value
         :param print_if_cached: if specified the string will be printed if cached value returned.
@@ -57,6 +64,7 @@ class cached(object):
         self.cache = {}
 
     def is_self_in_args(self, args, func):
+        """Check if the first argument is object with the same method as decorated function."""
         first_arg_is_object = len(args) and hasattr(args[0], '__dict__') \
             and '__class__' in dir(args[0])
         return first_arg_is_object and func.__name__ in dir(args[0])\
@@ -64,7 +72,9 @@ class cached(object):
                 and getattr(args[0], func.__name__).__func__ == self.func
 
     def __call__(self, func):
+        """Call decorator."""
         def cached_func(*args, **kw):
+            """Cached function."""
             if self.is_self_in_args(args, func):
                 # the first argument is 'self', this is objects's method so add the object attributes
                 # we do not use str representation because decorated object has id in it,
