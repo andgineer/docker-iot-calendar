@@ -4,8 +4,10 @@
 import matplotlib.image as mpimg
 import numpy as np
 
+from singleton import Singleton
 
-class ImageLoader:
+
+class ImageLoader(metaclass=Singleton):
     """Read matplotlib images from file.
 
     Cache images that have already been read.

@@ -19,6 +19,7 @@ class TestImageLoader:
         assert np.array_equal(result, fake_image)
 
     def test_cache_image(self, loader):
+        loader = ImageLoader.new_instance()
         fake_image = np.array([[[0, 0, 0]]], dtype=np.uint8)
 
         with patch('image_loader.mpimg.imread', return_value=fake_image) as mock_imread:
