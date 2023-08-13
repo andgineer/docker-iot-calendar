@@ -24,16 +24,16 @@ def test_cashed_decorator():
             self.n = n
 
         # @second(1) Now I do not know how to make it work together with other decorators
-        @cached(cache_time_seconds=0.01, print_if_cached='returned cached f1 at {time}')
+        @cached(seconds=0.01, trace_fmt='returned cached f1 at {time}')
         def f1(self, n):
             return n if n in (0, 1) else (n - 1) + (n - 2)
 
-        @cached(cache_time_seconds=0.05, print_if_cached='returned cached f2 at {time}')
+        @cached(seconds=0.05, trace_fmt='returned cached f2 at {time}')
         def f2(self, n):
             return n * self.n
 
 
-    @cached(cache_time_seconds=0.07, print_if_cached='returned cached f3 at {time}')
+    @cached(seconds=0.07, trace_fmt='returned cached f3 at {time}')
     def f3(n):
         return n
 
@@ -41,14 +41,14 @@ def test_cashed_decorator():
         def __init__(self, n):
             self.n = n
 
-        @cached(cache_time_seconds=0.05, print_if_cached='returned cached F2.f2 at {time}')
+        @cached(seconds=0.05, trace_fmt='returned cached F2.f2 at {time}')
         def f2(self, n):
             return n * self.n
 
 
 
     class F3(object):
-        @cached(cache_time_seconds=0.05, print_if_cached='returned cached F3.f2 at {time}')
+        @cached(seconds=0.05, trace_fmt='returned cached F3.f2 at {time}')
         def f1(self, n):
             return n if n in (0, 1) else (n - 1) + (n - 2)
 
@@ -108,7 +108,7 @@ call_count = 0
 def test_cache_decorator():
     global call_count
 
-    @cached(0.1)
+    @cached(seconds=0.1)
     def func(x, y):
         global call_count
         call_count += 1
@@ -127,7 +127,7 @@ def test_cache_method_decorator():
         def __init__(self, x):
             self.x = x
 
-        @cached(0.1)
+        @cached(seconds=0.1)
         def add(self, y):
             global call_count
             call_count += 1
@@ -147,7 +147,7 @@ def test_cache_per_instance_decorator():
         def __init__(self, x):
             self.x = x
 
-        @cached(0.1, cache_per_instance=True)
+        @cached(seconds=0.1, per_instance=True)
         def add(self, y):
             global call_count
             call_count += 1
@@ -168,7 +168,7 @@ def test_shared_cache_between_instances():
         def __init__(self, x):
             self.x = x
 
-        @cached(0.1, cache_per_instance=False)
+        @cached
         def add(self, y):
             global call_count
             call_count += 1
@@ -180,3 +180,40 @@ def test_shared_cache_between_instances():
     obj2 = MyClass(1)
     assert obj2.add(2) == 3  # Uses cache from obj1
     assert call_count == 1  # Because obj1 and obj2 should share the cache
+
+
+def test_func_cache():
+    global call_count
+    call_count = 0
+
+    @cached(seconds=0.1)
+    def add(y):
+        global call_count
+        call_count += 1
+        return x + y
+
+    x = 1
+    assert add(2) == 3
+    assert add(2) == 3
+    assert call_count == 1
+    x = 2
+    assert add(2) == 3  # Uses cache from x=1
+    assert call_count == 1
+
+def test_func_without_args_cache():
+    global call_count
+    call_count = 0
+
+    @cached
+    def add(y):
+        global call_count
+        call_count += 1
+        return x + y
+
+    x = 1
+    assert add(2) == 3
+    assert add(2) == 3
+    assert call_count == 1
+    x = 2
+    assert add(2) == 3  # Uses cache from x=1
+    assert call_count == 1

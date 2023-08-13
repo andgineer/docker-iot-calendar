@@ -360,9 +360,9 @@ def draw_plot(x: List[datetime],
                 )
 
 @cached(
-    cache_time_seconds=IMAGE_CACHED_SECONDS,
-    print_if_cached='Use stored imaged without rendering (from {time})',
-    evaluate_on_day_change=True
+    seconds=IMAGE_CACHED_SECONDS,
+    trace_fmt='Use stored imaged without rendering (from {time})',
+    daily_refresh=True
 )
 def draw_calendar(
     grid: List[List[Dict[str, Union[datetime, List[int]]]]],

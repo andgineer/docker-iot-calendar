@@ -8,14 +8,29 @@ import functools
 import hashlib
 
 
-class cached(object):
+class cached:
     """Decorator that caches a function's or class method's return value for cache_time_seconds.
+
+    Usage:
+
+	class C:
+		@cached
+		def f1()
+			pass
+		@cached(per_instance=True)
+		def f2()
+			pass
+
+	@cached
+	def f()
+		pass
+
+	@cached(seconds=1)
+	def f2()
+		pass
 
     If called later before cache_time_seconds passed with the same arguments, the cached value
     is returned, and not re-evaluated.
-    Example of usage:
-        @cached(0.1)
-        def function_to_cash_for_one_tenth_of_second():
 
     ! For object method it should be the only decorator applied because it saves ref to decorated function
     and if it changed by other decorator it would treat method call as function call, and
@@ -48,33 +63,56 @@ class cached(object):
     be other decorator instance.
     """
 
-    def __init__(self, cache_time_seconds, print_if_cached=None, evaluate_on_day_change=False, cache_per_instance=False):
+    def __init__(self, func=None, *, seconds=0.1, trace_fmt=None, daily_refresh=False, per_instance=False):
         """Init.
 
-        :param cache_time_seconds: cache time
-        :param evaluate_on_day_change: re-evaluate if current day is not the same as cached value
-        :param print_if_cached: if specified the string will be printed if cached value returned.
+        :param seconds: cache time
+        :param daily_refresh: re-evaluate if current day is not the same as cached value
+        :param trace_fmt: if specified the string will be printed if cached value returned.
                                 Inside string can be '{time}' parameter.
-        :param cache_per_instance: if False in case of object method the same cache would be used for all instances
+        :param per_instance: if False in case of object method the same cache would be used for all instances
         """
         super().__init__()
-        self.cache_time_seconds = cache_time_seconds
-        self.print_if_cached = print_if_cached
-        self.evaluate_on_day_change = evaluate_on_day_change
-        self.time = datetime.datetime.now() - datetime.timedelta(seconds=cache_time_seconds + 1)
-        self.cache_per_instance = cache_per_instance
+        self.cache_time_seconds = seconds
+        self.print_if_cached = trace_fmt
+        self.evaluate_on_day_change = daily_refresh
+        self.time = datetime.datetime.now() - datetime.timedelta(seconds=seconds + 1)
+        self.cache_per_instance = per_instance
         self.cache = {}
+        self.func = func
+
+        if func:
+            # @cached  without arguments
+            self.__call__ = self.decorate(func)
 
     def is_self_in_args(self, args, func):
         """Check if the first argument is object with the same method as decorated function."""
-        first_arg_is_object = len(args) and hasattr(args[0], '__dict__') \
-            and '__class__' in dir(args[0])
-        return first_arg_is_object and func.__name__ in dir(args[0])\
-                and '__func__' in dir(getattr(args[0], func.__name__)) \
-                and getattr(args[0], func.__name__).__func__ == self.func
+        if not args:
+            return False
+        first_arg = args[0]
 
-    def __call__(self, func):
-        """Call decorator."""
+        # Check if the first argument is an instance of a class
+        if not isinstance(first_arg, object) or not hasattr(first_arg, '__dict__'):
+            return False
+
+        # Check if the first argument's class has the function as one of its methods
+        if not hasattr(first_arg.__class__, func.__name__):
+            return False  # todo check if it is the same function, not just the same name
+
+        return True
+
+
+    def __call__(self, *args, **kwargs):
+        # If 'cached' is used without arguments, self.func is not None.
+        if self.func:
+            return self.decorate(self.func)(*args, **kwargs)
+        else:
+            # If 'cached' is used with arguments, self.func is None.
+            # In this case, args[0] will be the decorated function/method.
+            return self.decorate(args[0])
+
+    def decorate(self, func):
+        """The actual decorator function."""
         def cached_func(*args, **kw):
             """Cached function."""
             if self.is_self_in_args(args, func):
@@ -104,12 +142,12 @@ class cached(object):
                 }
             return self.cache[hash]['value']
         self.func = cached_func
+        cached_func._original_func = func  # Store the original function to be sure we decorate class
         return cached_func
 
     def __get__(self, obj, objtype=None):
+        """Descriptor protocol.
+
+        To automatically bind the decorator's call to the object instance.
+        """
         return functools.partial(self.__call__, obj)
-
-    def clear_cache(self):
-        """Clear cache."""
-        self.cache = {}
-

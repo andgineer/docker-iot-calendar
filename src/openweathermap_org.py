@@ -79,10 +79,10 @@ class Weather:
         return conditions_map.get(str(condition_code), icons_map.get(icon_code[:-1], ''))
 
     @cached(
-        cache_time_seconds=MIN_API_CALL_DELAY_SECONDS,
-        print_if_cached='Use stored weather data without calling openweathermap API (from {time})',
-        evaluate_on_day_change=True,
-        cache_per_instance=True,
+        seconds=MIN_API_CALL_DELAY_SECONDS,
+        trace_fmt='Use stored weather data without calling openweathermap API (from {time})',
+        daily_refresh=True,
+        per_instance=True,
     )
     def get_weather(self, latitude: float, longitude: float, days: int = 1, units: str = 'm') -> Optional[Dict[str, Union[List[float], List[str], List[datetime.datetime]]]]:
         """Fetch weather data for the given latitude and longitude.
@@ -99,12 +99,11 @@ class Weather:
             print("Exiting because no API key")
             return None
 
-        if units == 'e':
-            units_code = 'imperial'
-        elif units == 'm':
-            units_code = 'metric'
-        else:
-            units_code = ''
+        UNITS = {"e": "imperial", "m": "metric"}
+        units_code = UNITS.get(units)
+        if units_code is None:
+            print(f"Exiting because unknown units '{units}', supported {UNITS}")
+            return None
 
         weather_response = requests.get(
             'http://api.openweathermap.org/data/2.5/forecast',

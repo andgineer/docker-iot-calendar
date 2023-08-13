@@ -131,8 +131,8 @@ You can get new one from https://console.developers.google.com/start/api?id=cale
         )
 
 @cached(
-    cache_time_seconds=MIN_GOOGLE_API_CALL_DELAY_SECONDS,
-    print_if_cached='Use stored google calendar data (from {time})'
+    seconds=MIN_GOOGLE_API_CALL_DELAY_SECONDS,
+    trace_fmt='Use stored google calendar data (from {time})'
 )
 def collect_events(calendar_events, absent_events, settings):
     calendars = {}
