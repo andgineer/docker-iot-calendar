@@ -102,3 +102,81 @@ def test_cashed_decorator():
     print(out)
 
     assert len([line for line in out.split('\n') if line]) == hits
+
+call_count = 0
+
+def test_cache_decorator():
+    global call_count
+
+    @cached(0.1)
+    def func(x, y):
+        global call_count
+        call_count += 1
+        return x + y
+
+    assert func(1, 2) == 3
+    assert call_count == 1  # Ensure the function was called
+    assert func(1, 2) == 3
+    assert call_count == 1  # Ensure the function was cached and not called again
+
+def test_cache_method_decorator():
+    global call_count
+    call_count = 0
+
+    class MyClass:
+        def __init__(self, x):
+            self.x = x
+
+        @cached(0.1)
+        def add(self, y):
+            global call_count
+            call_count += 1
+            return self.x + y
+
+    obj = MyClass(1)
+    assert obj.add(2) == 3
+    assert call_count == 1
+    assert obj.add(2) == 3
+    assert call_count == 1
+
+def test_cache_per_instance_decorator():
+    global call_count
+    call_count = 0
+
+    class MyClass:
+        def __init__(self, x):
+            self.x = x
+
+        @cached(0.1, cache_per_instance=True)
+        def add(self, y):
+            global call_count
+            call_count += 1
+            return self.x + y
+
+    obj1 = MyClass(1)
+    assert obj1.add(2) == 3
+    assert call_count == 1
+    obj2 = MyClass(1)
+    assert obj2.add(2) == 3  # Separate cache for obj2
+    assert call_count == 2  # Because we expect obj2 to have its own cache
+
+def test_shared_cache_between_instances():
+    global call_count
+    call_count = 0
+
+    class MyClass:
+        def __init__(self, x):
+            self.x = x
+
+        @cached(0.1, cache_per_instance=False)
+        def add(self, y):
+            global call_count
+            call_count += 1
+            return self.x + y
+
+    obj1 = MyClass(1)
+    assert obj1.add(2) == 3
+    assert call_count == 1
+    obj2 = MyClass(1)
+    assert obj2.add(2) == 3  # Uses cache from obj1
+    assert call_count == 1  # Because obj1 and obj2 should share the cache

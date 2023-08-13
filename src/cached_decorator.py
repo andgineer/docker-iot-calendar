@@ -48,19 +48,21 @@ class cached(object):
     be other decorator instance.
     """
 
-    def __init__(self, cache_time_seconds, print_if_cached=None, evaluate_on_day_change=False):
+    def __init__(self, cache_time_seconds, print_if_cached=None, evaluate_on_day_change=False, cache_per_instance=False):
         """Init.
 
         :param cache_time_seconds: cache time
         :param evaluate_on_day_change: re-evaluate if current day is not the same as cached value
         :param print_if_cached: if specified the string will be printed if cached value returned.
                                 Inside string can be '{time}' parameter.
+        :param cache_per_instance: if False in case of object method the same cache would be used for all instances
         """
         super().__init__()
         self.cache_time_seconds = cache_time_seconds
         self.print_if_cached = print_if_cached
         self.evaluate_on_day_change = evaluate_on_day_change
         self.time = datetime.datetime.now() - datetime.timedelta(seconds=cache_time_seconds + 1)
+        self.cache_per_instance = cache_per_instance
         self.cache = {}
 
     def is_self_in_args(self, args, func):
@@ -77,9 +79,11 @@ class cached(object):
             """Cached function."""
             if self.is_self_in_args(args, func):
                 # the first argument is 'self', this is objects's method so add the object attributes
-                # we do not use str representation because decorated object has id in it,
-                # but I need the same hash for different instances with the same attributes.
-                hash_list = [str(args[0].__dict__), str(args[1:]), str(kw)]
+                if self.cache_per_instance:
+                    # Use object's id in the hash for separate instance caching
+                    hash_list = [str(id(args[0])), str(args[0].__dict__), str(args[1:]), str(kw)]
+                else:
+                    hash_list = [str(args[0].__dict__), str(args[1:]), str(kw)]
             else:
                 hash_list = ['', func.__name__, str(args), str(kw)]
             hash = hashlib.sha256('\n'.join(hash_list).encode('utf-8')).hexdigest()
@@ -104,4 +108,8 @@ class cached(object):
 
     def __get__(self, obj, objtype=None):
         return functools.partial(self.__call__, obj)
+
+    def clear_cache(self):
+        """Clear cache."""
+        self.cache = {}
 

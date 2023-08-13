@@ -5,6 +5,7 @@
     Weather(settings).get_weather(latitude, longitude)
 
 """
+from typing import Union, Dict, Any, Optional, List
 
 import requests
 import json
@@ -16,21 +17,26 @@ WEATHER_KEY_PARAM = 'openweathermap_key_file_name'
 MIN_API_CALL_DELAY_SECONDS = 60 * 10
 
 
-class Weather(object):
-    def __init__(self, settings):
-        """
-        :param settings:
-        settings['openweathermap_key_file_name'] - name and path of json file
-        with "key", like
+class Weather:
+    def __init__(self, settings: Dict[str, Any]) -> None:
+        """Init.
 
-         {
-         "key": "your key from https://home.openweathermap.org/users/sign_up"
-         }
+        :param settings:
+            settings['openweathermap_key_file_name'] - name and path of json file
+            with "key", like
+
+             {
+             "key": "your key from https://home.openweathermap.org/users/sign_up"
+             }
         """
         self.settings = settings
         self.key = self.load_key()
 
-    def load_key(self):
+    def load_key(self) -> Optional[str]:
+        """Load the API key from the file specified in the settings.
+
+        :return: The API key as a string, or None if the key couldn't be loaded.
+        """
         if WEATHER_KEY_PARAM in self.settings \
                 and os.path.isfile(self.settings[WEATHER_KEY_PARAM]):
             with open(self.settings[WEATHER_KEY_PARAM], 'r') as key_file:
@@ -38,9 +44,9 @@ class Weather(object):
         else:
             return None
 
-    def openweathermap_icons(self, icon_code, condition_code):
-        """
-        Converts OpenWeatherMap icon code and condition code to icons I have.
+    def openweathermap_icons(self, icon_code: str, condition_code: Union[str, int]) -> str:
+        """Convert OpenWeatherMap icon code and condition code to icon file names.
+
         Mostly we use icon code but for specific conditions use specific icon.
         Full codes list: http://openweathermap.org/weather-conditions
         """
@@ -75,10 +81,12 @@ class Weather(object):
     @cached(
         cache_time_seconds=MIN_API_CALL_DELAY_SECONDS,
         print_if_cached='Use stored weather data without calling openweathermap API (from {time})',
-        evaluate_on_day_change=True
+        evaluate_on_day_change=True,
+        cache_per_instance=True,
     )
-    def get_weather(self, latitude, longitude, days=1, units='m'):
-        """
+    def get_weather(self, latitude: float, longitude: float, days: int = 1, units: str = 'm') -> Optional[Dict[str, Union[List[float], List[str], List[datetime.datetime]]]]:
+        """Fetch weather data for the given latitude and longitude.
+
         :param latitude:
         :param longitude:
         :param days:
@@ -88,6 +96,7 @@ class Weather(object):
          or None if no key or load error
         """
         if not self.key:
+            print("Exiting because no API key")
             return None
 
         if units == 'e':
