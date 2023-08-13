@@ -66,7 +66,8 @@ def test_get_weather_success():
         }
 
 
-def test_get_weather_invalid_key():
+def test_get_weather_wrong_key():
+    """Application cannot read key from file."""
     mock_response = Mock()
     mock_response.json.return_value = {
         'cod': '401',
@@ -76,6 +77,36 @@ def test_get_weather_invalid_key():
     with patch("requests.get", return_value=mock_response):
         weather = Weather(settings={WEATHER_KEY_PARAM: "fake_path"})
         weather_data = weather.get_weather(51.5, 0.12)
+        assert weather_data is None
+
+
+def test_get_weather_error_invalid_key():
+    """OpenWeatherMap API returns 401 Unauthorized."""
+    mock_response = Mock()
+    mock_response.json.return_value = {
+        'cod': '401',
+        'message': 'Invalid API key'
+    }
+    mock_response.text = "Invalid key"
+
+    with patch("requests.get", return_value=mock_response), patch.object(Weather, "load_key", return_value="dummy_key"):
+        weather = Weather(settings={WEATHER_KEY_PARAM: "fake_path"})
+        weather_data = weather.get_weather(51.5, 0.12, units='m')
+        assert weather_data is None
+
+
+def test_get_weather_error_unexpected():
+    """OpenWeatherMap API returns 400."""
+    mock_response = Mock()
+    mock_response.json.return_value = {
+        'cod': '400',
+        'message': 'Unexpected error'
+    }
+    mock_response.text = "Unexpected error"
+
+    with patch("requests.get", return_value=mock_response), patch.object(Weather, "load_key", return_value="dummy_key"):
+        weather = Weather(settings={WEATHER_KEY_PARAM: "fake_path"})
+        weather_data = weather.get_weather(51.5, 0.12, units='m')
         assert weather_data is None
 
 def test_get_weather_metric_units():
@@ -92,6 +123,22 @@ def test_get_weather_metric_units():
         assert weather_data['temp_min'] == [20.0]
         assert weather_data['temp_max'] == [25.0]
 
+
+def test_get_weather_imperial_units():
+    mock_response = Mock()
+    mock_response.json.return_value = {
+        'cod': '200',
+        'list': [{'dt_txt': '2023-08-13 12:00:00', 'main': {'temp_min': 20.0, 'temp_max': 25.0}, 'weather': [{'icon': '01d', 'id': 800}]}]
+    }
+    mock_response.text = '{"cod": "200", "list": ...}'
+
+    with patch("requests.get", return_value=mock_response), patch.object(Weather, "load_key", return_value="dummy_key"):
+        weather = Weather(settings={WEATHER_KEY_PARAM: "fake_path"})
+        weather_data = weather.get_weather(51.5, 0.12, units='i')
+        assert weather_data['temp_min'] == [20.0]
+        assert weather_data['temp_max'] == [25.0]
+
+
 def test_get_weather_shower_rain():
     mock_response = Mock()
     mock_response.json.return_value = {
@@ -104,3 +151,41 @@ def test_get_weather_shower_rain():
         weather = Weather(settings={WEATHER_KEY_PARAM: "fake_path"})
         weather_data = weather.get_weather(51.5, 0.12)
         assert weather_data['icon'] == ['shra']
+
+
+def test_get_weather_2_days():
+    mock_response = Mock()
+    mock_response.json.return_value = {
+        'cod': '200',
+        'list': [
+            {
+                'dt_txt': '2023-08-13 12:00:00',
+                'main': {'temp_min': 20.0, 'temp_max': 25.0},
+                'weather': [{'icon': '01d', 'id': 800}]
+            },
+            {
+                'dt_txt': '2023-08-14 12:00:00',
+                'main': {'temp_min': 21.0, 'temp_max': 27.0},
+                'weather': [{'icon': '01d', 'id': 800}]
+            },
+            {
+                'dt_txt': '2023-08-14 12:00:00',
+                'main': {'temp_min': 22.0, 'temp_max': 26.0},
+                'weather': [{'icon': '01d', 'id': 800}]
+            }
+        ]
+    }
+    mock_response.text = '{"cod": "200", "list": ...}'
+
+    with patch("requests.get", return_value=mock_response), patch.object(Weather, "load_key", return_value="dummy_key"):
+        weather = Weather(settings={WEATHER_KEY_PARAM: "fake_path"})
+        weather_data = weather.get_weather(51.5, 0.12, days=3)
+        assert weather_data == {
+            'temp_min': [20.0, 21.0],
+            'temp_max': [25.0, 27.0],
+            'icon': ['skc', 'skc'],
+            'day': [
+                datetime.datetime(2023, 8, 13, 0, 0),
+                datetime.datetime(2023, 8, 14, 0, 0),
+            ]
+        }
