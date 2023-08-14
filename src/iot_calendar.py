@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """ Web-server for calendar
 """
+from typing import Dict, Any, List, Tuple
 
 import tornado.ioloop
 import tornado.web
@@ -148,20 +149,22 @@ class DashboardListHandler(HandlerWithParams):
 
 
 class Application(tornado.web.Application):
-    def __init__(self):
-        settings = dict(
-            template_path=os.path.join(os.path.dirname(__file__), "templates"),
-            debug=True,
-        )
-        handlers = [
-            (r'/', DashboardListHandler),
-            (r'/index.html', DashboardListHandler),
-            (r'/dashboard\.(\w*)', DashboardImageHandler),
-            (r'/d\.(\w*)', DashboardImageHandler),
-            (r'/img/(.*)', tornado.web.StaticFileHandler, {'path': os.path.join(os.path.dirname(__file__), 'static/img')}),
-            (r'/styles/(.*)', tornado.web.StaticFileHandler, {'path': os.path.join(os.path.dirname(__file__), 'static/styles/')}),
-            (r'/scripts/(.*)', tornado.web.StaticFileHandler, {'path': os.path.join(os.path.dirname(__file__), 'static/scripts/')})
-        ]
+    def __init__(self, settings: Dict[str, Any] = None, handlers: List[Tuple[str, Any]] = None):
+        if settings is None:
+            settings = dict(
+                template_path=os.path.join(os.path.dirname(__file__), "templates"),
+                debug=True,
+            )
+        if handlers is None:
+            handlers = [
+                (r'/', DashboardListHandler),
+                (r'/index.html', DashboardListHandler),
+                (r'/dashboard\.(\w*)', DashboardImageHandler),
+                (r'/d\.(\w*)', DashboardImageHandler),
+                (r'/img/(.*)', tornado.web.StaticFileHandler, {'path': os.path.join(os.path.dirname(__file__), 'static/img')}),
+                (r'/styles/(.*)', tornado.web.StaticFileHandler, {'path': os.path.join(os.path.dirname(__file__), 'static/styles/')}),
+                (r'/scripts/(.*)', tornado.web.StaticFileHandler, {'path': os.path.join(os.path.dirname(__file__), 'static/scripts/')})
+            ]
         tornado.web.Application.__init__(self, handlers, **settings)
 
 
