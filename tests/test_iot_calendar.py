@@ -27,6 +27,15 @@ def test_load_settings_valid_file(mocker):
 
     assert settings == mock_file_content
 
+
+def test_load_settings_with_missing_file(mocker, capsys):
+    mocker.patch('os.path.isfile', return_value=False)
+    with pytest.raises(SystemExit):
+        load_settings()
+    captured = capsys.readouterr()
+    assert "No ../amazon-dash-private/settings.json found." in captured.out
+
+
 class MockConnection:
     def __init__(self, *args, **kwargs):
         pass
@@ -55,25 +64,10 @@ def mock_request_handler():
     return handler
 
 
-
 def test_disable_cache(mock_request_handler):
     mock_request_handler.disable_cache()
     assert mock_request_handler._headers.get('Cache-Control') == 'no-cache, must-revalidate'
     assert mock_request_handler._headers.get('Expires') == '0'
-
-def test_load_settings_with_file_exists(mocker):
-    mocker.patch('os.path.isfile', return_value=True)
-    mocker.patch('json.loads', return_value={"some_key": "some_value"})
-    settings = load_settings()
-    assert settings == {"some_key": "some_value"}
-
-def test_load_settings_with_missing_file(mocker, capsys):
-    mocker.patch('os.path.isfile', return_value=False)
-    with pytest.raises(SystemExit):
-        load_settings()
-    captured = capsys.readouterr()
-    assert "No ../amazon-dash-private/settings.json found." in captured.out
-
 
 @patch('iot_calendar.settings', {'dashboards': {}})
 def test_dashboard_list_handler_renders_properly(mock_request_handler):
@@ -82,12 +76,4 @@ def test_dashboard_list_handler_renders_properly(mock_request_handler):
 
     # Then: assert that render was called correctly (or any other assertions you want to make)
     mock_request_handler.render.assert_called_once()
-
-
-def test_load_settings_missing_file(mocker, capsys):
-    mocker.patch('os.path.isfile', return_value=False)
-    with pytest.raises(SystemExit):
-        load_settings()
-    captured = capsys.readouterr()
-    assert "No ../amazon-dash-private/settings.json found." in captured.out
 
