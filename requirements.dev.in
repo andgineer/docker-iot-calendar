@@ -1,5 +1,6 @@
 pytest
 coverage
+pytest-mock
 
 pip-tools
 

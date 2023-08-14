@@ -145,12 +145,12 @@ def test_events_to_weeks_grid_multiple_weeks():
     events = [
         [{'start': start_date, 'end': end_date}],
     ]
-    absents = [[{'start': start_date - timedelta(days=14), 'end': start_date - timedelta(days=1), 'summary': 'Vacation'}]]
+    absents = [[{'start': start_date - timedelta(days=21), 'end': start_date - timedelta(days=1), 'summary': 'Vacation'}]]
     result = events_to_weeks_grid(events, absents, weeks=3)
     assert len(result) == 3  # Confirming 3 weeks
     assert result[-1][start_date.weekday()]['values'] == [1440]  # Confirming the event's duration for the first day
     assert result[0][0]['values'] == [0]  # no events for the first day of the first week
-    assert 'absents' in result[2][0]  # Confirming the presence of an absence in the third week
+    assert 'absents' in result[0][0]  # Confirming the presence of an absence in the third week
 
 
 with open('amazon-dash-private/settings.json', 'r') as f:
