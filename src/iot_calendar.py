@@ -37,8 +37,9 @@ should connect volume with setting files, like
     -v $PWD/amazon-dash-private:/amazon-dash-private:ro'''
 
 def load_settings(secrets_folder=None):
-    """ Load settings """
+    """Load settings."""
     def set_folder(params, substr, folder):
+        """Add folder to params if substr is in the param name."""
         for param in params:
             if param.find(substr) > -1:
                 _, name = os.path.split(params[param])
@@ -121,7 +122,7 @@ class DashboardImageHandler(HandlerWithParams):
             params
         )
         self.write(image)
-        self.set_header("Content-type",  "image/{}".format(format))
+        self.set_header("Content-type", f"image/{image_format}")
         self.flush()
 
 
