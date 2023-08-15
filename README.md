@@ -9,12 +9,12 @@
 | src/calendar\_image.py     |      163 |        9 |     94% |17-18, 272, 312-315, 322, 328, 410 |
 | src/google\_calendar.py    |       89 |       63 |     29% |22-26, 29-48, 51-54, 63, 66-72, 81-120, 123, 126, 129, 138-152 |
 | src/image\_loader.py       |       17 |        0 |    100% |           |
-| src/iot\_calendar.py       |      106 |       40 |     62% |42-45, 54-57, 59-70, 100-125, 133, 154 |
+| src/iot\_calendar.py       |      106 |       22 |     79% |43-46, 55-58, 60-71, 134, 155 |
 | src/openweathermap\_org.py |       63 |        0 |    100% |           |
 | src/singleton.py           |        9 |        0 |    100% |           |
 | src/svg\_to\_png.py        |       16 |       11 |     31% |10-12, 37-44 |
 | src/weather\_gov.py        |       30 |       25 |     17% |     28-65 |
-|                  **TOTAL** |  **662** |  **151** | **77%** |           |
+|                  **TOTAL** |  **662** |  **133** | **80%** |           |
 
 
 ## Setup coverage badge
