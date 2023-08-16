@@ -26,6 +26,9 @@ class Calendar(object):
         self.calendarId = calendar_id
 
     def get_credentials_http(self):
+        if GOOGLE_CREDENTIALS_PARAM not in self.settings:
+            raise ValueError(f"'{GOOGLE_CREDENTIALS_PARAM}' not found in settings.")
+
         if not os.path.isfile(self.settings[GOOGLE_CREDENTIALS_PARAM]):
             print('''Google API credentials file {} not found.
 Get it on https://console.developers.google.com/start/api?id=calendar'''.format(
