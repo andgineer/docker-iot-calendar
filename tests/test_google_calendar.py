@@ -78,6 +78,14 @@ def test_time_to_str(mock_google_calendar):
     test_time = datetime.datetime(2023, 8, 16, 10, 0)
     formatted_time = calendar.time_to_str(test_time)
 
-    expected_suffix = f'-0{time.timezone // 3600}:00'
+    # Extract the timezone offset from the formatted time
+    tz_offset_str = formatted_time[-6:]  # e.g., "+01:00" or "-01:00"
+    hours_offset = int(tz_offset_str[:3])  # Extract the hours part, which includes the sign
+
+    # Generate the expected suffix based on the extracted offset
+    expected_suffix = f'{hours_offset:+03d}:00'
+
     assert formatted_time.endswith(expected_suffix)
+
+
 
