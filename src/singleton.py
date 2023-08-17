@@ -11,7 +11,9 @@ class Singleton(type):
 
     To create new instance use YourClass.new_instance()
     """
+
     _instances = {}
+
     def __call__(cls, *args, **kwargs):
         """Call method."""
         if cls not in cls._instances:

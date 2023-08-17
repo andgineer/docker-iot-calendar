@@ -8,27 +8,30 @@ Usage
 
 import os
 from datetime import datetime, timedelta
-from typing import List, Dict, Any, Union, Optional
+from typing import Any, Dict, List, Optional, Union
 
 import matplotlib
-try: # !!! that should be before importing pyplot
-    import tkinter # check if tkinter is installed
-    matplotlib.use('TkAgg') # in MacOS we should have tkinter installed and use it as backend
+
+try:  # !!! that should be before importing pyplot
+    import tkinter  # check if tkinter is installed
+
+    matplotlib.use("TkAgg")  # in MacOS we should have tkinter installed and use it as backend
 except ImportError:
-    pass # in Docker container (where no tkinter installed) we use default matplotlib backend
-from matplotlib.dates import date2num, DateFormatter
-import matplotlib.pyplot as plt
-import matplotlib.patches as patches
+    pass  # in Docker container (where no tkinter installed) we use default matplotlib backend
+from collections import namedtuple
 from io import BytesIO
+
+import matplotlib.patches as patches
+import matplotlib.pyplot as plt
 import numpy as np
+import PIL.Image
+from matplotlib.dates import DateFormatter, date2num
+
 from cached_decorator import cached
 from image_loader import ImageLoader
-import PIL.Image
-from collections import namedtuple
 
-
-IMAGE_CACHED_SECONDS = 60 * 60 * 24 *30
-ImageParams = namedtuple('ImageParams', 'dashboard format style xkcd rotate')
+IMAGE_CACHED_SECONDS = 60 * 60 * 24 * 30
+ImageParams = namedtuple("ImageParams", "dashboard format style xkcd rotate")
 
 weeks = 4
 
@@ -37,7 +40,7 @@ picture_width = 800 // dpi
 picture_height = 600 // dpi
 
 left_gap = 0.01
-pies_height = 3.5 / 6 # vertical proportion between weeks grid and plot above it
+pies_height = 3.5 / 6  # vertical proportion between weeks grid and plot above it
 pies_top = 1 - pies_height
 
 WEEK_DAYS = 7
@@ -47,9 +50,9 @@ pie_col_header_height = (pies_height / weeks) / 5
 pie_height = (pies_height - pie_col_header_height) / weeks
 pie_scale = 0.9
 
-legend_image_sz = 0.2 # size of legend icons in 1 x 1
+legend_image_sz = 0.2  # size of legend icons in 1 x 1
 
-width_aspect = 1.282 # horizontal scale to fill full width of weeks grid
+width_aspect = 1.282  # horizontal scale to fill full width of weeks grid
 
 watch_left = 0
 watch_width = 0.3
@@ -57,17 +60,16 @@ watch_height = 1 - pies_height
 watch_bottom = 1 - watch_height
 
 plot_left = watch_width
-plot_width = 1 - watch_width - 0.025 # -0.02 to remove padding - tight layout do not remove it
+plot_width = 1 - watch_width - 0.025  # -0.02 to remove padding - tight layout do not remove it
 plot_height = 1 - pies_height - 0.125
 plot_bottom = 1 - plot_height - 0.025
 
-last_image = {
-}
+last_image = {}
 
 
 def get_daily_max(grid: List[List[Dict[str, List[int]]]]) -> int:
     """Maximum sum of 'values' for a day."""
-    return max((sum(day['values']) for week in grid for day in week), default=0)
+    return max((sum(day["values"]) for week in grid for day in week), default=0)
 
 
 def draw_day_headers(grid: List[List[Dict[str, Any]]]) -> None:
@@ -80,10 +82,10 @@ def draw_day_headers(grid: List[List[Dict[str, Any]]]) -> None:
         plt.text(
             (pie_row_header_width + (day + 0.5) * pie_width) * width_aspect,
             weeks * pie_height + 0.5 * pie_col_header_height,
-            grid[0][day]['date'].strftime('%A'),
-            horizontalalignment='center',
-            verticalalignment='center',
-            fontsize=12
+            grid[0][day]["date"].strftime("%A"),
+            horizontalalignment="center",
+            verticalalignment="center",
+            fontsize=12,
         )
 
 
@@ -97,14 +99,16 @@ def draw_week_headers(grid: List[List[Dict[str, any]]]) -> None:
         plt.text(
             pie_row_header_width * 0.5,
             (week + 0.5) * pie_height,
-            grid[week][0]['date'].strftime('%d\n%b'),
-            horizontalalignment='center',
-            verticalalignment='center',
-            fontsize=14
+            grid[week][0]["date"].strftime("%d\n%b"),
+            horizontalalignment="center",
+            verticalalignment="center",
+            fontsize=14,
         )
 
 
-def draw_pie(week: int, day: int, values: List[Union[int, float]], daily_max: Union[int, float]) -> None:
+def draw_pie(
+    week: int, day: int, values: List[Union[int, float]], daily_max: Union[int, float]
+) -> None:
     """Draws a pie chart for a specific day of a week based on the given values.
 
     Parameters:
@@ -114,7 +118,7 @@ def draw_pie(week: int, day: int, values: List[Union[int, float]], daily_max: Un
     - daily_max (Union[int, float]): The maximum value for the day, used to determine the pie's radius.
     """
     radius = sum(values) / daily_max * pie_height * pie_scale / 2
-    colours = [f'C{i}' for i in range(len(values))]
+    colours = [f"C{i}" for i in range(len(values))]
     explode = [0.007 for _ in range(len(values))]
     plt.pie(
         values,
@@ -124,19 +128,19 @@ def draw_pie(week: int, day: int, values: List[Union[int, float]], daily_max: Un
         colors=colours,
         center=(
             (pie_row_header_width + (day + 0.5) * pie_width) * width_aspect,
-            (week + 0.5) * pie_height
-        )
+            (week + 0.5) * pie_height,
+        ),
     )
 
 
 def draw_empty_pie(
-        grid: List[List[Dict[str, Union[datetime, List[Dict[str, Any]]]]]],
-        image_loader: ImageLoader,
-        week: int,
-        day: int,
-        absent_grid_images: Dict[str, str],
-        empty_image_file_name: str,
-        tomorrow: datetime
+    grid: List[List[Dict[str, Union[datetime, List[Dict[str, Any]]]]]],
+    image_loader: ImageLoader,
+    week: int,
+    day: int,
+    absent_grid_images: Dict[str, str],
+    empty_image_file_name: str,
+    tomorrow: datetime,
 ) -> None:
     """Draw an empty pie (or use an absent image) for a given week and day on the grid.
 
@@ -153,18 +157,22 @@ def draw_empty_pie(
     - tomorrow: The datetime representing the start of the next day.
     """
     image_padding = pie_width / 5
-    if 'absents' in grid[week][day]:
-        image = image_loader.by_file_name(absent_grid_images[grid[week][day]['absents'][0]['summary']])
+    if "absents" in grid[week][day]:
+        image = image_loader.by_file_name(
+            absent_grid_images[grid[week][day]["absents"][0]["summary"]]
+        )
     else:
         image = image_loader.by_file_name(empty_image_file_name)
-    if grid[week][day]['date'] < tomorrow:
+    if grid[week][day]["date"] < tomorrow:
         plt.imshow(
             image,
-            extent=((pie_row_header_width + day * pie_width + image_padding) * width_aspect,
-                    (pie_row_header_width + (day + 1) * pie_width - image_padding) * width_aspect,
-                    week * pie_height + image_padding,
-                    (week + 1) * pie_height - image_padding),
-            interpolation='bicubic'
+            extent=(
+                (pie_row_header_width + day * pie_width + image_padding) * width_aspect,
+                (pie_row_header_width + (day + 1) * pie_width - image_padding) * width_aspect,
+                week * pie_height + image_padding,
+                (week + 1) * pie_height - image_padding,
+            ),
+            interpolation="bicubic",
         )
 
 
@@ -175,7 +183,7 @@ def highlight_today(grid: List[List[Dict[str, Any]]], today: datetime) -> None:
     - grid: The grid representing the schedule [week][day]["date"].
     - today: A datetime object representing the current day.
     """
-    grid_shift = (today - grid[0][0]['date']).days
+    grid_shift = (today - grid[0][0]["date"]).days
     day = grid_shift % WEEK_DAYS
     week = grid_shift // WEEK_DAYS
     plt.gca().add_patch(
@@ -183,18 +191,20 @@ def highlight_today(grid: List[List[Dict[str, Any]]], today: datetime) -> None:
             ((pie_row_header_width + day * pie_width) * width_aspect, week * pie_height),
             pie_width * width_aspect * 0.98,
             pie_height,
-            edgecolor='black',
+            edgecolor="black",
             fill=False,
-            linewidth=2
+            linewidth=2,
         )
     )
 
 
-def draw_pies(grid: List[List[Dict[str, Any]]],
-              image_loader: ImageLoader,
-              weeks: int = 4,
-              absent_grid_images: Optional[Dict[str, str]] = None,
-              empty_image_file_name: Optional[str] = None) -> None:
+def draw_pies(
+    grid: List[List[Dict[str, Any]]],
+    image_loader: ImageLoader,
+    weeks: int = 4,
+    absent_grid_images: Optional[Dict[str, str]] = None,
+    empty_image_file_name: Optional[str] = None,
+) -> None:
     """
     Draws pie charts or images for each day in the provided grid based on the data provided.
 
@@ -207,22 +217,37 @@ def draw_pies(grid: List[List[Dict[str, Any]]],
     - empty_image_file_name: File name of the image to use when there's no data. Optional.
     """
     daily_max = get_daily_max(grid)
-    today = datetime.now(grid[0][0]['date'].tzinfo).replace(hour=0, minute=0, second=0, microsecond=0)
+    today = datetime.now(grid[0][0]["date"].tzinfo).replace(
+        hour=0, minute=0, second=0, microsecond=0
+    )
     tomorrow = today + timedelta(days=1)
     ax = plt.gcf().add_axes(
-        [left_gap, 0, 1, pies_height],  # left, bottom, width, height, in fractions of figure width and height
+        [
+            left_gap,
+            0,
+            1,
+            pies_height,
+        ],  # left, bottom, width, height, in fractions of figure width and height
         frameon=False,
         autoscale_on=False,
     )
-    plt.axis('off')
+    plt.axis("off")
     highlight_today(grid, today)
     draw_day_headers(grid)
     draw_week_headers(grid)
     for week in range(weeks):
         for day in range(len(grid[week])):
-            values = grid[week][day]['values']
+            values = grid[week][day]["values"]
             if sum(values) <= 0:
-                draw_empty_pie(grid, image_loader, week, day, absent_grid_images, empty_image_file_name, tomorrow)
+                draw_empty_pie(
+                    grid,
+                    image_loader,
+                    week,
+                    day,
+                    absent_grid_images,
+                    empty_image_file_name,
+                    tomorrow,
+                )
             else:
                 draw_pie(week, day, values, daily_max)
 
@@ -232,9 +257,12 @@ def draw_pies(grid: List[List[Dict[str, Any]]],
     ax.set_xticklabels([])
     ax.set_yticklabels([])
 
-def draw_weather(weather: Optional[Dict[str, Union[str, List[float]]]],
-                 rect: List[float],
-                 image_loader: ImageLoader) -> None:
+
+def draw_weather(
+    weather: Optional[Dict[str, Union[str, List[float]]]],
+    rect: List[float],
+    image_loader: ImageLoader,
+) -> None:
     """Render the weather data onto a specified rectangle using matplotlib.
 
     Parameters:
@@ -255,7 +283,7 @@ def draw_weather(weather: Optional[Dict[str, Union[str, List[float]]]],
         Image loader.
     """
     ax = plt.axes(rect)
-    plt.axis('off')
+    plt.axis("off")
     ax.patch.set_visible(False)
     ax.set_xticklabels([])
     ax.set_yticklabels([])
@@ -264,9 +292,9 @@ def draw_weather(weather: Optional[Dict[str, Union[str, List[float]]]],
     ax.text(
         0.5,
         1,
-        datetime.now().strftime('%d %B'),
-        horizontalalignment='center',
-        verticalalignment='top'
+        datetime.now().strftime("%d %B"),
+        horizontalalignment="center",
+        verticalalignment="top",
     )
     if not weather:
         return
@@ -274,22 +302,26 @@ def draw_weather(weather: Optional[Dict[str, Union[str, List[float]]]],
         0.5,
         0,
         f"{round(weather['temp_min'][0], 1)} °C … {round(weather['temp_max'][0], 1)} °C",
-        horizontalalignment='center',
-        verticalalignment='bottom',
+        horizontalalignment="center",
+        verticalalignment="bottom",
     )
     plt.imshow(
-        image_loader.by_file_name(os.path.join(weather['images_folder'], weather['icon'][0] + '.png')),
+        image_loader.by_file_name(
+            os.path.join(weather["images_folder"], weather["icon"][0] + ".png")
+        ),
         extent=[0.15, 0.85, 0.15, 0.85],
-        interpolation='bilinear' #'bicubic'
+        interpolation="bilinear",  #'bicubic'
     )
 
 
-def draw_plot(x: List[datetime],
-              y: List[List[float]],
-              labels: List[Dict[str, Union[str, float]]],
-              rect: List[float],
-              image_loader: ImageLoader,
-              legend: str = 'inside') -> None:
+def draw_plot(
+    x: List[datetime],
+    y: List[List[float]],
+    labels: List[Dict[str, Union[str, float]]],
+    rect: List[float],
+    image_loader: ImageLoader,
+    legend: str = "inside",
+) -> None:
     """Render a stacked plot using matplotlib.
 
     Parameters:
@@ -308,21 +340,24 @@ def draw_plot(x: List[datetime],
     if len(x) > 0:
         days_on_plot = (x[-1] - x[0]).days
         if days_on_plot < 5 * 30:
-            shortFmt = DateFormatter('%b %d')
+            shortFmt = DateFormatter("%b %d")
         elif days_on_plot < 5 * 365:
-            shortFmt = DateFormatter('%d')
+            shortFmt = DateFormatter("%d")
         else:
-            shortFmt = DateFormatter('%Y')
+            shortFmt = DateFormatter("%Y")
         ax.xaxis.set_major_formatter(shortFmt)
-    legend_labels = [label['summary'] for label in labels]
+    legend_labels = [label["summary"] for label in labels]
     polies = ax.stackplot(x, y)
     ax.xaxis.set_major_locator(plt.MaxNLocator(6))
     ax.patch.set_visible(False)
-    if legend == 'rectangle':
-        plt.legend([plt.Rectangle((0, 0), 1, 1, fc=poly.get_facecolor()[0]) for poly in polies], legend_labels)
-    elif legend == 'inside':
-        #y_sum = np.sum(np.array(y), axis=0)
-        #y_max = y_sum.max()
+    if legend == "rectangle":
+        plt.legend(
+            [plt.Rectangle((0, 0), 1, 1, fc=poly.get_facecolor()[0]) for poly in polies],
+            legend_labels,
+        )
+    elif legend == "inside":
+        # y_sum = np.sum(np.array(y), axis=0)
+        # y_max = y_sum.max()
         for region in range(len(labels)):
             if len(y[region]) == 0:
                 return
@@ -332,37 +367,44 @@ def draw_plot(x: List[datetime],
             ax.text(
                 x_pos,
                 y_pos,
-                labels[region]['summary'],
-                horizontalalignment='center',
-                verticalalignment='top'
+                labels[region]["summary"],
+                horizontalalignment="center",
+                verticalalignment="top",
             )
-            if 'image' in labels[region]:
+            if "image" in labels[region]:
                 legend_text_height = 0.13
                 ylim = ax.get_ylim()
                 xlim = ax.get_xlim()
                 xsz = xlim[1] - xlim[0]
                 ysz = ylim[1] - ylim[0]
-                x_scale = 1 / plot_height # at the moment I do not understand why 1 and not plot_width
+                x_scale = (
+                    1 / plot_height
+                )  # at the moment I do not understand why 1 and not plot_width
                 x_val = (date2num(x_pos) - xlim[0]) / xsz * x_scale
                 y_val = (y_pos - ylim[0]) / ysz
-                axes = plt.axes([plot_left, plot_bottom, plot_width, plot_height], label='2')
-                plt.axis('off')
+                axes = plt.axes([plot_left, plot_bottom, plot_width, plot_height], label="2")
+                plt.axis("off")
                 axes.patch.set_visible(False)
                 axes.set_xticklabels([])
                 axes.set_yticklabels([])
                 axes.set_ylim((0, 1))
                 axes.set_xlim((0, x_scale))
                 plt.imshow(
-                    image_loader.by_file_name(labels[region]['image']),
-                    extent=(x_val - legend_image_sz / 2, x_val + legend_image_sz / 2,
-                            y_val - legend_image_sz - legend_text_height, y_val - legend_text_height),
-                    interpolation='bicubic'
+                    image_loader.by_file_name(labels[region]["image"]),
+                    extent=(
+                        x_val - legend_image_sz / 2,
+                        x_val + legend_image_sz / 2,
+                        y_val - legend_image_sz - legend_text_height,
+                        y_val - legend_text_height,
+                    ),
+                    interpolation="bicubic",
                 )
+
 
 @cached(
     seconds=IMAGE_CACHED_SECONDS,
-    trace_fmt='Use stored imaged without rendering (from {time})',
-    daily_refresh=True
+    trace_fmt="Use stored imaged without rendering (from {time})",
+    daily_refresh=True,
 )
 def draw_calendar(
     grid: List[List[Dict[str, Union[datetime, List[int]]]]],
@@ -372,7 +414,7 @@ def draw_calendar(
     dashboard: Dict[str, Union[str, List[Dict[str, str]]]],
     labels: List[Dict[str, str]],
     absent_labels: List[Dict[str, str]],
-    params: 'ImageParams'
+    params: "ImageParams",
 ) -> bytes:
     """
     Draws IoT calendar as image, optimized for Amazon Kindle (600 x 800).
@@ -401,25 +443,34 @@ def draw_calendar(
         image data in specified (in params) format (png, gif etc)
     """
     plt.clf()
-    plt.figure(figsize=(picture_width, picture_height), dpi=dpi, facecolor='white')
-    absent_grid_images = {absent['summary'] : absent['image_grid'] for absent in absent_labels}
+    plt.figure(figsize=(picture_width, picture_height), dpi=dpi, facecolor="white")
+    absent_grid_images = {absent["summary"]: absent["image_grid"] for absent in absent_labels}
     image_loader = ImageLoader()
     plt.rcParams.update(plt.rcParamsDefault)
     with plt.style.context(params.style, after_reset=True):
         if int(params.xkcd):
             plt.xkcd()
-        draw_weather(weather, rect=[0, plot_bottom, plot_left * 0.8, plot_height], image_loader=image_loader)
-        draw_plot(x, y, labels, rect=[plot_left, plot_bottom, plot_width, plot_height], image_loader=image_loader)
+        draw_weather(
+            weather, rect=[0, plot_bottom, plot_left * 0.8, plot_height], image_loader=image_loader
+        )
+        draw_plot(
+            x,
+            y,
+            labels,
+            rect=[plot_left, plot_bottom, plot_width, plot_height],
+            image_loader=image_loader,
+        )
         draw_pies(
             grid,
             image_loader=image_loader,
             weeks=weeks,
             absent_grid_images=absent_grid_images,
-            empty_image_file_name=dashboard['empty_image']
+            empty_image_file_name=dashboard["empty_image"],
         )
         plt.gcf().canvas.draw()
-        bitmap = np.fromstring(plt.gcf().canvas.tostring_rgb(), dtype=np.uint8, sep='') \
-            .reshape(plt.gcf().canvas.get_width_height()[::-1] + (3,))
+        bitmap = np.fromstring(plt.gcf().canvas.tostring_rgb(), dtype=np.uint8, sep="").reshape(
+            plt.gcf().canvas.get_width_height()[::-1] + (3,)
+        )
         bitmap = np.rot90(bitmap, k=int(params.rotate) // 90)
         image = PIL.Image.fromarray(bitmap)
         bytes_file = BytesIO()
@@ -438,23 +489,25 @@ def check():  # pragma: no cover
         json.dump(call_params, open('draw_calendar_params.json', 'w'), default=str)
     """
     import json
+
     import dateutil
-    call_params = json.load(open('tests/resources/draw_calendar_params_2.json', 'r'))
-    for row in call_params['grid']:
+
+    call_params = json.load(open("tests/resources/draw_calendar_params_2.json", "r"))
+    for row in call_params["grid"]:
         for col in row:
-            col['date'] = dateutil.parser.parse(col['date'])
-    for i, day in enumerate(call_params['x']):
-        call_params['x'][i] = dateutil.parser.parse(call_params['x'][i])
+            col["date"] = dateutil.parser.parse(col["date"])
+    for i, day in enumerate(call_params["x"]):
+        call_params["x"][i] = dateutil.parser.parse(call_params["x"][i])
     t0 = datetime.now()
     image_data = draw_calendar(
-        call_params['grid'],
-        call_params['x'],
-        call_params['y'],
-        call_params['weather'],
-        call_params['dashboard'],
-        call_params['labels'],
-        call_params['absent_labels'],
-        ImageParams(*call_params['params'])
+        call_params["grid"],
+        call_params["x"],
+        call_params["y"],
+        call_params["weather"],
+        call_params["dashboard"],
+        call_params["labels"],
+        call_params["absent_labels"],
+        ImageParams(*call_params["params"]),
     )
     t1 = datetime.now()
     print(t1 - t0)
@@ -463,5 +516,5 @@ def check():  # pragma: no cover
     image.show()
 
 
-if __name__ == '__main__':  # pragma: no cover
+if __name__ == "__main__":  # pragma: no cover
     check()

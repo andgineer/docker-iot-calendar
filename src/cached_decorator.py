@@ -13,21 +13,21 @@ class cached:
 
     Usage:
 
-	class C:
-		@cached
-		def f1()
-			pass
-		@cached(per_instance=True)
-		def f2()
-			pass
+        class C:
+                @cached
+                def f1()
+                        pass
+                @cached(per_instance=True)
+                def f2()
+                        pass
 
-	@cached
-	def f()
-		pass
+        @cached
+        def f()
+                pass
 
-	@cached(seconds=1)
-	def f2()
-		pass
+        @cached(seconds=1)
+        def f2()
+                pass
 
     If called later before cache_time_seconds passed with the same arguments, the cached value
     is returned, and not re-evaluated.
@@ -63,7 +63,9 @@ class cached:
     be other decorator instance.
     """
 
-    def __init__(self, func=None, *, seconds=0.1, trace_fmt=None, daily_refresh=False, per_instance=False):
+    def __init__(
+        self, func=None, *, seconds=0.1, trace_fmt=None, daily_refresh=False, per_instance=False
+    ):
         """Init.
 
         :param seconds: cache time
@@ -92,7 +94,7 @@ class cached:
         first_arg = args[0]
 
         # Check if the first argument is an instance of a class
-        if not isinstance(first_arg, object) or not hasattr(first_arg, '__dict__'):
+        if not isinstance(first_arg, object) or not hasattr(first_arg, "__dict__"):
             return False
 
         # Check if the first argument's class has the function as one of its methods
@@ -100,7 +102,6 @@ class cached:
             return False  # todo check if it is the same function, not just the same name
 
         return True
-
 
     def __call__(self, *args, **kwargs):
         # If 'cached' is used without arguments, self.func is not None.
@@ -113,6 +114,7 @@ class cached:
 
     def decorate(self, func):
         """The actual decorator function."""
+
         def cached_func(*args, **kw):
             """Cached function."""
             if self.is_self_in_args(args, func):
@@ -123,26 +125,28 @@ class cached:
                 else:
                     hash_list = [str(args[0].__dict__), str(args[1:]), str(kw)]
             else:
-                hash_list = ['', func.__name__, str(args), str(kw)]
-            hash = hashlib.sha256('\n'.join(hash_list).encode('utf-8')).hexdigest()
+                hash_list = ["", func.__name__, str(args), str(kw)]
+            hash = hashlib.sha256("\n".join(hash_list).encode("utf-8")).hexdigest()
             now = datetime.datetime.now()
-            for item in list(self.cache): # we have to keep cache clean
-                if (now - self.cache[item]['time']).total_seconds() > self.cache_time_seconds:
+            for item in list(self.cache):  # we have to keep cache clean
+                if (now - self.cache[item]["time"]).total_seconds() > self.cache_time_seconds:
                     del self.cache[item]
             today = now.replace(hour=0, minute=0, second=0, microsecond=0)
-            if hash in self.cache \
-                    and (today == self.cache[hash]['time'].replace(hour=0, minute=0, second=0, microsecond=0)
-                            or not self.evaluate_on_day_change):
+            if hash in self.cache and (
+                today
+                == self.cache[hash]["time"].replace(hour=0, minute=0, second=0, microsecond=0)
+                or not self.evaluate_on_day_change
+            ):
                 if self.print_if_cached:
-                    print(self.print_if_cached.format(time=self.cache[hash]['time']))
+                    print(self.print_if_cached.format(time=self.cache[hash]["time"]))
             else:
-                self.cache[hash] = {
-                    'value': func(*args, **kw),
-                    'time': now
-                }
-            return self.cache[hash]['value']
+                self.cache[hash] = {"value": func(*args, **kw), "time": now}
+            return self.cache[hash]["value"]
+
         self.func = cached_func
-        cached_func._original_func = func  # Store the original function to be sure we decorate class
+        cached_func._original_func = (
+            func  # Store the original function to be sure we decorate class
+        )
         return cached_func
 
     def __get__(self, obj, objtype=None):

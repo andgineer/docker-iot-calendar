@@ -1,117 +1,189 @@
-import pytest
 import os
-from unittest.mock import patch, call, MagicMock, Mock
 from datetime import datetime
-from calendar_image import pie_row_header_width, pie_width, pie_height, pie_col_header_height, weeks, draw_day_headers, \
-    width_aspect, draw_week_headers, pie_scale, draw_pie, draw_empty_pie, highlight_today, draw_pies, draw_weather, ImageLoader, draw_plot, draw_calendar
+from unittest.mock import MagicMock, Mock, call, patch
+
+import pytest
+
+from calendar_image import (
+    ImageLoader,
+    draw_calendar,
+    draw_day_headers,
+    draw_empty_pie,
+    draw_pie,
+    draw_pies,
+    draw_plot,
+    draw_weather,
+    draw_week_headers,
+    highlight_today,
+    pie_col_header_height,
+    pie_height,
+    pie_row_header_width,
+    pie_scale,
+    pie_width,
+    weeks,
+    width_aspect,
+)
 
 
-@pytest.mark.parametrize('input_grid', [
+@pytest.mark.parametrize(
+    "input_grid",
     [
         [
-            {'date': datetime(2023, 8, 7)},  # Monday
-            {'date': datetime(2023, 8, 8)},  # Tuesday
-            {'date': datetime(2023, 8, 9)},  # Wednesday
-            {'date': datetime(2023, 8, 10)},  # Thursday
-            {'date': datetime(2023, 8, 11)},  # Friday
-            {'date': datetime(2023, 8, 12)},  # Saturday
-            {'date': datetime(2023, 8, 13)}  # Sunday
+            [
+                {"date": datetime(2023, 8, 7)},  # Monday
+                {"date": datetime(2023, 8, 8)},  # Tuesday
+                {"date": datetime(2023, 8, 9)},  # Wednesday
+                {"date": datetime(2023, 8, 10)},  # Thursday
+                {"date": datetime(2023, 8, 11)},  # Friday
+                {"date": datetime(2023, 8, 12)},  # Saturday
+                {"date": datetime(2023, 8, 13)},  # Sunday
+            ]
         ]
-    ]
-])
+    ],
+)
 def test_draw_day_headers(input_grid):
     expected_calls = [
-        call((pie_row_header_width + (day + 0.5) * pie_width) * width_aspect,
-             weeks * pie_height + 0.5 * pie_col_header_height,
-             day_name,
-             horizontalalignment='center', verticalalignment='center', fontsize=12)
-        for day, day_name in enumerate(['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'])
+        call(
+            (pie_row_header_width + (day + 0.5) * pie_width) * width_aspect,
+            weeks * pie_height + 0.5 * pie_col_header_height,
+            day_name,
+            horizontalalignment="center",
+            verticalalignment="center",
+            fontsize=12,
+        )
+        for day, day_name in enumerate(
+            ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+        )
     ]
 
-    with patch('matplotlib.pyplot.text') as mock_text:
+    with patch("matplotlib.pyplot.text") as mock_text:
         draw_day_headers(input_grid)
         mock_text.assert_has_calls(expected_calls, any_order=False)
 
 
-@pytest.mark.parametrize('input_grid,expected_calls', [
-    (
-        [
-            [{'date': datetime(2023, 8, 7)}, {'date': datetime(2023, 8, 8)}], # Week 1
-            [{'date': datetime(2023, 8, 14)}, {'date': datetime(2023, 8, 15)}], # Week 2
-            [{'date': datetime(2023, 8, 21)}, {'date': datetime(2023, 8, 22)}], # Week 3
-            [{'date': datetime(2023, 8, 28)}, {'date': datetime(2023, 8, 29)}]  # Week 4
-        ],
-        [
-            call(pie_row_header_width * 0.5, 0.5 * pie_height, '07\nAug', horizontalalignment='center', verticalalignment='center', fontsize=14),
-            call(pie_row_header_width * 0.5, 1.5 * pie_height, '14\nAug', horizontalalignment='center', verticalalignment='center', fontsize=14),
-            call(pie_row_header_width * 0.5, 2.5 * pie_height, '21\nAug', horizontalalignment='center', verticalalignment='center', fontsize=14),
-            call(pie_row_header_width * 0.5, 3.5 * pie_height, '28\nAug', horizontalalignment='center', verticalalignment='center', fontsize=14)
-        ]
-    )
-])
+@pytest.mark.parametrize(
+    "input_grid,expected_calls",
+    [
+        (
+            [
+                [{"date": datetime(2023, 8, 7)}, {"date": datetime(2023, 8, 8)}],  # Week 1
+                [{"date": datetime(2023, 8, 14)}, {"date": datetime(2023, 8, 15)}],  # Week 2
+                [{"date": datetime(2023, 8, 21)}, {"date": datetime(2023, 8, 22)}],  # Week 3
+                [{"date": datetime(2023, 8, 28)}, {"date": datetime(2023, 8, 29)}],  # Week 4
+            ],
+            [
+                call(
+                    pie_row_header_width * 0.5,
+                    0.5 * pie_height,
+                    "07\nAug",
+                    horizontalalignment="center",
+                    verticalalignment="center",
+                    fontsize=14,
+                ),
+                call(
+                    pie_row_header_width * 0.5,
+                    1.5 * pie_height,
+                    "14\nAug",
+                    horizontalalignment="center",
+                    verticalalignment="center",
+                    fontsize=14,
+                ),
+                call(
+                    pie_row_header_width * 0.5,
+                    2.5 * pie_height,
+                    "21\nAug",
+                    horizontalalignment="center",
+                    verticalalignment="center",
+                    fontsize=14,
+                ),
+                call(
+                    pie_row_header_width * 0.5,
+                    3.5 * pie_height,
+                    "28\nAug",
+                    horizontalalignment="center",
+                    verticalalignment="center",
+                    fontsize=14,
+                ),
+            ],
+        )
+    ],
+)
 def test_draw_week_headers(input_grid, expected_calls):
-    with patch('matplotlib.pyplot.text') as mock_text:
+    with patch("matplotlib.pyplot.text") as mock_text:
         draw_week_headers(input_grid)
         mock_text.assert_has_calls(expected_calls, any_order=False)
 
-@pytest.mark.parametrize('week, day, values, daily_max, expected_call', [
-    (
-        0, 0, [10, 20, 30], 100,
-        call(
+
+@pytest.mark.parametrize(
+    "week, day, values, daily_max, expected_call",
+    [
+        (
+            0,
+            0,
             [10, 20, 30],
-            explode=[0.007, 0.007, 0.007],
-            radius=0.6 * pie_height * pie_scale / 2,
-            colors=['C0', 'C1', 'C2'],
-            center=(
-                (pie_row_header_width + 0.5 * pie_width) * width_aspect,
-                0.5 * pie_height
-            )
+            100,
+            call(
+                [10, 20, 30],
+                explode=[0.007, 0.007, 0.007],
+                radius=0.6 * pie_height * pie_scale / 2,
+                colors=["C0", "C1", "C2"],
+                center=((pie_row_header_width + 0.5 * pie_width) * width_aspect, 0.5 * pie_height),
+            ),
         )
-    )
-])
+    ],
+)
 def test_draw_pie(week, day, values, daily_max, expected_call):
-    with patch('matplotlib.pyplot.pie') as mock_pie:
+    with patch("matplotlib.pyplot.pie") as mock_pie:
         draw_pie(week, day, values, daily_max)
         mock_pie.assert_called_once_with(*expected_call.args, **expected_call.kwargs)
 
 
-@pytest.mark.parametrize('grid, week, day, absent_grid_images, empty_image_file_name, tomorrow, expected_image_filename', [
-    (
-        [
+@pytest.mark.parametrize(
+    "grid, week, day, absent_grid_images, empty_image_file_name, tomorrow, expected_image_filename",
+    [
+        (
             [
-                {'date': datetime(2023, 8, 10)},
-                {'date': datetime(2023, 8, 11), 'absents': [{'summary': 'AbsentA'}]},
+                [
+                    {"date": datetime(2023, 8, 10)},
+                    {"date": datetime(2023, 8, 11), "absents": [{"summary": "AbsentA"}]},
+                ],
             ],
-        ],
-        0, 1,
-        {'AbsentA': 'absent_imageA.jpg'},
-        'empty_image.jpg',
-        datetime(2023, 8, 12),
-        'absent_imageA.jpg'
-    ),
-    (
-        [
+            0,
+            1,
+            {"AbsentA": "absent_imageA.jpg"},
+            "empty_image.jpg",
+            datetime(2023, 8, 12),
+            "absent_imageA.jpg",
+        ),
+        (
             [
-                {'date': datetime(2023, 8, 10)},
-                {'date': datetime(2023, 8, 11)},
-                # ... other days
+                [
+                    {"date": datetime(2023, 8, 10)},
+                    {"date": datetime(2023, 8, 11)},
+                    # ... other days
+                ],
+                # ... other weeks
             ],
-            # ... other weeks
-        ],
-        0, 1,
-        {'AbsentA': 'absent_imageA.jpg'},
-        'empty_image.jpg',
-        datetime(2023, 8, 12),
-        'empty_image.jpg'
-    ),
-])
-def test_draw_empty_pie(grid, week, day, absent_grid_images, empty_image_file_name, tomorrow, expected_image_filename):
+            0,
+            1,
+            {"AbsentA": "absent_imageA.jpg"},
+            "empty_image.jpg",
+            datetime(2023, 8, 12),
+            "empty_image.jpg",
+        ),
+    ],
+)
+def test_draw_empty_pie(
+    grid, week, day, absent_grid_images, empty_image_file_name, tomorrow, expected_image_filename
+):
     image_loader = MagicMock()
     image_mock = MagicMock()
     image_loader.by_file_name.return_value = image_mock
 
-    with patch('matplotlib.pyplot.imshow') as mock_imshow:
-        draw_empty_pie(grid, image_loader, week, day, absent_grid_images, empty_image_file_name, tomorrow)
+    with patch("matplotlib.pyplot.imshow") as mock_imshow:
+        draw_empty_pie(
+            grid, image_loader, week, day, absent_grid_images, empty_image_file_name, tomorrow
+        )
 
         # Asserting the expected call to plt.imshow
         mock_imshow.assert_called_once_with(
@@ -120,9 +192,9 @@ def test_draw_empty_pie(grid, week, day, absent_grid_images, empty_image_file_na
                 (pie_row_header_width + day * pie_width + pie_width / 5) * width_aspect,
                 (pie_row_header_width + (day + 1) * pie_width - pie_width / 5) * width_aspect,
                 week * pie_height + pie_width / 5,
-                (week + 1) * pie_height - pie_width / 5
+                (week + 1) * pie_height - pie_width / 5,
             ),
-            interpolation='bicubic'
+            interpolation="bicubic",
         )
 
         # Asserting the expected call to image_loader.by_file_name
@@ -133,17 +205,17 @@ def test_draw_today():
     # Sample grid
     grid = [
         [
-            {'date': datetime(2023, 8, 9)},
-            {'date': datetime(2023, 8, 10)},
+            {"date": datetime(2023, 8, 9)},
+            {"date": datetime(2023, 8, 10)},
         ],
         [
-            {'date': datetime(2023, 8, 16)},
-            {'date': datetime(2023, 8, 17)},
-        ]
+            {"date": datetime(2023, 8, 16)},
+            {"date": datetime(2023, 8, 17)},
+        ],
     ]
 
     # Mocking required objects
-    with patch('matplotlib.pyplot.gca') as mock_gca:
+    with patch("matplotlib.pyplot.gca") as mock_gca:
         ax_mock = MagicMock()
         mock_gca.return_value = ax_mock
 
@@ -157,7 +229,10 @@ def test_draw_today():
         rect = ax_mock.add_patch.call_args[0][0]
 
         # Here we only check a few properties, but more can be added as needed
-        assert rect.get_xy() == ((pie_row_header_width + 1 * pie_width) * width_aspect, 1 * pie_height)
+        assert rect.get_xy() == (
+            (pie_row_header_width + 1 * pie_width) * width_aspect,
+            1 * pie_height,
+        )
         assert rect.get_width() == pie_width * width_aspect * 0.98
         assert rect.get_height() == pie_height
 
@@ -165,23 +240,23 @@ def test_draw_today():
 def test_draw_pies():
     sample_grid = [
         [
-            {'date': datetime(2023, 8, 7), 'values': [10, 20]},
-            {'date': datetime(2023, 8, 8), 'values': [0], 'absents': [{'summary': 'AbsentA'}]},
-            {'date': datetime(2023, 8, 9), 'values': [15]},
-            {'date': datetime(2023, 8, 10), 'values': [0]},
-            {'date': datetime(2023, 8, 11), 'values': [10]},
-            {'date': datetime(2023, 8, 12), 'values': [25]},
-            {'date': datetime(2023, 8, 13), 'values': [0]},
+            {"date": datetime(2023, 8, 7), "values": [10, 20]},
+            {"date": datetime(2023, 8, 8), "values": [0], "absents": [{"summary": "AbsentA"}]},
+            {"date": datetime(2023, 8, 9), "values": [15]},
+            {"date": datetime(2023, 8, 10), "values": [0]},
+            {"date": datetime(2023, 8, 11), "values": [10]},
+            {"date": datetime(2023, 8, 12), "values": [25]},
+            {"date": datetime(2023, 8, 13), "values": [0]},
         ],
         [
-            {'date': datetime(2023, 8, 14), 'values': [10, 20]},
-            {'date': datetime(2023, 8, 15), 'values': [0]},
-            {'date': datetime(2023, 8, 9), 'values': [15]},
-            {'date': datetime(2023, 8, 10), 'values': [0]},
-            {'date': datetime(2023, 8, 11), 'values': [10]},
-            {'date': datetime(2023, 8, 12), 'values': [25]},
-            {'date': datetime(2023, 8, 13), 'values': [0]},
-        ]
+            {"date": datetime(2023, 8, 14), "values": [10, 20]},
+            {"date": datetime(2023, 8, 15), "values": [0]},
+            {"date": datetime(2023, 8, 9), "values": [15]},
+            {"date": datetime(2023, 8, 10), "values": [0]},
+            {"date": datetime(2023, 8, 11), "values": [10]},
+            {"date": datetime(2023, 8, 12), "values": [25]},
+            {"date": datetime(2023, 8, 13), "values": [0]},
+        ],
     ]
     mock_image_loader = Mock()
     mock_image_loader.by_file_name = Mock(return_value="test_image")
@@ -190,13 +265,23 @@ def test_draw_pies():
 
     # Mocking plt functions and your draw_pie and draw_empty_pie functions
     import matplotlib.pyplot as plt
-    with patch.object(plt, "gcf", return_value=Mock()), \
-            patch("calendar_image.draw_pie") as mock_draw_pie, \
-            patch("calendar_image.draw_empty_pie") as mock_draw_empty_pie, \
-            patch("calendar_image.highlight_today") as mock_highlight_today, \
-            patch("calendar_image.draw_day_headers") as mock_draw_day_headers, \
-            patch("calendar_image.draw_week_headers") as mock_draw_week_headers:
-        draw_pies(sample_grid, mock_image_loader, absent_grid_images=absent_images, empty_image_file_name=empty_image, weeks=2)
+
+    with patch.object(plt, "gcf", return_value=Mock()), patch(
+        "calendar_image.draw_pie"
+    ) as mock_draw_pie, patch("calendar_image.draw_empty_pie") as mock_draw_empty_pie, patch(
+        "calendar_image.highlight_today"
+    ) as mock_highlight_today, patch(
+        "calendar_image.draw_day_headers"
+    ) as mock_draw_day_headers, patch(
+        "calendar_image.draw_week_headers"
+    ) as mock_draw_week_headers:
+        draw_pies(
+            sample_grid,
+            mock_image_loader,
+            absent_grid_images=absent_images,
+            empty_image_file_name=empty_image,
+            weeks=2,
+        )
 
     assert mock_draw_pie.call_count == 8
 
@@ -216,10 +301,10 @@ def test_draw_pies():
 def test_draw_weather():
     # Sample data
     weather_data = {
-        'temp_min': [15.5],
-        'temp_max': [25.8],
-        'images_folder': 'path_to_folder',
-        'icon': ['sample_icon']
+        "temp_min": [15.5],
+        "temp_max": [25.8],
+        "images_folder": "path_to_folder",
+        "icon": ["sample_icon"],
     }
     rect = [0, 0, 1, 1]
 
@@ -228,24 +313,30 @@ def test_draw_weather():
 
     # Mock plt functions
     import matplotlib.pyplot as plt
-    with patch.object(plt, 'axes', return_value=Mock()), \
-            patch.object(plt, 'axis'), \
-            patch.object(plt, 'imshow') as mock_imshow:
+
+    with patch.object(plt, "axes", return_value=Mock()), patch.object(plt, "axis"), patch.object(
+        plt, "imshow"
+    ) as mock_imshow:
         draw_weather(weather_data, rect, mock_image_loader)
 
     # Asserts
     # Check if the image cache was called with the expected path
-    expected_path = os.path.join(weather_data['images_folder'], weather_data['icon'][0] + '.png')
+    expected_path = os.path.join(weather_data["images_folder"], weather_data["icon"][0] + ".png")
     mock_image_loader.by_file_name.assert_called_with(expected_path)
 
     # Assert the image was drawn at the expected extent
-    mock_imshow.assert_called_once_with("test_image_path", extent=[0.15, 0.85, 0.15, 0.85], interpolation='bilinear')
+    mock_imshow.assert_called_once_with(
+        "test_image_path", extent=[0.15, 0.85, 0.15, 0.85], interpolation="bilinear"
+    )
 
 
 def test_draw_plot():
     x = [datetime(2023, 1, 1), datetime(2023, 1, 2), datetime(2023, 1, 3)]
     y = [[1, 2, 3], [1, 2, 3]]
-    labels = [{'summary': 'Label1', 'image': 'image1.png'}, {'summary': 'Label2', 'image': 'image2.png'}]
+    labels = [
+        {"summary": "Label1", "image": "image1.png"},
+        {"summary": "Label2", "image": "image2.png"},
+    ]
     rect = [0.1, 0.1, 0.8, 0.8]
     mock_image_loader = Mock()
     mock_image_loader.by_file_name.return_value = "some_image.png"
@@ -255,11 +346,14 @@ def test_draw_plot():
     mock_axes.get_ylim.return_value = (0, 20)  # Sample ylim values
 
     import matplotlib.pyplot as plt
-    with patch.object(plt, "axes", return_value=mock_axes), \
-            patch.object(plt, "axis", return_value=Mock()), \
-            patch.object(plt, "imshow", return_value=Mock()), \
-            patch.object(plt, "legend", return_value=Mock()), \
-            patch.object(plt, "text", return_value=Mock()):
+
+    with patch.object(plt, "axes", return_value=mock_axes), patch.object(
+        plt, "axis", return_value=Mock()
+    ), patch.object(plt, "imshow", return_value=Mock()), patch.object(
+        plt, "legend", return_value=Mock()
+    ), patch.object(
+        plt, "text", return_value=Mock()
+    ):
         draw_plot(x, y, labels, rect, mock_image_loader)
 
     # Assert that xlim and ylim were accessed twice each
@@ -270,42 +364,67 @@ def test_draw_plot():
     assert mock_axes.get_ylim.call_count == 2
 
     # Assert image cache was called with the provided image file names
-    mock_image_loader.by_file_name.assert_has_calls([call('image1.png'), call('image2.png')])
+    mock_image_loader.by_file_name.assert_has_calls([call("image1.png"), call("image2.png")])
 
     # Assert text was called for the labels
     mock_axes.text.assert_has_calls(
-        [call(x[2], y[0][2], 'Label1', horizontalalignment='center', verticalalignment='top'),
-         call(x[2], y[1][2], 'Label2', horizontalalignment='center', verticalalignment='top')])
+        [
+            call(x[2], y[0][2], "Label1", horizontalalignment="center", verticalalignment="top"),
+            call(x[2], y[1][2], "Label2", horizontalalignment="center", verticalalignment="top"),
+        ]
+    )
 
     # Assuming you have other mockable functions, you can add similar assertions
 
 
 def test_draw_calendar():
     # Mock data
-    grid = [[{'date': datetime(2023, 8, 7), 'values': [10, 20]}]]
+    grid = [[{"date": datetime(2023, 8, 7), "values": [10, 20]}]]
     x = [datetime(2023, 8, 7)]
     y = [[10]]
-    weather = {'temp_min': [15.0], 'temp_max': [20.0], 'icon': ['cloudy'], 'day': [datetime(2023, 8, 7)]}
-    dashboard = {'summary': 'Summary', 'empty_image': 'path/to/image.jpg', 'absent': [{'summary': 'Holiday', 'image_grid': 'path/to/holiday.jpg'}]}
-    labels = [{'summary': 'Summary', 'image': 'path/to/image.jpg'}]
-    absent_labels = [{'summary': 'Holiday', 'image_grid': 'path/to/holiday.jpg', 'image_plot': 'path/to/holiday_plot.jpg'}]
-    params = Mock()  # This will need to be an instance of ImageParams or a Mock object representing it
+    weather = {
+        "temp_min": [15.0],
+        "temp_max": [20.0],
+        "icon": ["cloudy"],
+        "day": [datetime(2023, 8, 7)],
+    }
+    dashboard = {
+        "summary": "Summary",
+        "empty_image": "path/to/image.jpg",
+        "absent": [{"summary": "Holiday", "image_grid": "path/to/holiday.jpg"}],
+    }
+    labels = [{"summary": "Summary", "image": "path/to/image.jpg"}]
+    absent_labels = [
+        {
+            "summary": "Holiday",
+            "image_grid": "path/to/holiday.jpg",
+            "image_plot": "path/to/holiday_plot.jpg",
+        }
+    ]
+    params = (
+        Mock()
+    )  # This will need to be an instance of ImageParams or a Mock object representing it
     params.xkcd = "0"
     params.rotate = "0"
 
     # Mocking plt and other external calls
-    with patch("matplotlib.pyplot.clf"), \
-            patch("matplotlib.pyplot.figure"), \
-            patch("matplotlib.pyplot.rcParams.update"), \
-            patch("matplotlib.pyplot.style.context"), \
-            patch("calendar_image.draw_weather") as mock_draw_weather, \
-            patch("calendar_image.draw_plot") as mock_draw_plot, \
-            patch("calendar_image.draw_pies") as mock_draw_pies, \
-            patch("calendar_image.ImageLoader") as mock_image_loader, \
-            patch("numpy.fromstring") as mock_np_fromstring, \
-            patch("numpy.rot90") as mock_np_rot90, \
-            patch("PIL.Image.fromarray") as mock_fromarray:
-
+    with patch("matplotlib.pyplot.clf"), patch("matplotlib.pyplot.figure"), patch(
+        "matplotlib.pyplot.rcParams.update"
+    ), patch("matplotlib.pyplot.style.context"), patch(
+        "calendar_image.draw_weather"
+    ) as mock_draw_weather, patch(
+        "calendar_image.draw_plot"
+    ) as mock_draw_plot, patch(
+        "calendar_image.draw_pies"
+    ) as mock_draw_pies, patch(
+        "calendar_image.ImageLoader"
+    ) as mock_image_loader, patch(
+        "numpy.fromstring"
+    ) as mock_np_fromstring, patch(
+        "numpy.rot90"
+    ) as mock_np_rot90, patch(
+        "PIL.Image.fromarray"
+    ) as mock_fromarray:
         # Assign return values to mocked objects if needed
         mock_image_loader.return_value = Mock()
         mock_np_fromstring.return_value = Mock()
@@ -315,14 +434,28 @@ def test_draw_calendar():
         # Call the function
         result = draw_calendar(grid, x, y, weather, dashboard, labels, absent_labels, params)
 
-        mock_draw_weather.assert_called_once_with(weather, rect=[0, 0.6833333333333333, 0.24, 0.29166666666666663], image_loader=mock_image_loader.return_value)
-        mock_draw_plot.assert_called_once_with(x, y, labels, rect=[0.3, 0.6833333333333333, 0.6749999999999999, 0.29166666666666663], image_loader=mock_image_loader.return_value)
-        mock_draw_pies.assert_called_once_with(grid, image_loader=mock_image_loader.return_value, weeks=4, absent_grid_images={'Holiday': 'path/to/holiday.jpg'}, empty_image_file_name='path/to/image.jpg')
+        mock_draw_weather.assert_called_once_with(
+            weather,
+            rect=[0, 0.6833333333333333, 0.24, 0.29166666666666663],
+            image_loader=mock_image_loader.return_value,
+        )
+        mock_draw_plot.assert_called_once_with(
+            x,
+            y,
+            labels,
+            rect=[0.3, 0.6833333333333333, 0.6749999999999999, 0.29166666666666663],
+            image_loader=mock_image_loader.return_value,
+        )
+        mock_draw_pies.assert_called_once_with(
+            grid,
+            image_loader=mock_image_loader.return_value,
+            weeks=4,
+            absent_grid_images={"Holiday": "path/to/holiday.jpg"},
+            empty_image_file_name="path/to/image.jpg",
+        )
 
         assert isinstance(result, bytes)
         mock_image_loader.assert_called_once()
         mock_np_fromstring.assert_called_once()
         mock_np_rot90.assert_called_once()
         mock_fromarray.assert_called_once()
-
-

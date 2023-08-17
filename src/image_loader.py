@@ -13,6 +13,7 @@ class ImageLoader(metaclass=Singleton):
     Cache images that have already been read.
     Return default image if file does not exist or if file name is empty.
     """
+
     def __init__(self):
         self._cache = {}
         self._non_existed = np.array([[[255, 255, 255]]], dtype=np.uint8)
@@ -25,6 +26,6 @@ class ImageLoader(metaclass=Singleton):
             try:
                 self._cache[image_file_name] = mpimg.imread(image_file_name)
             except Exception as e:
-                print('#'*5, f' Error reading image from {image_file_name}:\n{e}')
+                print("#" * 5, f" Error reading image from {image_file_name}:\n{e}")
                 return self._non_existed
         return self._cache[image_file_name]

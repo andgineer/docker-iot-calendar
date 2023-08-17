@@ -1,5 +1,6 @@
 from singleton import Singleton
 
+
 def test_singleton_meta():
     class MyClass(metaclass=Singleton):
         pass

@@ -1,27 +1,29 @@
-import pytest
-from unittest.mock import patch, MagicMock
-import os
 import json
-from iot_calendar import load_settings, DashboardListHandler, Application, DashboardImageHandler
-import tornado.web
+import os
+from unittest.mock import MagicMock, patch
+
+import pytest
 import tornado.httputil
+import tornado.web
+
+from iot_calendar import Application, DashboardImageHandler, DashboardListHandler, load_settings
+
 
 # Sample test file for the load_settings function
 def test_load_settings_no_file(mocker):
-    mocker.patch('os.path.isfile', return_value=False)
-    mocker.patch('builtins.print')
-    mocker.patch('builtins.exit', side_effect=Exception("exit called"))
+    mocker.patch("os.path.isfile", return_value=False)
+    mocker.patch("builtins.print")
+    mocker.patch("builtins.exit", side_effect=Exception("exit called"))
 
     with pytest.raises(Exception, match="exit called"):
         load_settings()
 
-def test_load_settings_valid_file(mocker):
-    mock_file_content = {
-        "key": "value"
-    }
 
-    mocker.patch('os.path.isfile', return_value=True)
-    mocker.patch('builtins.open', mocker.mock_open(read_data=json.dumps(mock_file_content)))
+def test_load_settings_valid_file(mocker):
+    mock_file_content = {"key": "value"}
+
+    mocker.patch("os.path.isfile", return_value=True)
+    mocker.patch("builtins.open", mocker.mock_open(read_data=json.dumps(mock_file_content)))
 
     settings = load_settings()
 
@@ -29,7 +31,7 @@ def test_load_settings_valid_file(mocker):
 
 
 def test_load_settings_with_missing_file(mocker, capsys):
-    mocker.patch('os.path.isfile', return_value=False)
+    mocker.patch("os.path.isfile", return_value=False)
     with pytest.raises(SystemExit):
         load_settings()
     captured = capsys.readouterr()
@@ -49,6 +51,7 @@ class MockConnection:
     def set_close_callback(self, callback):
         pass
 
+
 @pytest.fixture
 def mock_request_list_handler():
     mock_settings = dict(
@@ -57,7 +60,9 @@ def mock_request_list_handler():
     )
     application = Application(settings=mock_settings)
     connection = MockConnection()
-    request = tornado.httputil.HTTPServerRequest(method="GET", uri="/", version="HTTP/1.1", headers=None, body=None, connection=connection)
+    request = tornado.httputil.HTTPServerRequest(
+        method="GET", uri="/", version="HTTP/1.1", headers=None, body=None, connection=connection
+    )
     handler = DashboardListHandler(application, request)
     handler._transforms = []
     handler.render = MagicMock()
@@ -66,10 +71,11 @@ def mock_request_list_handler():
 
 def test_disable_cache(mock_request_list_handler):
     mock_request_list_handler.disable_cache()
-    assert mock_request_list_handler._headers.get('Cache-Control') == 'no-cache, must-revalidate'
-    assert mock_request_list_handler._headers.get('Expires') == '0'
+    assert mock_request_list_handler._headers.get("Cache-Control") == "no-cache, must-revalidate"
+    assert mock_request_list_handler._headers.get("Expires") == "0"
 
-@patch('iot_calendar.settings', {'dashboards': {}})
+
+@patch("iot_calendar.settings", {"dashboards": {}})
 def test_dashboard_list_handler_renders_properly(mock_request_list_handler):
     # When: the get method of the DashboardListHandler is called
     mock_request_list_handler.get()
@@ -84,18 +90,18 @@ class MockWeather:
 
     def get_weather(self, latitude, longitude):
         return {
-            'temperature': 72,
-            'condition': 'Sunny',
-            'images_folder': 'mock/path',
+            "temperature": 72,
+            "condition": "Sunny",
+            "images_folder": "mock/path",
         }
 
 
 def test_load_params_default_values(mock_request_list_handler):
     params = mock_request_list_handler.load_params()
 
-    assert params.dashboard == ''
-    assert params.format == 'gif'
-    assert params.style == 'grayscale'
+    assert params.dashboard == ""
+    assert params.format == "gif"
+    assert params.style == "grayscale"
 
 
 def test_load_params_overrides(mock_request_list_handler):
@@ -113,8 +119,9 @@ def mock_request_inage_handler():
     )
     application = tornado.web.Application(settings=mock_settings)
     connection = MockConnection()
-    request = tornado.httputil.HTTPServerRequest(method="GET", uri="/", version="HTTP/1.1", headers=None, body=None,
-                                                 connection=connection)
+    request = tornado.httputil.HTTPServerRequest(
+        method="GET", uri="/", version="HTTP/1.1", headers=None, body=None, connection=connection
+    )
 
     # Change this line:
     handler = DashboardImageHandler(application, request)  # <-- use DashboardImageHandler here
@@ -124,21 +131,32 @@ def mock_request_inage_handler():
     return handler
 
 
-@patch('iot_calendar.draw_calendar', return_value="mock_image_data")
-@patch('iot_calendar.Weather', return_value=MockWeather({}))
-@patch('iot_calendar.collect_events', return_value=("mock_events", "mock_absents"))
-@patch('iot_calendar.events_to_weeks_grid', return_value="mock_grid")
-@patch('iot_calendar.events_to_array', return_value=("mock_x", "mock_y"))
-@patch('iot_calendar.dashboard_absent_events_list', return_value="mock_absent_events")
-@patch('iot_calendar.calendar_events_list', return_value="mock_calendar_events")
-@patch('iot_calendar.settings', {
-    'dashboards': {"default": {}},
-    'latitude': 'mock_latitude',
-    'longitude': 'mock_longitude',
-    "images_folder": "mock_images_folder",
-})
-def test_dashboard_image_handler(mock_calendar_events_list, mock_dashboard_absent_events_list, mock_events_to_array, mock_events_to_weeks_grid, mock_collect_events, MockWeather, mock_draw_calendar,
-                                 mock_request_inage_handler):
+@patch("iot_calendar.draw_calendar", return_value="mock_image_data")
+@patch("iot_calendar.Weather", return_value=MockWeather({}))
+@patch("iot_calendar.collect_events", return_value=("mock_events", "mock_absents"))
+@patch("iot_calendar.events_to_weeks_grid", return_value="mock_grid")
+@patch("iot_calendar.events_to_array", return_value=("mock_x", "mock_y"))
+@patch("iot_calendar.dashboard_absent_events_list", return_value="mock_absent_events")
+@patch("iot_calendar.calendar_events_list", return_value="mock_calendar_events")
+@patch(
+    "iot_calendar.settings",
+    {
+        "dashboards": {"default": {}},
+        "latitude": "mock_latitude",
+        "longitude": "mock_longitude",
+        "images_folder": "mock_images_folder",
+    },
+)
+def test_dashboard_image_handler(
+    mock_calendar_events_list,
+    mock_dashboard_absent_events_list,
+    mock_events_to_array,
+    mock_events_to_weeks_grid,
+    mock_collect_events,
+    MockWeather,
+    mock_draw_calendar,
+    mock_request_inage_handler,
+):
     mock_request_inage_handler.get("png")
 
     mock_draw_calendar.assert_called_once()

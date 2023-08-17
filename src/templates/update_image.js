@@ -3,7 +3,7 @@
 /*
 updatePageImage gets the newest version of the
 image from the server. To prevent the browser from loading
-a cached version of the image, we add a query to the URL 
+a cached version of the image, we add a query to the URL
 for the image. We're using the time, but any query that is
 guaranteed not to repeat would be fine.
 */
