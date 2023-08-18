@@ -1,5 +1,5 @@
-"""
-Tests run from the project root folder.
+"""Tests run from the project root folder.
+
 But the code expects to run inside src folder.
 
 So for tests we add src folder to sys.path.

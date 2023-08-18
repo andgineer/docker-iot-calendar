@@ -44,7 +44,7 @@ Get it on https://console.developers.google.com/start/api?id=calendar""".format(
                 self.settings[GOOGLE_CREDENTIALS_PARAM],
                 ["https://www.googleapis.com/auth/calendar"],
             )
-        except Exception as e:
+        except Exception:
             print(
                 """Cannot login to Google API - check your credential file {}.
 You can get new one from https://console.developers.google.com/start/api?id=calendar""".format(

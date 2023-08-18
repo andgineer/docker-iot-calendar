@@ -13,7 +13,7 @@ from typing import Any, Dict, List, Optional, Union
 import matplotlib
 
 try:  # !!! that should be before importing pyplot
-    import tkinter  # check if tkinter is installed
+    import tkinter  # noqa: F401  # check if tkinter is installed
 
     matplotlib.use("TkAgg")  # in MacOS we should have tkinter installed and use it as backend
 except ImportError:
@@ -310,7 +310,7 @@ def draw_weather(
             os.path.join(weather["images_folder"], weather["icon"][0] + ".png")
         ),
         extent=[0.15, 0.85, 0.15, 0.85],
-        interpolation="bilinear",  #'bicubic'
+        interpolation="bilinear",  # 'bicubic'
     )
 
 
