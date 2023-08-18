@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="d_145eef247bfb46b6_google_calendar_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.3.0">coverage.py v7.3.0</a>,
-            created at 2023-08-17 12:03 +0000
+            created at 2023-08-18 12:06 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"/>
@@ -95,7 +95,7 @@
     <p class="run"><span class="n"><a id="t13" href="#t13">13</a></span><span class="t"><span class="key">import</span> <span class="nam">matplotlib</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t14" href="#t14">14</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t15" href="#t15">15</a></span><span class="t"><span class="key">try</span><span class="op">:</span>  <span class="com"># !!! that should be before importing pyplot</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t16" href="#t16">16</a></span><span class="t">    <span class="key">import</span> <span class="nam">tkinter</span>  <span class="com"># check if tkinter is installed</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t16" href="#t16">16</a></span><span class="t">    <span class="key">import</span> <span class="nam">tkinter</span>  <span class="com"># noqa: F401  # check if tkinter is installed</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t17" href="#t17">17</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t18" href="#t18">18</a></span><span class="t">    <span class="nam">matplotlib</span><span class="op">.</span><span class="nam">use</span><span class="op">(</span><span class="str">"TkAgg"</span><span class="op">)</span>  <span class="com"># in MacOS we should have tkinter installed and use it as backend</span>&nbsp;</span><span class="r"></span></p>
     <p class="mis show_mis"><span class="n"><a id="t19" href="#t19">19</a></span><span class="t"><span class="key">except</span> <span class="nam">ImportError</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -392,7 +392,7 @@
     <p class="pln"><span class="n"><a id="t310" href="#t310">310</a></span><span class="t">            <span class="nam">os</span><span class="op">.</span><span class="nam">path</span><span class="op">.</span><span class="nam">join</span><span class="op">(</span><span class="nam">weather</span><span class="op">[</span><span class="str">"images_folder"</span><span class="op">]</span><span class="op">,</span> <span class="nam">weather</span><span class="op">[</span><span class="str">"icon"</span><span class="op">]</span><span class="op">[</span><span class="num">0</span><span class="op">]</span> <span class="op">+</span> <span class="str">".png"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t311" href="#t311">311</a></span><span class="t">        <span class="op">)</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t312" href="#t312">312</a></span><span class="t">        <span class="nam">extent</span><span class="op">=</span><span class="op">[</span><span class="num">0.15</span><span class="op">,</span> <span class="num">0.85</span><span class="op">,</span> <span class="num">0.15</span><span class="op">,</span> <span class="num">0.85</span><span class="op">]</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t313" href="#t313">313</a></span><span class="t">        <span class="nam">interpolation</span><span class="op">=</span><span class="str">"bilinear"</span><span class="op">,</span>  <span class="com">#'bicubic'</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t313" href="#t313">313</a></span><span class="t">        <span class="nam">interpolation</span><span class="op">=</span><span class="str">"bilinear"</span><span class="op">,</span>  <span class="com"># 'bicubic'</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t314" href="#t314">314</a></span><span class="t">    <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t315" href="#t315">315</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t316" href="#t316">316</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
@@ -609,7 +609,7 @@
             <a id="nextFileLink" class="nav" href="d_145eef247bfb46b6_google_calendar_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.3.0">coverage.py v7.3.0</a>,
-            created at 2023-08-17 12:03 +0000
+            created at 2023-08-18 12:06 +0000
         </p>
     </div>
 </footer>
