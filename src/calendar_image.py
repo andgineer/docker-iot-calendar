@@ -470,14 +470,18 @@ def draw_calendar(
         )
         plt.gcf().canvas.draw()
 
-        image = create_image(rotate=int(params.rotate), format=params.format)
+        image = create_image(rotation_degrees=int(params.rotate), format=params.format)
         bytes_file = BytesIO()
         image.save(bytes_file, format=params.format)
         return bytes_file.getvalue()
 
 
-def create_image(rotate: int, format: str) -> PIL.Image:  # pragma: no cover
+def create_image(rotation_degrees: int, format: str) -> PIL.Image:  # pragma: no cover
     """Creates image from matplotlib canvas."""
+    if rotation_degrees % 90 != 0:
+        raise ValueError("Degrees should be a multiple of 90")
+
+    num_90_rotations = (rotation_degrees // 90) % 4
     buf = io.BytesIO()
     plt.savefig(buf, format=format)
     buf.seek(0)
@@ -485,7 +489,7 @@ def create_image(rotate: int, format: str) -> PIL.Image:  # pragma: no cover
 
     # Rotate the image
     img_np = np.array(image)
-    img_np = np.rot90(img_np, k=rotate // 90)
+    img_np = np.rot90(img_np, k=num_90_rotations)
 
     return PIL.Image.fromarray(img_np)
 

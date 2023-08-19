@@ -5,117 +5,151 @@
 #    pip-compile requirements.in
 #
 cachetools==5.3.1
-    # via google-auth
+    # via
+    #   -r requirements.docker.txt
+    #   google-auth
 cairocffi==1.6.1
-    # via cairosvg
+    # via
+    #   -r requirements.docker.txt
+    #   cairosvg
 cairosvg==2.7.1
-    # via -r requirements.in
+    # via -r requirements.docker.txt
 certifi==2023.7.22
-    # via requests
+    # via
+    #   -r requirements.docker.txt
+    #   requests
 cffi==1.15.1
-    # via cairocffi
+    # via
+    #   -r requirements.docker.txt
+    #   cairocffi
 charset-normalizer==3.2.0
-    # via requests
+    # via
+    #   -r requirements.docker.txt
+    #   requests
 contourpy==1.1.0
     # via matplotlib
 cssselect2==0.7.0
-    # via cairosvg
+    # via
+    #   -r requirements.docker.txt
+    #   cairosvg
 cycler==0.11.0
     # via matplotlib
 defusedxml==0.7.1
-    # via cairosvg
+    # via
+    #   -r requirements.docker.txt
+    #   cairosvg
 fonttools==4.42.0
     # via matplotlib
 google-api-core==2.11.1
-    # via google-api-python-client
+    # via
+    #   -r requirements.docker.txt
+    #   google-api-python-client
 google-api-python-client==2.97.0
-    # via -r requirements.in
+    # via -r requirements.docker.txt
 google-auth==2.22.0
     # via
+    #   -r requirements.docker.txt
     #   google-api-core
     #   google-api-python-client
     #   google-auth-httplib2
 google-auth-httplib2==0.1.0
-    # via google-api-python-client
+    # via
+    #   -r requirements.docker.txt
+    #   google-api-python-client
 googleapis-common-protos==1.60.0
-    # via google-api-core
+    # via
+    #   -r requirements.docker.txt
+    #   google-api-core
 httplib2==0.22.0
     # via
+    #   -r requirements.docker.txt
     #   google-api-python-client
     #   google-auth-httplib2
     #   oauth2client
 idna==3.4
-    # via requests
+    # via
+    #   -r requirements.docker.txt
+    #   requests
 kiwisolver==1.4.4
     # via matplotlib
-matplotlib==3.7.2
+matplotlib==3.7.1
     # via -r requirements.in
 numpy==1.25.2
     # via
     #   contourpy
     #   matplotlib
 oauth2client==4.1.3
-    # via -r requirements.in
+    # via -r requirements.docker.txt
 packaging==23.1
     # via matplotlib
 pillow==10.0.0
     # via
-    #   -r requirements.in
+    #   -r requirements.docker.txt
     #   cairosvg
     #   matplotlib
 protobuf==4.24.1
     # via
+    #   -r requirements.docker.txt
     #   google-api-core
     #   googleapis-common-protos
 pyasn1==0.5.0
     # via
+    #   -r requirements.docker.txt
     #   oauth2client
     #   pyasn1-modules
     #   rsa
 pyasn1-modules==0.3.0
     # via
+    #   -r requirements.docker.txt
     #   google-auth
     #   oauth2client
 pycparser==2.21
-    # via cffi
-pyparsing==3.0.9
     # via
+    #   -r requirements.docker.txt
+    #   cffi
+pyparsing==3.1.1
+    # via
+    #   -r requirements.docker.txt
     #   httplib2
     #   matplotlib
 python-dateutil==2.8.2
     # via
-    #   -r requirements.in
+    #   -r requirements.docker.txt
     #   matplotlib
 requests==2.31.0
     # via
-    #   -r requirements.in
+    #   -r requirements.docker.txt
     #   google-api-core
 rsa==4.9
     # via
+    #   -r requirements.docker.txt
     #   google-auth
     #   oauth2client
 six==1.16.0
     # via
+    #   -r requirements.docker.txt
     #   google-auth
     #   google-auth-httplib2
     #   oauth2client
     #   python-dateutil
 tinycss2==1.2.1
     # via
+    #   -r requirements.docker.txt
     #   cairosvg
     #   cssselect2
 tornado==6.3.3
-    # via -r requirements.in
+    # via -r requirements.docker.txt
 uritemplate==4.1.1
-    # via google-api-python-client
+    # via
+    #   -r requirements.docker.txt
+    #   google-api-python-client
 urllib3==1.26.16
     # via
+    #   -r requirements.docker.txt
     #   google-auth
     #   requests
 webencodings==0.5.1
     # via
+    #   -r requirements.docker.txt
     #   cssselect2
     #   tinycss2
-
-# The following packages are considered to be unsafe in a requirements file:
-# setuptools

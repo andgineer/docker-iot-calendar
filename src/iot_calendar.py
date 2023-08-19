@@ -80,7 +80,7 @@ class HandlerWithParams(tornado.web.RequestHandler):
     def load_params(self, **kw):
         defaults = ImageParams(
             dashboard=kw.get("dashboard", ""),
-            format=kw.get("format", "gif"),
+            format=kw.get("format", "png"),
             style="grayscale",
             xkcd=1,
             rotate=90,

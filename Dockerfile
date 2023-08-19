@@ -1,12 +1,16 @@
 FROM andgineer/matplotlib
 
-COPY requirements.txt /requirements.txt
+RUN apk --no-cache --update \
+      add build-base zlib-dev \
+      cairo-dev cairo cairo-tools \
+      jpeg-dev openjpeg-dev tiff-dev \
+      freetype-dev lcms2-dev tk-dev tcl-dev
+
+COPY requirements.docker.txt /requirements.docker.txt
 COPY requirements.dev.txt /requirements.dev.txt
 
-RUN apk --no-cache --update add build-base cairo-dev cairo cairo-tools jpeg-dev zlib-dev \
-                                        freetype-dev lcms2-dev openjpeg-dev tiff-dev tk-dev tcl-dev \
-    && pip install --no-cache-dir -r requirements.dev.txt \
-    && pip install --no-cache-dir -r requirements.txt \
+RUN pip install --no-cache-dir -r requirements.dev.txt \
+    && pip install --no-cache-dir -r requirements.docker.txt \
     && rm -rf ~/.pip/cache/ \
     && rm -rf /var/cache/apk/*
 

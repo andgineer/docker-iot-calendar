@@ -100,7 +100,7 @@ def test_load_params_default_values(mock_request_list_handler):
     params = mock_request_list_handler.load_params()
 
     assert params.dashboard == ""
-    assert params.format == "gif"
+    assert params.format == "png"
     assert params.style == "grayscale"
 
 
