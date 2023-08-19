@@ -4,6 +4,7 @@ from unittest.mock import MagicMock, Mock, call, patch
 
 import pytest
 
+import calendar_image
 from calendar_image import (
     ImageLoader,
     draw_calendar,
@@ -21,7 +22,7 @@ from calendar_image import (
     pie_scale,
     pie_width,
     weeks,
-    width_aspect,
+    width_aspect, ImageParams,
 )
 
 
@@ -378,7 +379,6 @@ def test_draw_plot():
 
 
 def test_draw_calendar():
-    # Mock data
     grid = [[{"date": datetime(2023, 8, 7), "values": [10, 20]}]]
     x = [datetime(2023, 8, 7)]
     y = [[10]]
@@ -419,19 +419,16 @@ def test_draw_calendar():
     ) as mock_draw_pies, patch(
         "calendar_image.ImageLoader"
     ) as mock_image_loader, patch(
-        "numpy.fromstring"
-    ) as mock_np_fromstring, patch(
         "numpy.rot90"
     ) as mock_np_rot90, patch(
         "PIL.Image.fromarray"
-    ) as mock_fromarray:
-        # Assign return values to mocked objects if needed
+    ) as mock_fromarray, patch(
+        "PIL.Image.open"
+    ) as mock_image_open:
         mock_image_loader.return_value = Mock()
-        mock_np_fromstring.return_value = Mock()
         mock_np_rot90.return_value = Mock()
         mock_fromarray.return_value = Mock(save=Mock())
 
-        # Call the function
         result = draw_calendar(grid, x, y, weather, dashboard, labels, absent_labels, params)
 
         mock_draw_weather.assert_called_once_with(
@@ -456,6 +453,11 @@ def test_draw_calendar():
 
         assert isinstance(result, bytes)
         mock_image_loader.assert_called_once()
-        mock_np_fromstring.assert_called_once()
         mock_np_rot90.assert_called_once()
         mock_fromarray.assert_called_once()
+        mock_image_open.assert_called_once()
+
+
+@pytest.mark.benchmark
+def test_draw_benchmark(benchmark):
+    benchmark(calendar_image.check, show=False)

@@ -1,6 +1,7 @@
 pytest
 coverage
 pytest-mock
+pytest-benchmark
 
 pip-tools
 

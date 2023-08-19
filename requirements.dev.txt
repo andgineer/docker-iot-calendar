@@ -12,7 +12,7 @@ build==0.10.0
     # via pip-tools
 cfgv==3.4.0
     # via pre-commit
-click==8.1.6
+click==8.1.7
     # via
     #   black
     #   pip-tools
@@ -36,7 +36,7 @@ lazy-object-proxy==1.9.0
     # via astroid
 mccabe==0.7.0
     # via pylint
-mypy==1.5.0
+mypy==1.5.1
     # via -r requirements.dev.in
 mypy-extensions==1.0.0
     # via
@@ -62,6 +62,8 @@ pluggy==1.2.0
     # via pytest
 pre-commit==3.3.3
     # via -r requirements.dev.in
+py-cpuinfo==9.0.0
+    # via pytest-benchmark
 pydocstyle==6.3.0
     # via -r requirements.dev.in
 pylint==2.17.5
@@ -71,8 +73,11 @@ pyproject-hooks==1.0.0
 pytest==7.4.0
     # via
     #   -r requirements.dev.in
+    #   pytest-benchmark
     #   pytest-cov
     #   pytest-mock
+pytest-benchmark==4.0.0
+    # via -r requirements.dev.in
 pytest-cov==4.1.0
     # via -r requirements.dev.in
 pytest-mock==3.11.1

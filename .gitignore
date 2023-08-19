@@ -71,6 +71,7 @@ wheels/
 .installed.cfg
 *.egg
 .pytest_cache
+benchmark.json
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

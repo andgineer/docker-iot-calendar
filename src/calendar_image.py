@@ -9,6 +9,7 @@ Usage
 import os
 from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional, Union
+import io
 
 import matplotlib
 
@@ -468,17 +469,28 @@ def draw_calendar(
             empty_image_file_name=dashboard["empty_image"],
         )
         plt.gcf().canvas.draw()
-        bitmap = np.fromstring(plt.gcf().canvas.tostring_rgb(), dtype=np.uint8, sep="").reshape(
-            plt.gcf().canvas.get_width_height()[::-1] + (3,)
-        )
-        bitmap = np.rot90(bitmap, k=int(params.rotate) // 90)
-        image = PIL.Image.fromarray(bitmap)
+
+        image = create_image(rotate=int(params.rotate), format=params.format)
         bytes_file = BytesIO()
         image.save(bytes_file, format=params.format)
         return bytes_file.getvalue()
 
 
-def check():  # pragma: no cover
+def create_image(rotate: int, format: str) -> PIL.Image:  # pragma: no cover
+    """Creates image from matplotlib canvas."""
+    buf = io.BytesIO()
+    plt.savefig(buf, format=format)
+    buf.seek(0)
+    image = PIL.Image.open(buf)
+
+    # Rotate the image
+    img_np = np.array(image)
+    img_np = np.rot90(img_np, k=rotate // 90)
+
+    return PIL.Image.fromarray(img_np)
+
+
+def check(show: bool = True):  # pragma: no cover
     """Debugging function.
 
     To create the file with parameters for the check(), add the following code to the draw_calendar()
@@ -509,11 +521,12 @@ def check():  # pragma: no cover
         call_params["absent_labels"],
         ImageParams(*call_params["params"]),
     )
-    t1 = datetime.now()
-    print(t1 - t0)
-    image_file = BytesIO(image_data)
-    image = PIL.Image.open(image_file)
-    image.show()
+    if show:
+        t1 = datetime.now()
+        print(f"Elapsed: {t1 - t0}")
+        image_file = BytesIO(image_data)
+        image = PIL.Image.open(image_file)
+        image.show()
 
 
 if __name__ == "__main__":  # pragma: no cover

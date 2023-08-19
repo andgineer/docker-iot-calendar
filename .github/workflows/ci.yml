@@ -31,7 +31,7 @@ jobs:
         python -m pip install -r requirements.txt
     - name: Test with pytest
       run: |
-        coverage run -m pytest
+        coverage run -m pytest --benchmark-json benchmark.json
 
     - name: Upload Coverage to Codecov
       if: ${{ matrix.python-version == 3.11 && matrix.platform == 'ubuntu-latest' }}
@@ -52,3 +52,9 @@ jobs:
         name: python-coverage-comment-action
         # If you use a different name, update COMMENT_FILENAME accordingly
         path: python-coverage-comment-action.txt
+
+    - name: Store benchmark result
+      uses: benchmark-action/github-action-benchmark@v1
+      with:
+        tool: 'pytest'
+        output-file-path: benchmark.json
