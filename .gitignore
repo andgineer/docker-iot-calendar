@@ -72,6 +72,10 @@ wheels/
 *.egg
 .pytest_cache
 benchmark.json
+.benchmarks
+.dmypy.json
+docs/docstrings
+site
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

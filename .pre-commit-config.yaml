@@ -2,7 +2,9 @@ exclude: |
     (?x)(
         tests/|
         setup.py|
-        version.py
+        version.py|
+        site/|
+        docs/
     )
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
