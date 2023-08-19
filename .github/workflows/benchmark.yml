@@ -1,5 +1,7 @@
 # https://github.com/benchmark-action/github-action-benchmark#how-to-use
 # Do not run this workflow on pull request since this workflow has permission to modify contents.
+name: benchmark
+
 on:
   push:
     branches:

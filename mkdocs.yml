@@ -1,9 +1,9 @@
-site_name: aios3
+site_name: docker-iot-calendar
 site_url: https://andgineer.github.io/docker-iot-calendar
 site_author: Andrey Sorokin
 
 # Repository
-repo_name: aios3
+repo_name: docker-iot-calendar
 repo_url: https://github.com/andgineer/docker-iot-calendar
 edit_uri: edit/master/docs
 docs_dir: docs
