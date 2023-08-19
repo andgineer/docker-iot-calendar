@@ -3,6 +3,10 @@ coverage
 pytest-mock
 pytest-benchmark
 
+lazydocs
+mkdocs
+mkdocs-awesome-pages-plugin
+
 pip-tools
 
 pre-commit
