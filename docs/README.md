@@ -3,7 +3,7 @@
 [Docker Hub container](https://hub.docker.com/r/andgineer/iot-calendar)
 that generates image for Amazon Kindle.
 
-![calendar](include/calendar.png)
+![calendar](../include/calendar.png)
 See [description in my blog](https://sorokin.engineer/posts/en/iot_calendar_synology.html).
 
 The image contains calendar with events from Google Calendar - supposedly events from your IoT
@@ -18,4 +18,4 @@ this page in index.html).
 
 # source code
 
-[sorokin.engineer/docker-iot-calendar](https://github.com/andgineer/docker-iot-calendar)
+[andgineer/docker-iot-calendar](https://github.com/andgineer/docker-iot-calendar)
