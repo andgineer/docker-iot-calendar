@@ -1,5 +1,4 @@
-"""Singleton meta class.
-"""
+"""Singleton meta class."""
 
 
 class Singleton(type):

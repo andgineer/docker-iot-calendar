@@ -1,6 +1,4 @@
-"""
-Prepare data for calendar_image.py
-"""
+"""Prepare data for calendar_image.py."""
 
 import collections.abc
 import copy

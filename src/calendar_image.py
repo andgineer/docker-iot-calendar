@@ -6,10 +6,10 @@ Usage
     see details in the function description
 """
 
+import io
 import os
 from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional, Union
-import io
 
 import matplotlib
 

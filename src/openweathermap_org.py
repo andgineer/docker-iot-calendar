@@ -1,7 +1,6 @@
-"""
- Loads weather from OpenWeatherMap.org.
+"""Load weather from OpenWeatherMap.org.
 
- Usage:
+Usage:
     Weather(settings).get_weather(latitude, longitude)
 
 """
@@ -19,6 +18,8 @@ MIN_API_CALL_DELAY_SECONDS = 60 * 10
 
 
 class Weather:
+    """Load weather from OpenWeatherMap.org."""
+
     def __init__(self, settings: Dict[str, Any]) -> None:
         """Init.
 

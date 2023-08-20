@@ -1,10 +1,9 @@
-"""
- Loads weather from weather.gov.
- Works for USA only (NDFD regions).
+"""Load weather from weather.gov.
 
- Usage:
+Works for USA only (NDFD regions).
+
+Usage:
     Weather().get_weather(latitude, longitude)
-
 """
 
 import datetime

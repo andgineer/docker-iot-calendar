@@ -15,6 +15,7 @@ class ImageLoader(metaclass=Singleton):
     """
 
     def __init__(self):
+        """Init."""
         self._cache = {}
         self._non_existed = np.array([[[255, 255, 255]]], dtype=np.uint8)
 

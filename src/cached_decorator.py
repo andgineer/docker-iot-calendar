@@ -104,19 +104,20 @@ class cached:
         return True
 
     def __call__(self, *args, **kwargs):
-        # If 'cached' is used without arguments, self.func is not None.
+        """Call the decorated function/method."""
         if self.func:
+            # If '@cached' is used without arguments
             return self.decorate(self.func)(*args, **kwargs)
         else:
-            # If 'cached' is used with arguments, self.func is None.
+            # If '@cached' is used with arguments
             # In this case, args[0] will be the decorated function/method.
             return self.decorate(args[0])
 
     def decorate(self, func):
-        """The actual decorator function."""
+        """Decorate function."""
 
         def cached_func(*args, **kw):
-            """Cached function."""
+            """Cache function."""
             if self.is_self_in_args(args, func):
                 # the first argument is 'self', this is objects's method so add the object attributes
                 if self.cache_per_instance:

@@ -1,4 +1,4 @@
-"""Load events from Google Calendar using Google Calendar API """
+"""Load events from Google Calendar using Google Calendar API."""
 
 import datetime
 import os
@@ -20,7 +20,10 @@ MIN_GOOGLE_API_CALL_DELAY_SECONDS = 15
 
 
 class Calendar(object):
+    """Google Calendar API wrapper."""
+
     def __init__(self, settings, calendar_id):
+        """Init."""
         self.settings = settings
         self.http = self.get_credentials_http()
         self.service = self.get_service()
@@ -28,6 +31,7 @@ class Calendar(object):
         self.calendarId = calendar_id
 
     def get_credentials_http(self):
+        """Get credentials."""
         if GOOGLE_CREDENTIALS_PARAM not in self.settings:
             raise ValueError(f"'{GOOGLE_CREDENTIALS_PARAM}' not found in settings.")
 
@@ -55,6 +59,7 @@ You can get new one from https://console.developers.google.com/start/api?id=cale
         return credentials.authorize(httplib2.Http())
 
     def get_service(self):
+        """Get service."""
         if not self.http:
             return None
         # logging.getLogger('googleapiclient.discovery').setLevel(logging.CRITICAL)
@@ -67,9 +72,11 @@ You can get new one from https://console.developers.google.com/start/api?id=cale
         )
 
     def parse_time(self, s):
+        """Parse time."""
         return dateutil.parser.parse(s)
 
     def time_to_str(self, t):
+        """Time to string."""
         GCAL_TIME_FORMAT = "%Y-%m-%dT%H:%M:%S"
         tz = -time.timezone / 60 / 60 * 100
         # todo that is incorrect - you need minutes after ':' not hours % 100
@@ -79,7 +86,8 @@ You can get new one from https://console.developers.google.com/start/api?id=cale
         return s
 
     def get_last_events(self, summary, days=31, default_length=900):
-        """
+        """Get last events.
+
         :param summary: text to search
         :param days: days from today to collect events
         :return:
@@ -87,12 +95,14 @@ You can get new one from https://console.developers.google.com/start/api?id=cale
         """
 
         def get_event_interval(event):
-            """
+            """Get event interval.
+
             :param event: with ['start'] and ['end']
             :return: start and end calculated from dateTime or date formats of google calendar
             """
 
             def get_timepoint(timepoint):
+                """Get timepoint."""
                 if "dateTime" in timepoint:
                     return self.parse_time(timepoint["dateTime"])
                 else:
@@ -135,12 +145,15 @@ You can get new one from https://console.developers.google.com/start/api?id=cale
                 return result
 
     def google_time_format(self, t):
+        """Google time format."""
         return t.strftime("%Y-%m-%dT%H:%M:%SZ")
 
     def google_now(self):
+        """Google now."""
         return self.google_time_format(datetime.datetime.now())
 
     def google_today(self):
+        """Google today."""
         return self.google_time_format(
             datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
         )
@@ -151,6 +164,7 @@ You can get new one from https://console.developers.google.com/start/api?id=cale
     trace_fmt="Use stored google calendar data (from {time})",
 )
 def collect_events(calendar_events, absent_events, settings):
+    """Collect events."""
     calendars = {}
     events = []
     absents = []
