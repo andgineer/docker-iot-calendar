@@ -60,7 +60,7 @@ class Weather(object):
         xml_day_one = dom.getElementsByTagName("start-valid-time")[0].firstChild.nodeValue[0:10]
         day_one = datetime.datetime.strptime(xml_day_one, "%Y-%m-%d")
 
-        return {"temp_min": highs, "temp_max": lows, "icon": icons, "day": [day_one]}
+        return {"temp_min": lows, "temp_max": highs, "icon": icons, "day": [day_one]}
 
 
 if __name__ == "__main__":  # pragma: no cover
