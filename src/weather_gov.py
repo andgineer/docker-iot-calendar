@@ -7,19 +7,26 @@ Usage:
 """
 
 import datetime
+from typing import Dict, List, Optional
 from urllib.request import urlopen
 from xml.dom import minidom
 
 
-class Weather(object):
-    def get_weather(self, latitude, longitude, days=1, units="m"):
-        """
+class Weather:
+    """Weather from weather.gov."""
+
+    def get_weather(
+        self, latitude: str, longitude: str, days: int = 1, units: str = "m"
+    ) -> Dict[str, List[Optional[int]]]:
+        """Get weather from weather.gov.
+
         :param latitude:
         :param longitude:
         :param days:
         :param units: m - metric, e - USA
         :return:
          {'temp_min': [], 'temp_max': [], 'icon': [], 'day': []}
+         with lists for each day
          or None if no key or load error
         """
 
@@ -57,7 +64,7 @@ class Weather(object):
                 xml_icons[i].firstChild.nodeValue.split("/")[-1].split(".")[0].rstrip("0123456789")
             )
 
-        xml_day_one = dom.getElementsByTagName("start-valid-time")[0].firstChild.nodeValue[0:10]
+        xml_day_one = dom.getElementsByTagName("start-valid-time")[0].firstChild.nodeValue[:10]
         day_one = datetime.datetime.strptime(xml_day_one, "%Y-%m-%d")
 
         return {"temp_min": lows, "temp_max": highs, "icon": icons, "day": [day_one]}
