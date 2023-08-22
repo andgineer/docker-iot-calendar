@@ -29,7 +29,6 @@ class Weather:
          with lists for each day
          or None if no key or load error
         """
-
         weather_xml = urlopen(
             "http://graphical.weather.gov/xml/SOAP_server/ndfdSOAPclientByDay.php?"
             "whichClient=NDFDgenByDay&lat={latitude}&lon={longitude}"

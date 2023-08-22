@@ -266,22 +266,22 @@ def draw_weather(
 ) -> None:
     """Render the weather data onto a specified rectangle using matplotlib.
 
-    Parameters:
-    - weather (Optional[Dict[str, Union[str, List[float]]]]):
-        A dictionary containing weather data.
-        It should have the following keys:
-        - 'temp_min': List containing minimum temperature (only first element is used).
-        - 'temp_max': List containing maximum temperature (only first element is used).
-        - 'images_folder': Path to the folder containing weather icons.
-        - 'icon': List containing the name of the icon file (without extension, only first element is used).
-        If weather is None, it renders the date only.
+    :param weather: A dictionary containing weather data. The dictionary should have the following keys:
+                    - 'temp_min': List of minimum temperatures (only the first element is used).
+                    - 'temp_max': List of maximum temperatures (only the first element is used).
+                    - 'images_folder': Path to the folder containing weather icons.
+                    - 'icon': List containing the name of the icon file (without extension, only the first element is used).
+                    If weather is None, only the date is rendered.
+    :type weather: Optional[Dict[str, Union[str, List[float]]]]
 
-    - rect (List[float]):
-        A list of four float numbers specifying the [left, bottom, width, height]
-        of the rectangle where the weather data should be rendered.
+    :param rect: A list of four float numbers [left, bottom, width, height] specifying the rectangle where the
+                 weather data will be rendered.
+    :type rect: List[float]
 
-    - image_loader (ImageLoader):
-        Image loader.
+    :param image_loader: Instance responsible for loading images.
+    :type image_loader: ImageLoader
+
+    :return: None
     """
     ax = plt.axes(rect)
     plt.axis("off")
@@ -325,17 +325,23 @@ def draw_plot(
 ) -> None:
     """Render a stacked plot using matplotlib.
 
-    Parameters:
-    - x (List[datetime]): List of datetime objects representing the X-axis data.
-    - y (List[List[float]]): 2D list where each sublist represents a dataset to be stacked in the plot.
-    - labels (List[Dict[str, Union[str, float]]]): Labels for each dataset in `y`. Each dictionary may contain:
-        - 'summary': Summary or name of the dataset.
-        - 'image': (optional) Path to the image representing the dataset.
-    - rect (List[float]): A list of four float numbers specifying the [left, bottom, width, height] of the rectangle
-      where the plot should be rendered.
-    - image_loader (ImageLoader): Image loader.
-    - legend (str, default 'inside'): Defines the style of the legend. It can be 'inside', 'rectangle' or any other value
-      which will result in no legend.
+    :param x: List of datetime objects for the X-axis data.
+    :type x: List[datetime]
+    :param y: 2D list where each inner list represents a dataset for the plot, meant to be stacked.
+    :type y: List[List[float]]
+    :param labels: List of dictionaries containing labels for each dataset in `y`. Each dictionary can have:
+                   - 'summary': The name or description of the dataset.
+                   - 'image' (optional): Path to an image that represents the dataset.
+    :type labels: List[Dict[str, Union[str, float]]]
+    :param rect: A list of four floats denoting the [left, bottom, width, height] of the rectangle where the plot is drawn.
+    :type rect: List[float]
+    :param image_loader: Instance responsible for image operations.
+    :type image_loader: ImageLoader
+    :param legend: Specifies the legend style. Can be 'inside', 'rectangle', or other values that result in no legend being drawn.
+                   Defaults to 'inside'.
+    :type legend: str
+
+    :return: None
     """
     ax = plt.axes(rect)
     if len(x) > 0:
@@ -417,8 +423,8 @@ def draw_calendar(
     absent_labels: List[Dict[str, str]],
     params: "ImageParams",
 ) -> bytes:
-    """
-    Draws IoT calendar as image, optimized for Amazon Kindle (600 x 800).
+    """Draw IoT calendar as image, optimized for Amazon Kindle (600 x 800).
+
     To prepare data see functions in calendar_data.py
 
     :param grid:
@@ -477,7 +483,7 @@ def draw_calendar(
 
 
 def create_image(rotation_degrees: int, format: str) -> PIL.Image:  # pragma: no cover
-    """Creates image from matplotlib canvas."""
+    """Create image from matplotlib canvas."""
     if rotation_degrees % 90 != 0:
         raise ValueError("Degrees should be a multiple of 90")
 
