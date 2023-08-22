@@ -30,11 +30,9 @@ class Weather:
          or None if no key or load error
         """
         weather_xml = urlopen(
-            "http://graphical.weather.gov/xml/SOAP_server/ndfdSOAPclientByDay.php?"
-            "whichClient=NDFDgenByDay&lat={latitude}&lon={longitude}"
-            "&format=24+hourly&numDays={days}&Unit={units}".format(
-                latitude=latitude, longitude=longitude, days=days, units=units
-            )
+            f"http://graphical.weather.gov/xml/SOAP_server/ndfdSOAPclientByDay.php?"
+            f"whichClient=NDFDgenByDay&lat={latitude}&lon={longitude}"
+            f"&format=24+hourly&numDays={days}&Unit={units}"
         ).read()
         dom = minidom.parseString(weather_xml)
         error = dom.getElementsByTagName("error")
@@ -58,9 +56,9 @@ class Weather:
 
         xml_icons = dom.getElementsByTagName("icon-link")
         icons = [None] * days
-        for i in range(len(xml_icons)):
+        for i, xml_icon in enumerate(xml_icons):
             icons[i] = (
-                xml_icons[i].firstChild.nodeValue.split("/")[-1].split(".")[0].rstrip("0123456789")
+                xml_icon.firstChild.nodeValue.split("/")[-1].split(".")[0].rstrip("0123456789")
             )
 
         xml_day_one = dom.getElementsByTagName("start-valid-time")[0].firstChild.nodeValue[:10]

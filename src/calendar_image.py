@@ -1,5 +1,4 @@
-"""
-Draws IoT calendar as bitmap image.
+"""Draw IoT calendar as bitmap image.
 
 Usage
     draw_calendar(parameters)
@@ -76,8 +75,8 @@ def get_daily_max(grid: List[List[Dict[str, List[int]]]]) -> int:
 def draw_day_headers(grid: List[List[Dict[str, Any]]]) -> None:
     """Draws the day headers for a grid.
 
-    Args:
-    - grid (List[List[Dict[str, Any]]]): A 2D grid [week][day]
+    :param grid: A 2D grid [week][day].
+    :return: None
     """
     for day in range(WEEK_DAYS):
         plt.text(
@@ -93,8 +92,8 @@ def draw_day_headers(grid: List[List[Dict[str, Any]]]) -> None:
 def draw_week_headers(grid: List[List[Dict[str, any]]]) -> None:
     """Draw headers for each week on the grid using the date from the first day of each week.
 
-    Args:
-    - grid (List[List[Dict[str, Any]]]): A 2D grid [week][day]
+    :param grid: A 2D grid [week][day].
+    :return: None
     """
     for week in range(weeks):
         plt.text(
@@ -112,11 +111,11 @@ def draw_pie(
 ) -> None:
     """Draws a pie chart for a specific day of a week based on the given values.
 
-    Parameters:
-    - week (int): The index of the week.
-    - day (int): The index of the day within the week.
-    - values (List[Union[int, float]]): A list of numerical values for each slice of the pie chart.
-    - daily_max (Union[int, float]): The maximum value for the day, used to determine the pie's radius.
+    :param week: The index of the week.
+    :param day: The index of the day within the week.
+    :param values: A list of numerical values for each slice of the pie chart.
+    :param daily_max: The maximum value for the day, used to determine the pie's radius.
+    :return: None
     """
     radius = sum(values) / daily_max * pie_height * pie_scale / 2
     colours = [f"C{i}" for i in range(len(values))]
@@ -147,15 +146,15 @@ def draw_empty_pie(
 
     Do not fill cells for a days in the future (after `tomorrow`).
 
-    Args:
-    - grid: The grid representing the schedule [week][day]["date"].
-    - image_loader: Image loader.
-    - week: The week index for which to draw the pie.
-    - day: The day index for which to draw the pie.
-    - absent_grid_images: Dictionary mapping absent summary to image file names
-        - "image_grid" from "absent" array in the settings.
-    - empty_image_file_name: Name of the file to use for the empty image.
-    - tomorrow: The datetime representing the start of the next day.
+    :param grid: The grid representing the schedule with structure [week][day]["date"].
+    :param image_loader: Image loader.
+    :param week: The week index for which to draw the pie.
+    :param day: The day index for which to draw the pie.
+    :param absent_grid_images: Dictionary mapping absent summary to image file names.
+                               "image_grid" from the "absent" array in the settings.
+    :param empty_image_file_name: Name of the file to use for the empty image.
+    :param tomorrow: The datetime representing the start of the next day.
+    :return: None
     """
     image_padding = pie_width / 5
     if "absents" in grid[week][day]:
@@ -180,9 +179,9 @@ def draw_empty_pie(
 def highlight_today(grid: List[List[Dict[str, Any]]], today: datetime) -> None:
     """Draw a rectangle around the current day in the grid to highlight it.
 
-    Parameters:
-    - grid: The grid representing the schedule [week][day]["date"].
-    - today: A datetime object representing the current day.
+    :param grid: The grid representing the schedule with structure [week][day]["date"].
+    :param today: A datetime object indicating the current day.
+    :return: None
     """
     grid_shift = (today - grid[0][0]["date"]).days
     day = grid_shift % WEEK_DAYS
@@ -206,16 +205,15 @@ def draw_pies(
     absent_grid_images: Optional[Dict[str, str]] = None,
     empty_image_file_name: Optional[str] = None,
 ) -> None:
-    """
-    Draws pie charts or images for each day in the provided grid based on the data provided.
+    """Draw pie charts or images for each day in the provided grid based on the data provided.
 
-    Parameters:
-    - grid: The grid representing the schedule [week][day]["date"]/["values"].
-    - image_loader: Image loader.
-    - weeks: Number of weeks to consider. Default is 4.
-    - absent_grid_images: Dictionary mapping absent summary to image file names
-        - "image_grid" from "absent" array in the settings. Optional.
-    - empty_image_file_name: File name of the image to use when there's no data. Optional.
+    :param grid: The grid representing the schedule [week][day]["date"]/["values"].
+    :param image_loader: Instance responsible for loading images.
+    :param weeks: Number of weeks to consider. Default is 4.
+    :param absent_grid_images: Dictionary mapping absent summary to image file names, which comes from the
+                               "image_grid" key within the "absent" array in the settings. Optional.
+    :param empty_image_file_name: File name of the image to use when there's no data. Optional.
+    :return: None
     """
     daily_max = get_daily_max(grid)
     today = datetime.now(grid[0][0]["date"].tzinfo).replace(

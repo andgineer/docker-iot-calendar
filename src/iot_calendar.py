@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-""" Web-server for calendar
-"""
+"""Web-server for calendar."""
 import datetime
 import json
 import os
@@ -77,7 +76,10 @@ def load_settings(secrets_folder=None):
 
 
 class HandlerWithParams(tornado.web.RequestHandler):
+    """Handler with params."""
+
     def load_params(self, **kw):
+        """Load params from request."""
         defaults = ImageParams(
             dashboard=kw.get("dashboard", ""),
             format=kw.get("format", "png"),
@@ -92,6 +94,7 @@ class HandlerWithParams(tornado.web.RequestHandler):
         return ImageParams(*params)
 
     def disable_cache(self):
+        """Disable cache."""
         self.set_header("Cache-Control", "no-cache, must-revalidate")
         self.set_header("Expires", "0")
         now = datetime.datetime.now()
@@ -100,8 +103,11 @@ class HandlerWithParams(tornado.web.RequestHandler):
 
 
 class DashboardImageHandler(HandlerWithParams):
+    """Dashboard image handler."""
+
     # todo async decorators and async version of draw_calendar
     def get(self, image_format):
+        """Get image."""
         self.disable_cache()
         params = self.load_params(
             format=image_format, dashboard=list(settings["dashboards"].keys())[0]
@@ -127,7 +133,10 @@ class DashboardImageHandler(HandlerWithParams):
 
 
 class DashboardListHandler(HandlerWithParams):
+    """Dashboard list handler."""
+
     def get(self):
+        """Get list of dashboards."""
         self.disable_cache()
         params = self.load_params()
         if params.dashboard:
@@ -150,7 +159,10 @@ class DashboardListHandler(HandlerWithParams):
 
 
 class Application(tornado.web.Application):
+    """Application."""
+
     def __init__(self, settings: Dict[str, Any] = None, handlers: List[Tuple[str, Any]] = None):
+        """Init."""
         if settings is None:
             settings = dict(
                 template_path=os.path.join(os.path.dirname(__file__), "templates"),
