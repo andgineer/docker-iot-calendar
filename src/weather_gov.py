@@ -87,4 +87,4 @@ if __name__ == "__main__":  # pragma: no cover
     from pprint import pprint
 
     weather = Weather()
-    pprint(weather.get_weather("39.3286", "-76.6169"))
+    pprint(weather.get_weather("39.3286", "-76.6169", days=5))

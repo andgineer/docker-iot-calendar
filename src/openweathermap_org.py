@@ -40,7 +40,7 @@ class Weather:
         :return: The API key as a string, or None if the key couldn't be loaded.
         """
         if WEATHER_KEY_PARAM in self.settings and os.path.isfile(self.settings[WEATHER_KEY_PARAM]):
-            with open(self.settings[WEATHER_KEY_PARAM], "r") as key_file:
+            with open(self.settings[WEATHER_KEY_PARAM], "r", encoding="utf8") as key_file:
                 return json.loads(key_file.read())["key"]
         else:
             return None
@@ -111,6 +111,7 @@ class Weather:
         weather_response = requests.get(
             "http://api.openweathermap.org/data/2.5/forecast",
             params={"units": units_code, "lat": latitude, "lon": longitude, "appid": self.key},
+            timeout=10,
         )
         print("Got weather from openweathermap.org:", weather_response.text[:100])
         weather = weather_response.json()
@@ -119,10 +120,8 @@ class Weather:
             if str(weather["cod"]) == "401" and weather["message"].startswith("Invalid API key"):
                 print(
                     "#" * 5,
-                    """You should get your key from https://home.openweathermap.org/users/sign_up
-    and place it into {}""".format(
-                        self.settings["openweathermap_key_file_name"]
-                    ),
+                    f"""You should get your key from https://home.openweathermap.org/users/sign_up
+                    and place it into {self.settings["openweathermap_key_file_name"]}""",
                 )
             else:
                 print("#" * 5, "ERROR:", weather["message"])

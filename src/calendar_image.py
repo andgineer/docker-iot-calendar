@@ -5,6 +5,8 @@ Usage
     see details in the function description
 """
 
+
+import contextlib
 import io
 import os
 from datetime import datetime, timedelta
@@ -12,19 +14,20 @@ from typing import Any, Dict, List, Optional, Union
 
 import matplotlib
 
-try:  # !!! that should be before importing pyplot
-    import tkinter  # noqa: F401  # check if tkinter is installed
+# !!! that should be before importing pyplot
+with contextlib.suppress(ImportError):
+    import tkinter  # noqa: F401  # pylint: disable=unused-import  # check if tkinter is installed
 
     matplotlib.use("TkAgg")  # in MacOS we should have tkinter installed and use it as backend
-except ImportError:
-    pass  # in Docker container (where no tkinter installed) we use default matplotlib backend
+
 from collections import namedtuple
 from io import BytesIO
 
-import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import numpy as np
 import PIL.Image
+from matplotlib import patches
+from matplotlib.axes import Axes
 from matplotlib.dates import DateFormatter, date2num
 
 from cached_decorator import cached
@@ -313,6 +316,58 @@ def draw_weather(
     )
 
 
+def place_text_and_image(
+    ax: Axes,
+    x_pos: Union[int, float],
+    y_pos: Union[int, float],
+    label: Dict[str, Union[str, float]],
+    image_loader: ImageLoader,
+) -> None:
+    """Place text and image on the axes."""
+    ax.text(x_pos, y_pos, label["summary"], horizontalalignment="center", verticalalignment="top")
+
+    if "image" in label:
+        add_image_to_axes(ax, x_pos, y_pos, label, image_loader)
+
+
+def add_image_to_axes(
+    ax: Axes,
+    x_pos: Union[int, float],
+    y_pos: Union[int, float],
+    label: Dict[str, Union[str, float]],
+    image_loader: ImageLoader,
+) -> None:
+    """Add image to the axes."""
+    legend_text_height = 0.13
+    xlim, ylim = ax.get_xlim(), ax.get_ylim()
+    xsz, ysz = xlim[1] - xlim[0], ylim[1] - ylim[0]
+    x_scale = 1 / plot_height  # Clarify the logic behind this.
+    x_val, y_val = (date2num(x_pos) - xlim[0]) / xsz * x_scale, (y_pos - ylim[0]) / ysz
+
+    axes = plt.axes([plot_left, plot_bottom, plot_width, plot_height], label="2")
+    configure_axes_for_image(axes)
+    plt.imshow(
+        image_loader.by_file_name(label["image"]),
+        extent=(
+            x_val - legend_image_sz / 2,
+            x_val + legend_image_sz / 2,
+            y_val - legend_image_sz - legend_text_height,
+            y_val - legend_text_height,
+        ),
+        interpolation="bicubic",
+    )
+
+
+def configure_axes_for_image(axes: Axes) -> None:
+    """Configure the axes for displaying an image."""
+    plt.axis("off")
+    axes.patch.set_visible(False)
+    axes.set_xticklabels([])
+    axes.set_yticklabels([])
+    axes.set_ylim(0, 1)
+    axes.set_xlim(0, 1 / plot_height)  # Used the earlier logic for x_scale directly here.
+
+
 def draw_plot(
     x: List[datetime],
     y: List[List[float]],
@@ -363,47 +418,12 @@ def draw_plot(
     elif legend == "inside":
         # y_sum = np.sum(np.array(y), axis=0)
         # y_max = y_sum.max()
-        for region in range(len(labels)):
-            if len(y[region]) == 0:
+        for region, label in enumerate(labels):
+            if not y[region]:
                 return
             max_idx, _ = max(enumerate(y[region]), key=lambda item: item[1])
-            x_pos = x[max_idx]
-            y_pos = y[region][max_idx]
-            ax.text(
-                x_pos,
-                y_pos,
-                labels[region]["summary"],
-                horizontalalignment="center",
-                verticalalignment="top",
-            )
-            if "image" in labels[region]:
-                legend_text_height = 0.13
-                ylim = ax.get_ylim()
-                xlim = ax.get_xlim()
-                xsz = xlim[1] - xlim[0]
-                ysz = ylim[1] - ylim[0]
-                x_scale = (
-                    1 / plot_height
-                )  # at the moment I do not understand why 1 and not plot_width
-                x_val = (date2num(x_pos) - xlim[0]) / xsz * x_scale
-                y_val = (y_pos - ylim[0]) / ysz
-                axes = plt.axes([plot_left, plot_bottom, plot_width, plot_height], label="2")
-                plt.axis("off")
-                axes.patch.set_visible(False)
-                axes.set_xticklabels([])
-                axes.set_yticklabels([])
-                axes.set_ylim((0, 1))
-                axes.set_xlim((0, x_scale))
-                plt.imshow(
-                    image_loader.by_file_name(labels[region]["image"]),
-                    extent=(
-                        x_val - legend_image_sz / 2,
-                        x_val + legend_image_sz / 2,
-                        y_val - legend_image_sz - legend_text_height,
-                        y_val - legend_text_height,
-                    ),
-                    interpolation="bicubic",
-                )
+            x_pos, y_pos = x[max_idx], y[region][max_idx]
+            place_text_and_image(ax, x_pos, y_pos, label, image_loader)
 
 
 @cached(
@@ -512,7 +532,9 @@ def check(show: bool = True):  # pragma: no cover
 
     import dateutil
 
-    call_params = json.load(open("tests/resources/draw_calendar_params_2.json", "r"))
+    call_params = json.load(
+        open("tests/resources/draw_calendar_params_2.json", "r", encoding="utf-8")
+    )
     for row in call_params["grid"]:
         for col in row:
             col["date"] = dateutil.parser.parse(col["date"])
