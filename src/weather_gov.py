@@ -7,9 +7,14 @@ Usage:
 """
 
 import datetime
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple, Union
 from urllib.request import urlopen
 from xml.dom import minidom
+from xml.dom.minicompat import NodeList
+from xml.dom.minidom import Element
+
+ValueType = Union[int, str, datetime.datetime, None]
+WeatherType = Dict[str, List[ValueType]]
 
 
 class Weather:
@@ -17,18 +22,8 @@ class Weather:
 
     def get_weather(
         self, latitude: str, longitude: str, days: int = 1, units: str = "m"
-    ) -> Dict[str, List[Optional[int]]]:
-        """Get weather from weather.gov.
-
-        :param latitude:
-        :param longitude:
-        :param days:
-        :param units: m - metric, e - USA
-        :return:
-         {'temp_min': [], 'temp_max': [], 'icon': [], 'day': []}
-         with lists for each day
-         or None if no key or load error
-        """
+    ) -> Optional[WeatherType]:
+        """Get weather from weather.gov."""
         weather_xml = urlopen(
             f"http://graphical.weather.gov/xml/SOAP_server/ndfdSOAPclientByDay.php?"
             f"whichClient=NDFDgenByDay&lat={latitude}&lon={longitude}"
@@ -40,31 +35,52 @@ class Weather:
             print(weather_xml)
             return None
 
-        # Parse temperatures
         xml_temperatures = dom.getElementsByTagName("temperature")
-        highs = [None] * days
-        lows = [None] * days
-        for item in xml_temperatures:
-            if item.getAttribute("type") == "maximum":
-                values = item.getElementsByTagName("value")
-                for i in range(len(values)):
-                    highs[i] = int(values[i].firstChild.nodeValue)
-            if item.getAttribute("type") == "minimum":
-                values = item.getElementsByTagName("value")
-                for i in range(len(values)):
-                    lows[i] = int(values[i].firstChild.nodeValue)
+        highs, lows = self.highs_and_lows(days, xml_temperatures)
 
         xml_icons = dom.getElementsByTagName("icon-link")
-        icons = [None] * days
+        icons: List[ValueType] = [None] * days
         for i, xml_icon in enumerate(xml_icons):
-            icons[i] = (
-                xml_icon.firstChild.nodeValue.split("/")[-1].split(".")[0].rstrip("0123456789")
-            )
+            if xml_icon.firstChild:
+                icons[i] = (
+                    xml_icon.firstChild.nodeValue.split("/")[-1].split(".")[0].rstrip("0123456789")  # type: ignore
+                )
 
-        xml_day_one = dom.getElementsByTagName("start-valid-time")[0].firstChild.nodeValue[:10]
+        start_time_nodes = dom.getElementsByTagName("start-valid-time")
+        if not start_time_nodes or not start_time_nodes[0].firstChild:
+            return None
+        xml_day_one = start_time_nodes[0].firstChild.nodeValue[:10]  # type: ignore
         day_one = datetime.datetime.strptime(xml_day_one, "%Y-%m-%d")
+        day_list: List[ValueType] = [(day_one + datetime.timedelta(days=i)) for i in range(days)]
 
-        return {"temp_min": lows, "temp_max": highs, "icon": icons, "day": [day_one]}
+        return {"temp_min": lows, "temp_max": highs, "icon": icons, "day": day_list}
+
+    def highs_and_lows(
+        self, days: int, xml_temperatures: NodeList[Element]
+    ) -> Tuple[List[ValueType], List[ValueType]]:
+        """Parse highs and lows from XML."""
+
+        def extract_temperatures(item: Element, attribute_type: str) -> List[ValueType]:
+            """Extract temperatures from XML."""
+            values: List[ValueType] = []
+            if item.getAttribute("type") == attribute_type:
+                value_nodes = item.getElementsByTagName("value")
+                for value in value_nodes:
+                    if value.firstChild:
+                        values.append(int(value.firstChild.nodeValue))  # type: ignore
+            return values
+
+        highs: List[ValueType] = [None] * days
+        lows: List[ValueType] = [None] * days
+        for item in xml_temperatures:
+            max_values = extract_temperatures(item, "maximum")
+            min_values = extract_temperatures(item, "minimum")
+
+            if max_values:
+                highs = max_values
+            elif min_values:
+                lows = min_values
+        return highs, lows
 
 
 if __name__ == "__main__":  # pragma: no cover
