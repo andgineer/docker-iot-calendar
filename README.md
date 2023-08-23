@@ -12,8 +12,8 @@
 | src/iot\_calendar.py       |      100 |       22 |     78% |43-46, 55-58, 60-71, 143, 167 |
 | src/openweathermap\_org.py |       63 |        0 |    100% |           |
 | src/singleton.py           |        9 |        0 |    100% |           |
-| src/weather\_gov.py        |       31 |        0 |    100% |           |
-|                  **TOTAL** |  **642** |   **40** | **94%** |           |
+| src/weather\_gov.py        |       49 |        1 |     98% |        51 |
+|                  **TOTAL** |  **660** |   **41** | **94%** |           |
 
 
 ## Setup coverage badge
