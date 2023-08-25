@@ -33,6 +33,10 @@ from matplotlib.dates import DateFormatter, date2num
 from cached_decorator import cached
 from image_loader import ImageLoader
 
+import matplotlib.font_manager
+
+matplotlib.font_manager._load_fontmanager(try_read_cache=False)
+
 IMAGE_CACHED_SECONDS = 60 * 60 * 24 * 30
 ImageParams = namedtuple("ImageParams", "dashboard format style xkcd rotate")
 

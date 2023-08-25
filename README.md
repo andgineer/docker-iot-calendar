@@ -30,6 +30,15 @@ brew update
 brew install cairo
 ```
 
+### Matplotlib fonts
+
+You have to install [Humor font](http://antiyawn.com/uploads/humorsans.html),
+[xkcd font](https://github.com/ipython/xkcd-font) or [xkcd font](https://github.com/andgineer/docker-matplotlib/blob/master/xkcd.otf)
+and [Comic Neue](https://fonts.google.com/specimen/Comic+Neue).
+
+If you already had matplotlib installed, after font installation you have to remove `~/.matplotlib/fontList.json`.
+
+### HTTP server
 As HTTP server I use [tornado](http://www.tornadoweb.org/en/stable/).
 
 

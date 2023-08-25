@@ -4,6 +4,7 @@ exclude: |
         setup.py|
         version.py|
         site/|
+        docker/|
         docs/
     )
 repos:

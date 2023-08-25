@@ -2,7 +2,7 @@
   "type": "service_account",
   "project_id": "amazone-dash-hack",
   "private_key_id": "0cfa5f2562b3eb2925c9a2c951b9f3b77df095d0",
-  "private_key": "your private key from https://console.developers.google.com/start/api?id=sheets.googleapis.com",
+  "private_key": "your private key from https://console.cloud.google.com/apis/library/sheets.googleapis.com",
   "client_email": "dash-button-hack-docker@amazone-dash-hack.iam.gserviceaccount.com",
   "client_id": "110121235683045242579",
   "auth_uri": "https://accounts.google.com/o/oauth2/auth",

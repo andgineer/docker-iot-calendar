@@ -14,6 +14,8 @@ RUN pip install --no-cache-dir -r requirements.dev.txt \
     && rm -rf ~/.pip/cache/ \
     && rm -rf /var/cache/apk/*
 
+COPY docker/fonts $HOME/.fonts/
+
 COPY src  /iot_calendar/
 COPY tests /tests
 COPY pytest.ini /
