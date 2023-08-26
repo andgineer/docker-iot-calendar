@@ -4,25 +4,49 @@
 that generates image for Amazon Kindle.
 
 ![calendar](docs/include/calendar.png)
-See [description in my blog](https://sorokin.engineer/posts/en/iot_calendar_synology.html).
 
-The image contains calendar with events from Google Calendar - supposedly events from your IoT
+The image contains calendar with events from Google Calendar - supposedly events from your IoT devices
 (like [Smart wifi button (Amazon Dash Button hack)](https://sorokin.engineer/posts/en/amazon_dash_button_hack.html)).
 
-Also it has html-page that updates the image every minute (link to
-this page in index.html).
+You can point your Kindle browser to html-page that updates the image every minute.
+So you can see the calendar on your Kindle.
+
+## Prepare environment
+Read [description in my blog](https://sorokin.engineer/posts/en/iot_calendar_synology.html) how to create Google and open weather credentials.
+
+Roadmap:
+* Create Google project
+* Create Google service account
+* Enable [Google Calendar API](https://console.cloud.google.com/apis/api/calendar-json.googleapis.com/metrics)
+* [Create key](https://console.cloud.google.com/iam-admin/serviceaccounts/details/110121235683045242579;edit=true/keys) -> Add Key -> JSON
+* replace `amazon-dash-hack.json` in `amazon-dash-private` folder with downloaded file
+* Create Google calendar wheret your IoT device will publish events (like [Amazon Dash Button](https://sorokin.engineer/posts/en/amazon_dash_button_hack.html))
+* Share Google calendar with service account
+* Create OpenWeatherMap API key and place it into `amazon-dash-private/openweathermap.key` file
+
+
+## Local run
+
+Prepare secrets as described in the blog post mentioned above.
+
+Copy `amazon-dash-private` folder up one level, so it will be in the same folder as `docker-iot-calendar` project.
+Place your secrets to this folder copy.
 
 Run in the `docker-iot-calendar` folder:
 ```
-docker run --rm -it -v $PWD/amazon-dash-private:/amazon-dash-private:ro -p 4444:4444 andgineer/iot-calendar
+docker run --rm -it -v $PWD/../amazon-dash-private:/amazon-dash-private:ro -p 4444:4444 andgineer/iot-calendar
 ```
 
 Local address for the calendar page `http://localhost:4444`
+
+## Development
 
 At first I thought it would be great idea to use
 [svgwrite](http://svgwrite.readthedocs.io/en/master/attributes/presentation.html),
 and [cairosvg](http://cairosvg.org/documentation/), but then decided otherwise
 and use [matplotlib](http://matplotlib.org) instead.
+
+### Development dependencies
 
 To install system dependencies in Mac OSX (if you want to run it outside docker container):
 ```
@@ -41,7 +65,6 @@ If you already had matplotlib installed, after font installation you have to rem
 ### HTTP server
 As HTTP server I use [tornado](http://www.tornadoweb.org/en/stable/).
 
-
-# Performance
+## Performance
 
 https://andgineer.github.io/docker-iot-calendar/dev/bench
