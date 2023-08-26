@@ -11,8 +11,11 @@ The image contains calendar with events from Google Calendar - supposedly events
 You can point your Kindle browser to html-page that updates the image every minute.
 So you can see the calendar on your Kindle.
 
+## Usage
+Read [description in my blog](https://sorokin.engineer/posts/en/iot_calendar_synology.html).
+
 ## Prepare environment
-Read [description in my blog](https://sorokin.engineer/posts/en/iot_calendar_synology.html) how to create Google and open weather credentials.
+Detailed manual how to create Google and open weather credentials is in the blog post mentioned above.
 
 Roadmap:
 * Create Google project
