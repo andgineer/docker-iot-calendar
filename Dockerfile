@@ -14,8 +14,10 @@ RUN pip install --no-cache-dir -r requirements.dev.txt \
     && rm -rf ~/.pip/cache/ \
     && rm -rf /var/cache/apk/*
 
-ARG HOME /root
-COPY docker/fonts/* $HOME/.fonts/
+# At build time $HOME is not defined. And we cannot use ARG - COPY do not substitute it
+# As do not want to mess with system defined HOME, thus use _HOME
+ENV _HOME /root
+COPY docker/fonts/* ${_HOME}/.fonts/
 
 COPY src  /iot_calendar/
 COPY tests /tests
