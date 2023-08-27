@@ -6,8 +6,8 @@
 |--------------------------- | -------: | -------: | ------: | --------: |
 | src/cached\_decorator.py   |       51 |        2 |     96% |   93, 102 |
 | src/calendar\_data.py      |      103 |        1 |     99% |        86 |
-| src/calendar\_image.py     |      166 |        7 |     96% |306, 408-411, 418, 427, 481 |
-| src/google\_calendar.py    |       91 |        6 |     93% |109, 114, 153, 157, 173, 183 |
+| src/calendar\_image.py     |      166 |        7 |     96% |305, 407-410, 417, 426, 480 |
+| src/google\_calendar.py    |       91 |        6 |     93% |105, 110, 149, 153, 169, 179 |
 | src/image\_loader.py       |       17 |        0 |    100% |           |
 | src/iot\_calendar.py       |      100 |       22 |     78% |43-46, 55-58, 60-71, 143, 167 |
 | src/openweathermap\_org.py |       63 |        0 |    100% |           |
