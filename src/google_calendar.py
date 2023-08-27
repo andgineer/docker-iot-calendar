@@ -19,7 +19,7 @@ GOOGLE_CREDENTIALS_PARAM = "credentials_file_name"
 MIN_GOOGLE_API_CALL_DELAY_SECONDS = 15
 
 
-class Calendar(object):
+class Calendar:
     """Google Calendar API wrapper."""
 
     def __init__(self, settings, calendar_id):
@@ -37,10 +37,8 @@ class Calendar(object):
 
         if not os.path.isfile(self.settings[GOOGLE_CREDENTIALS_PARAM]):
             print(
-                """Google API credentials file {} not found.
-Get it on https://console.developers.google.com/start/api?id=calendar""".format(
-                    self.settings[GOOGLE_CREDENTIALS_PARAM]
-                )
+                f"""Google API credentials file {self.settings[GOOGLE_CREDENTIALS_PARAM]} not found.
+Get it on https://console.developers.google.com/start/api?id=calendar"""
             )
             return None
         try:
@@ -50,10 +48,8 @@ Get it on https://console.developers.google.com/start/api?id=calendar""".format(
             )
         except Exception:
             print(
-                """Cannot login to Google API - check your credential file {}.
-You can get new one from https://console.developers.google.com/start/api?id=calendar""".format(
-                    self.settings[GOOGLE_CREDENTIALS_PARAM]
-                )
+                f"""Cannot login to Google API - check your credential file {self.settings[GOOGLE_CREDENTIALS_PARAM]}.
+You can get new one from https://console.developers.google.com/start/api?id=calendar"""
             )
             return None
         return credentials.authorize(httplib2.Http())

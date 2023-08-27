@@ -23,6 +23,7 @@ with contextlib.suppress(ImportError):
 from collections import namedtuple
 from io import BytesIO
 
+import matplotlib.font_manager
 import matplotlib.pyplot as plt
 import numpy as np
 import PIL.Image
@@ -32,8 +33,6 @@ from matplotlib.dates import DateFormatter, date2num
 
 from cached_decorator import cached
 from image_loader import ImageLoader
-
-import matplotlib.font_manager
 
 matplotlib.font_manager._load_fontmanager(try_read_cache=False)
 
