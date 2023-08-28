@@ -199,7 +199,7 @@ if __name__ == "__main__":  # pragma: no cover
     tornado.options.parse_command_line()
     settings = load_settings(options.secrets)
     http_server = tornado.httpserver.HTTPServer(Application())
-    print("Running on port {}".format(options.port))
+    print(f"Running on port {options.port}")
     http_server.listen(options.port)
 
     tornado.ioloop.IOLoop.instance().start()
