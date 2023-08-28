@@ -84,7 +84,7 @@ class cached:
         self.func = func
 
         if func:
-            # @cached  without arguments
+            # @cached without arguments
             self.__call__ = self.decorate(func)
 
     def is_self_in_args(self, args, func):
@@ -103,15 +103,17 @@ class cached:
 
         return True
 
-    def __call__(self, *args, **kwargs):
-        """Call the decorated function/method."""
+    def __call__(self, *args, **kwargs):  # pylint: disable=method-hidden
+        """Call the decorated function/method.
+
+        Replace the method in __init__ with self.decorate() for @cached without arguments.
+        """
         if self.func:
             # If '@cached' is used without arguments
             return self.decorate(self.func)(*args, **kwargs)
-        else:
-            # If '@cached' is used with arguments
-            # In this case, args[0] will be the decorated function/method.
-            return self.decorate(args[0])
+        # If '@cached' is used with arguments
+        # In this case, args[0] will be the decorated function/method.
+        return self.decorate(args[0])
 
     def decorate(self, func):
         """Decorate function."""

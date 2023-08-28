@@ -101,8 +101,7 @@ You can get new one from https://console.developers.google.com/start/api?id=cale
                 """Get timepoint."""
                 if "dateTime" in timepoint:
                     return self.parse_time(timepoint["dateTime"])
-                else:
-                    return self.parse_time(timepoint["date"]).replace(tzinfo=tzinfo)
+                return self.parse_time(timepoint["date"]).replace(tzinfo=tzinfo)
 
             start = get_timepoint(event["start"])
             end = get_timepoint(event["end"])

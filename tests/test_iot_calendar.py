@@ -13,7 +13,7 @@ from iot_calendar import Application, DashboardImageHandler, DashboardListHandle
 def test_load_settings_no_file(mocker):
     mocker.patch("os.path.isfile", return_value=False)
     mocker.patch("builtins.print")
-    mocker.patch("builtins.exit", side_effect=Exception("exit called"))
+    mocker.patch("sys.exit", side_effect=Exception("exit called"))
 
     with pytest.raises(Exception, match="exit called"):
         load_settings()

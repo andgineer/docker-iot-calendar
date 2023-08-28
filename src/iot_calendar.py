@@ -5,7 +5,8 @@ import json
 import os
 import os.path
 import pprint
-from typing import Any, Dict, List, Tuple
+import sys
+from typing import Any, Awaitable, Dict, List, Optional, Tuple
 
 import tornado.auth
 import tornado.escape
@@ -27,7 +28,7 @@ from openweathermap_org import WEATHER_KEY_PARAM, Weather
 
 SETTINGS_FILE_NAME = "../amazon-dash-private/settings.json"
 
-settings = {}
+settings: Dict[str, Any] = {}
 
 
 NO_SETTINGS_FILE = """\nNo {} found. \nIf you run application in docker container you
@@ -35,10 +36,10 @@ should connect volume with setting files, like
     -v $PWD/amazon-dash-private:/amazon-dash-private:ro"""
 
 
-def load_settings(secrets_folder=None):
+def load_settings(secrets_folder: Optional[str] = None) -> Dict[str, Any]:
     """Load settings."""
 
-    def set_folder(params, substr, folder):
+    def set_folder(params: Dict[str, Any], substr: str, folder: str) -> None:
         """Add folder to params if substr is in the param name."""
         for param in params:
             if param.find(substr) > -1:
@@ -47,7 +48,7 @@ def load_settings(secrets_folder=None):
 
     if not os.path.isfile(SETTINGS_FILE_NAME):
         print(NO_SETTINGS_FILE.format(SETTINGS_FILE_NAME))
-        exit(1)
+        sys.exit(1)
     with open(SETTINGS_FILE_NAME, "r", encoding="utf-8-sig") as settings_file:
         settings = json.loads(settings_file.read())
 
@@ -101,6 +102,9 @@ class HandlerWithParams(tornado.web.RequestHandler):
         expiration = datetime.datetime(now.year - 1, now.month, now.day)
         self.set_header("Last-Modified", expiration)
 
+    def data_received(self, chunk: bytes) -> Optional[Awaitable[None]]:
+        """Receive data."""
+
 
 class DashboardImageHandler(HandlerWithParams):
     """Dashboard image handler."""
@@ -131,6 +135,9 @@ class DashboardImageHandler(HandlerWithParams):
         self.set_header("Content-type", f"image/{image_format}")
         self.flush()
 
+    def data_received(self, chunk: bytes) -> Optional[Awaitable[None]]:
+        """Receive data."""
+
 
 class DashboardListHandler(HandlerWithParams):
     """Dashboard list handler."""
@@ -157,6 +164,9 @@ class DashboardListHandler(HandlerWithParams):
                 page_title="Dashboards list",
             )
 
+    def data_received(self, chunk: bytes) -> Optional[Awaitable[None]]:
+        """Receive data."""
+
 
 class Application(tornado.web.Application):
     """Application."""
@@ -164,10 +174,10 @@ class Application(tornado.web.Application):
     def __init__(self, settings: Dict[str, Any] = None, handlers: List[Tuple[str, Any]] = None):
         """Init."""
         if settings is None:
-            settings = dict(
-                template_path=os.path.join(os.path.dirname(__file__), "templates"),
-                debug=True,
-            )
+            settings = {
+                "template_path": os.path.join(os.path.dirname(__file__), "templates"),
+                "debug": True,
+            }
         if handlers is None:
             handlers = [
                 (r"/", DashboardListHandler),
