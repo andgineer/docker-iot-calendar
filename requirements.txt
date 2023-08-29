@@ -38,7 +38,7 @@ defusedxml==0.7.1
     # via
     #   -r requirements.docker.txt
     #   cairosvg
-fonttools==4.42.0
+fonttools==4.42.1
     # via matplotlib
 google-api-core==2.11.1
     # via
@@ -70,7 +70,7 @@ idna==3.4
     # via
     #   -r requirements.docker.txt
     #   requests
-kiwisolver==1.4.4
+kiwisolver==1.4.5
     # via matplotlib
 matplotlib==3.7.1
     # via -r requirements.in
@@ -87,7 +87,7 @@ pillow==10.0.0
     #   -r requirements.docker.txt
     #   cairosvg
     #   matplotlib
-protobuf==4.24.1
+protobuf==4.24.2
     # via
     #   -r requirements.docker.txt
     #   google-api-core

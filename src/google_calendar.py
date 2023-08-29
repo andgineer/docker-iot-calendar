@@ -6,6 +6,7 @@ import os.path
 import time
 from datetime import timedelta
 from pprint import pprint
+from typing import Any, Dict, Optional, Tuple
 
 import dateutil.parser
 import dateutil.tz
@@ -22,7 +23,7 @@ MIN_GOOGLE_API_CALL_DELAY_SECONDS = 15
 class Calendar:
     """Google Calendar API wrapper."""
 
-    def __init__(self, settings, calendar_id):
+    def __init__(self, settings: Dict[str, Any], calendar_id: str) -> None:
         """Init."""
         self.settings = settings
         self.http = self.get_credentials_http()
@@ -30,7 +31,7 @@ class Calendar:
         self.tz = os.environ.get("TZ", "Europe/Moscow")
         self.calendarId = calendar_id
 
-    def get_credentials_http(self):
+    def get_credentials_http(self) -> Optional[httplib2.Http]:
         """Get credentials."""
         if GOOGLE_CREDENTIALS_PARAM not in self.settings:
             raise ValueError(f"'{GOOGLE_CREDENTIALS_PARAM}' not found in settings.")
@@ -54,7 +55,7 @@ You can get new one from https://console.developers.google.com/start/api?id=cale
             return None
         return credentials.authorize(httplib2.Http())
 
-    def get_service(self):
+    def get_service(self) -> Optional[discovery.Resource]:
         """Get service."""
         if not self.http:
             return None
@@ -67,37 +68,38 @@ You can get new one from https://console.developers.google.com/start/api?id=cale
             # also we can use older pip uninstall oauth2client ; pip install oauth2client==3.0.0
         )
 
-    def parse_time(self, s):
+    def parse_time(self, s: str) -> datetime.datetime:
         """Parse time."""
         return dateutil.parser.parse(s)
 
-    def time_to_str(self, t):
+    def time_to_str(self, t: datetime.datetime) -> str:
         """Time to string."""
         GCAL_TIME_FORMAT = "%Y-%m-%dT%H:%M:%S"
-        tz = -time.timezone / 60 / 60 * 100
-        # todo that is incorrect - you need minutes after ':' not hours % 100
-        # so h = int(- time.timezone / 60 / 60)
-        # m = abs(time.timezone / 60) - h * 60
-        s = t.strftime(GCAL_TIME_FORMAT) + "%+03d:%02d" % (tz / 100, abs(tz % 100))
-        return s
+        minutes = -time.timezone // 60
+        return f"{t.strftime(GCAL_TIME_FORMAT)}{minutes // 60:+03d}:{abs(minutes % 60):02d}"
 
-    def get_last_events(self, summary, days=31, default_length=900):
+    def get_last_events(
+        self, summary: str, days: int = 31, default_length: int = 900
+    ) -> Dict[str, Any]:
         """Get last events.
 
         :param summary: text to search
         :param days: days from today to collect events
+        :default_length: default length of event in seconds
         :return:
         [ {'summary': summary, 'start': start, 'end': end} ]
         """
 
-        def get_event_interval(event):
+        def get_event_interval(
+            event: Dict[str, Any]
+        ) -> Tuple[datetime.datetime, datetime.datetime]:
             """Get event interval.
 
             :param event: with ['start'] and ['end']
             :return: start and end calculated from dateTime or date formats of google calendar
             """
 
-            def get_timepoint(timepoint):
+            def get_timepoint(timepoint: Dict[str, Any]) -> datetime.datetime:
                 """Get timepoint."""
                 if "dateTime" in timepoint:
                     return self.parse_time(timepoint["dateTime"])

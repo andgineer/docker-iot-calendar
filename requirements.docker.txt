@@ -46,7 +46,7 @@ pillow==10.0.0
     # via
     #   -r requirements.docker.in
     #   cairosvg
-protobuf==4.24.1
+protobuf==4.24.2
     # via
     #   google-api-core
     #   googleapis-common-protos
