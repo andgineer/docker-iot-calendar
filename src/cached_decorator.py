@@ -6,6 +6,9 @@ To be honest, this was implemented primarily for educational purposes.
 import datetime
 import functools
 import hashlib
+from typing import Any, Callable, Dict, Optional, Tuple, Union
+
+Func = Callable[..., Any]
 
 
 class cached:
@@ -64,8 +67,14 @@ class cached:
     """
 
     def __init__(
-        self, func=None, *, seconds=0.1, trace_fmt=None, daily_refresh=False, per_instance=False
-    ):
+        self,
+        func: Optional[Func] = None,
+        *,
+        seconds: Union[float, int] = 0.1,
+        trace_fmt: Optional[str] = None,
+        daily_refresh: bool = False,
+        per_instance: bool = False
+    ) -> None:
         """Init.
 
         :param seconds: cache time
@@ -80,14 +89,14 @@ class cached:
         self.evaluate_on_day_change = daily_refresh
         self.time = datetime.datetime.now() - datetime.timedelta(seconds=seconds + 1)
         self.cache_per_instance = per_instance
-        self.cache = {}
+        self.cache: Dict[str, Dict[str, Any]] = {}
         self.func = func
 
         if func:
             # @cached without arguments
-            self.__call__ = self.decorate(func)
+            self.__call__ = self.decorate(func)  # type: ignore
 
-    def is_self_in_args(self, args, func):
+    def is_self_in_args(self, args: Tuple[Any, ...], func: Func) -> bool:
         """Check if the first argument is object with the same method as decorated function."""
         if not args:
             return False
@@ -103,7 +112,7 @@ class cached:
 
         return True
 
-    def __call__(self, *args, **kwargs):  # pylint: disable=method-hidden
+    def __call__(self, *args: Any, **kwargs: Any) -> Any:  # pylint: disable=method-hidden
         """Call the decorated function/method.
 
         Replace the method in __init__ with self.decorate() for @cached without arguments.
@@ -115,10 +124,10 @@ class cached:
         # In this case, args[0] will be the decorated function/method.
         return self.decorate(args[0])
 
-    def decorate(self, func):
+    def decorate(self, func: Func) -> Func:
         """Decorate function."""
 
-        def cached_func(*args, **kw):
+        def cached_func(*args: Any, **kw: Any) -> Any:
             """Cache function."""
             if self.is_self_in_args(args, func):
                 # the first argument is 'self', this is objects's method so add the object attributes
@@ -147,14 +156,14 @@ class cached:
             return self.cache[hash]["value"]
 
         self.func = cached_func
-        cached_func._original_func = (
+        cached_func._original_func = (  # type: ignore
             func  # Store the original function to be sure we decorate class
         )
         return cached_func
 
-    def __get__(self, obj, objtype=None):
+    def __get__(self, obj: Any, objtype: Optional[Any] = None) -> Func:
         """Descriptor protocol.
 
         To automatically bind the decorator's call to the object instance.
         """
-        return functools.partial(self.__call__, obj)
+        return functools.partial(self.__call__, obj)  # type: ignore

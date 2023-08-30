@@ -6,7 +6,7 @@ import os
 import os.path
 import pprint
 import sys
-from typing import Any, Awaitable, Dict, List, Optional, Tuple
+from typing import Any, Awaitable, Dict, Optional, Sequence, Tuple, Union, cast
 
 import tornado.auth
 import tornado.escape
@@ -15,6 +15,7 @@ import tornado.ioloop
 import tornado.options
 import tornado.web
 from tornado.options import define, options
+from tornado.routing import _RuleList
 
 from calendar_data import (
     calendar_events_list,
@@ -168,13 +169,23 @@ class DashboardListHandler(HandlerWithParams):
         """Receive data."""
 
 
+HandlersType = Optional[
+    Sequence[
+        Union[
+            Tuple[str, type[HandlerWithParams]],
+            Tuple[str, type[tornado.web.StaticFileHandler], Dict[str, Any]],
+        ]
+    ]
+]
+
+
 class Application(tornado.web.Application):
     """Application."""
 
     def __init__(
         self,
         settings: Optional[Dict[str, Any]] = None,
-        handlers: Optional[List[Tuple[str, Any]]] = None,
+        handlers: HandlersType = None,
     ):
         """Init."""
         if settings is None:
@@ -204,7 +215,7 @@ class Application(tornado.web.Application):
                     {"path": os.path.join(os.path.dirname(__file__), "static/scripts/")},
                 ),
             ]
-        tornado.web.Application.__init__(self, handlers, **settings)
+        tornado.web.Application.__init__(self, cast(_RuleList, handlers), **settings)
 
 
 if __name__ == "__main__":  # pragma: no cover
