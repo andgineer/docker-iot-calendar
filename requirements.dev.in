@@ -16,3 +16,4 @@ pydocstyle
 black
 pytest-cov
 types-python-dateutil
+types-requests

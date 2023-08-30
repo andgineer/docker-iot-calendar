@@ -4,7 +4,7 @@ import collections.abc
 import copy
 import datetime
 import pprint
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 
 def preprocess_actions(button, button_settings):
@@ -79,7 +79,9 @@ def calendar_events_list(
     return [processed for action in all_actions for processed in process_action(action)]
 
 
-def dashboard_absent_events_list(settings, dashboard_name):
+def dashboard_absent_events_list(
+    settings: Dict[str, Any], dashboard_name: str
+) -> List[Dict[str, Any]]:
     """List of calendar absent events for the dashboard_name."""
     dashboards = settings["dashboards"]
     if dashboard_name in dashboards and "absent" in dashboards[dashboard_name]:
@@ -158,7 +160,7 @@ def events_to_weeks_grid(
     return grid
 
 
-def events_to_array(events, absents):
+def events_to_array(events, absents) -> Tuple[List[datetime.datetime], List[List[int]]]:
     """Convert list of events to array."""
     DATE_FMT = "%Y%m%d"
     by_date = {}

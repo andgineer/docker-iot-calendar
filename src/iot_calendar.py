@@ -50,7 +50,7 @@ def load_settings(secrets_folder: Optional[str] = None) -> Dict[str, Any]:
         print(NO_SETTINGS_FILE.format(SETTINGS_FILE_NAME))
         sys.exit(1)
     with open(SETTINGS_FILE_NAME, "r", encoding="utf-8-sig") as settings_file:
-        settings = json.loads(settings_file.read())
+        settings: Dict[str, Any] = json.loads(settings_file.read())
 
     if secrets_folder:
         g_path, g_name = os.path.split(settings[GOOGLE_CREDENTIALS_PARAM])
@@ -79,7 +79,7 @@ def load_settings(secrets_folder: Optional[str] = None) -> Dict[str, Any]:
 class HandlerWithParams(tornado.web.RequestHandler):
     """Handler with params."""
 
-    def load_params(self, **kw):
+    def load_params(self, **kw: Any) -> ImageParams:
         """Load params from request."""
         defaults = ImageParams(
             dashboard=kw.get("dashboard", ""),
@@ -94,7 +94,7 @@ class HandlerWithParams(tornado.web.RequestHandler):
         ]
         return ImageParams(*params)
 
-    def disable_cache(self):
+    def disable_cache(self) -> None:
         """Disable cache."""
         self.set_header("Cache-Control", "no-cache, must-revalidate")
         self.set_header("Expires", "0")
@@ -110,7 +110,7 @@ class DashboardImageHandler(HandlerWithParams):
     """Dashboard image handler."""
 
     # todo async decorators and async version of draw_calendar
-    def get(self, image_format):
+    def get(self, image_format: str) -> None:
         """Get image."""
         self.disable_cache()
         params = self.load_params(
@@ -142,7 +142,7 @@ class DashboardImageHandler(HandlerWithParams):
 class DashboardListHandler(HandlerWithParams):
     """Dashboard list handler."""
 
-    def get(self):
+    def get(self) -> None:
         """Get list of dashboards."""
         self.disable_cache()
         params = self.load_params()
@@ -171,7 +171,11 @@ class DashboardListHandler(HandlerWithParams):
 class Application(tornado.web.Application):
     """Application."""
 
-    def __init__(self, settings: Dict[str, Any] = None, handlers: List[Tuple[str, Any]] = None):
+    def __init__(
+        self,
+        settings: Optional[Dict[str, Any]] = None,
+        handlers: Optional[List[Tuple[str, Any]]] = None,
+    ):
         """Init."""
         if settings is None:
             settings = {

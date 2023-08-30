@@ -6,7 +6,7 @@ import os.path
 import time
 from datetime import timedelta
 from pprint import pprint
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import dateutil.parser
 import dateutil.tz
@@ -80,7 +80,7 @@ You can get new one from https://console.developers.google.com/start/api?id=cale
 
     def get_last_events(
         self, summary: str, days: int = 31, default_length: int = 900
-    ) -> Dict[str, Any]:
+    ) -> List[Dict[str, Any]]:
         """Get last events.
 
         :param summary: text to search
@@ -111,7 +111,7 @@ You can get new one from https://console.developers.google.com/start/api?id=cale
                 end = start + timedelta(seconds=default_length)
             return start, end
 
-        result = []
+        result: List[Dict[str, Any]] = []
         if not self.service:
             return result
         tzinfo = dateutil.tz.tzoffset(None, -time.timezone)
@@ -160,11 +160,18 @@ You can get new one from https://console.developers.google.com/start/api?id=cale
     seconds=MIN_GOOGLE_API_CALL_DELAY_SECONDS,
     trace_fmt="Use stored google calendar data (from {time})",
 )
-def collect_events(calendar_events, absent_events, settings):
-    """Collect events."""
+def collect_events(
+    calendar_events, absent_events, settings: Dict[str, Any]
+) -> Tuple[List[List[Dict[str, Any]]], List[List[Dict[str, Any]]]]:
+    """Collect events.
+
+    Return (events, absents)
+    For each event from `calendar_events` add to events list of events from Google Calendar.
+    And to absents list of events from Google Calendar with summary from `absent_events`.
+    """
     calendars = {}
     events = []
-    absents = []
+    absents: List[List[Dict[str, Any]]] = []
     for event in calendar_events:
         if event["calendar_id"] in calendars:
             calendar_processed = True
@@ -176,19 +183,20 @@ def collect_events(calendar_events, absent_events, settings):
             calendar.get_last_events(event["summary"], default_length=event.get("default", 900))
         )
         if not calendar_processed:
-            for event in absent_events:
-                absents.append(calendar.get_last_events(event["summary"]))
+            absents.extend(calendar.get_last_events(event["summary"]) for event in absent_events)
     return events, absents
 
 
 if __name__ == "__main__":  # pragma: no cover
-    from .calendar_data import calendar_events_list, dashboard_absent_events_list
-    from .iot_calendar import load_settings
+    from calendar_data import calendar_events_list, dashboard_absent_events_list
+    from iot_calendar import load_settings
 
-    settings = load_settings(secrets_folder="../secrets")
+    settings = load_settings(secrets_folder="../amazon-dash-private")
     calendar_events = calendar_events_list(settings, "anna_work_out")
     absent_events = dashboard_absent_events_list(settings, "anna_work_out")
     pprint(absent_events)
     events, absents = collect_events(calendar_events, absent_events, settings)
+    print("=" * 20, "events")
     pprint(events)
+    print("=" * 20, "absents")
     pprint(absents)
