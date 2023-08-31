@@ -7,7 +7,7 @@
 | src/cached\_decorator.py   |       53 |        2 |     96% |  102, 111 |
 | src/calendar\_data.py      |      103 |        1 |     99% |        88 |
 | src/calendar\_image.py     |      166 |        7 |     96% |305, 407-410, 417, 426, 480 |
-| src/google\_calendar.py    |       90 |        5 |     94% |106, 111, 150, 154, 177 |
+| src/google\_calendar.py    |       90 |        5 |     94% |106, 111, 150, 154, 179 |
 | src/image\_loader.py       |       17 |        0 |    100% |           |
 | src/iot\_calendar.py       |      106 |       22 |     79% |45-48, 57-60, 62-73, 151, 192 |
 | src/openweathermap\_org.py |       62 |        0 |    100% |           |
