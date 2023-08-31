@@ -216,3 +216,37 @@ def test_func_without_args_cache():
     x = 2
     assert add(2) == 3  # Uses cache from x=1
     assert call_count == 1
+
+
+counter = 0
+
+
+@cached(seconds=1)
+def func(x):
+    global counter
+    counter += 1
+    return x
+
+
+def test_clear_cache():
+    global counter
+    counter = 0
+
+    # Call the function to store result in cache
+    result1 = func(10)
+    assert counter == 1
+
+    # Call the function again without clearing the cache
+    result2 = func(10)
+    # Assert that the function is not re-evaluated
+    assert counter == 1
+    assert result1 == result2
+
+    # Clear the cache and call the function again
+    func.clear_cache()
+    result3 = func(10)
+    # Assert that the function is re-evaluated
+    assert counter == 2
+    assert result3 == 10
+
+

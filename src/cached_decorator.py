@@ -124,6 +124,10 @@ class cached:
         # In this case, args[0] will be the decorated function/method.
         return self.decorate(args[0])
 
+    def clear_cache(self) -> None:
+        """Clear the cache."""
+        self.cache = {}
+
     def decorate(self, func: Func) -> Func:
         """Decorate function."""
 
@@ -159,6 +163,8 @@ class cached:
         cached_func._original_func = (  # type: ignore
             func  # Store the original function to be sure we decorate class
         )
+        cached_func.clear_cache = self.clear_cache  # type: ignore  # Add clear_cache method to cached_func
+
         return cached_func
 
     def __get__(self, obj: Any, objtype: Optional[Any] = None) -> Func:
