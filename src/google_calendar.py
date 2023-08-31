@@ -141,15 +141,15 @@ You can get new one from https://console.developers.google.com/start/api?id=cale
             if not page_token:
                 return result
 
-    def google_time_format(self, t):
+    def google_time_format(self, t: datetime.datetime) -> str:
         """Google time format."""
         return t.strftime("%Y-%m-%dT%H:%M:%SZ")
 
-    def google_now(self):
+    def google_now(self) -> str:
         """Google now."""
         return self.google_time_format(datetime.datetime.now())
 
-    def google_today(self):
+    def google_today(self) -> str:
         """Google today."""
         return self.google_time_format(
             datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
@@ -161,7 +161,9 @@ You can get new one from https://console.developers.google.com/start/api?id=cale
     trace_fmt="Use stored google calendar data (from {time})",
 )
 def collect_events(
-    calendar_events, absent_events, settings: Dict[str, Any]
+    calendar_events: List[Dict[str, Any]],
+    absent_events: List[Dict[str, Any]],
+    settings: Dict[str, Any],
 ) -> Tuple[List[List[Dict[str, Any]]], List[List[Dict[str, Any]]]]:
     """Collect events.
 
