@@ -73,7 +73,8 @@ class cached:
         seconds: Union[float, int] = 0.1,
         trace_fmt: Optional[str] = None,
         daily_refresh: bool = False,
-        per_instance: bool = False
+        per_instance: bool = False,
+        cache_none: bool = True,
     ) -> None:
         """Init.
 
@@ -82,6 +83,7 @@ class cached:
         :param trace_fmt: if specified the string will be printed if cached value returned.
                                 Inside string can be '{time}' parameter.
         :param per_instance: if False in case of object method the same cache would be used for all instances
+        :param cache_none: if False the function would be re-evaluated if cached value is None
         """
         super().__init__()
         self.cache_time_seconds = seconds
@@ -89,6 +91,7 @@ class cached:
         self.evaluate_on_day_change = daily_refresh
         self.time = datetime.datetime.now() - datetime.timedelta(seconds=seconds + 1)
         self.cache_per_instance = per_instance
+        self.cache_none = cache_none
         self.cache: Dict[str, Dict[str, Any]] = {}
         self.func = func
 
@@ -153,8 +156,13 @@ class cached:
                 == self.cache[hash]["time"].replace(hour=0, minute=0, second=0, microsecond=0)
                 or not self.evaluate_on_day_change
             ):
-                if self.print_if_cached:
-                    print(self.print_if_cached.format(time=self.cache[hash]["time"]))
+                # cache hit and the day the same of no need to track day change
+                if not self.cache_none and self.cache[hash]["value"] is None:
+                    # Re-evaluate the function if cache_none is False and cached value is None
+                    self.cache[hash] = {"value": func(*args, **kw), "time": now}
+                else:
+                    if self.print_if_cached:
+                        print(self.print_if_cached.format(time=self.cache[hash]["time"]))
             else:
                 self.cache[hash] = {"value": func(*args, **kw), "time": now}
             return self.cache[hash]["value"]

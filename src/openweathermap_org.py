@@ -84,6 +84,7 @@ class Weather:
         trace_fmt="Use stored weather data without calling openweathermap API (from {time})",
         daily_refresh=True,
         per_instance=True,
+        cache_none=False,
     )
     def get_weather(
         self, latitude: float, longitude: float, days: int = 1, units: str = "m"

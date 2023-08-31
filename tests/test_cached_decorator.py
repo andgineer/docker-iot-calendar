@@ -249,4 +249,32 @@ def test_clear_cache():
     assert counter == 2
     assert result3 == 10
 
+def test_cache_none():
+    counter = [0]
+
+    @cached(cache_none=False)
+    def func1(x):
+        counter[0] += 1
+        return None if x == 0 else x
+
+    @cached(cache_none=True)
+    def func2(x):
+        counter[0] += 1
+        return None if x == 0 else x
+
+    # Call func1 with x=0, the result will be None
+    assert func1(0) is None
+    assert counter[0] == 1
+
+    # Call func1 again with x=0, the result should be re-evaluated because cache_none is False
+    assert func1(0) is None
+    assert counter[0] == 2
+
+    # Call func2 with x=0, the result will be None
+    assert func2(0) is None
+    assert counter[0] == 3
+
+    # Call func2 again with x=0, the result should be cached because cache_none is True
+    assert func2(0) is None
+    assert counter[0] == 3
 
