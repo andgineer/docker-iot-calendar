@@ -12,6 +12,9 @@ on:
     branches:
       - main
       - master
+
+concurrency: gh-pages-${{ github.run_id }}
+
 jobs:
   deploy:
     runs-on: ubuntu-latest

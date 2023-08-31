@@ -7,6 +7,8 @@ on:
     branches:
       - master
 
+concurrency: gh-pages-${{ github.run_id }}
+
 permissions:
   # deployments permission to deploy GitHub pages website
   deployments: write
