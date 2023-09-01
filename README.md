@@ -4,7 +4,7 @@
 
 | Name                       |    Stmts |     Miss |   Cover |   Missing |
 |--------------------------- | -------: | -------: | ------: | --------: |
-| src/cached\_decorator.py   |       59 |        2 |     97% |  105, 114 |
+| src/cached\_decorator.py   |       59 |        2 |     97% |  107, 116 |
 | src/calendar\_data.py      |      103 |        1 |     99% |        88 |
 | src/calendar\_image.py     |      166 |        7 |     96% |305, 407-410, 417, 426, 480 |
 | src/google\_calendar.py    |       90 |        5 |     94% |106, 111, 150, 154, 179 |
