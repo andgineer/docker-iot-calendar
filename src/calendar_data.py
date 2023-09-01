@@ -4,24 +4,26 @@ import collections.abc
 import copy
 import datetime
 import pprint
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union, cast
 
 
-def preprocess_actions(button, button_settings):
+def preprocess_actions(
+    button: str, button_settings: Dict[str, List[Dict[str, Any]]]
+) -> List[Dict[str, Any]]:
     """Add summary (with button name value) if there is no one.
 
     Substitutes {button} with button name in parameters.
     """
 
-    def subst(param):
+    def subst(param: Any) -> Any:
         """Substitute {button} with button name in parameters."""
         if isinstance(param, str):
             return param.format(button=button)
         if isinstance(param, collections.abc.Mapping):
-            result = {}
+            result_map = {}
             for item in param:
-                result[item] = subst(param[item])
-            return result
+                result_map[item] = subst(param[item])
+            return result_map
         if isinstance(param, collections.abc.Iterable):
             result = []
             for item in param:
@@ -85,13 +87,13 @@ def dashboard_absent_events_list(
     """List of calendar absent events for the dashboard_name."""
     dashboards = settings["dashboards"]
     if dashboard_name in dashboards and "absent" in dashboards[dashboard_name]:
-        return dashboards[dashboard_name]["absent"]
+        return cast(List[Dict[str, Any]], dashboards[dashboard_name]["absent"])
     return []
 
 
 def event_duration(event: Dict[str, Any]) -> int:
     """Duration of event in minutes."""
-    delta = event["end"] - event["start"]
+    delta = cast(datetime.datetime, event["end"]) - cast(datetime.datetime, event["start"])
     return (delta.days * 24 * 60) + (delta.seconds // 60)
 
 
@@ -160,7 +162,9 @@ def events_to_weeks_grid(
     return grid
 
 
-def events_to_array(events, absents) -> Tuple[List[datetime.datetime], List[List[int]]]:
+def events_to_array(
+    events: List[List[Dict[str, Any]]], absents: List[List[Dict[str, Any]]]
+) -> Tuple[List[datetime.datetime], List[List[int]]]:
     """Convert list of events to array."""
     DATE_FMT = "%Y%m%d"
     by_date = {}
@@ -189,7 +193,7 @@ def events_to_array(events, absents) -> Tuple[List[datetime.datetime], List[List
     return x, y
 
 
-def check():  # pragma: no cover
+def check() -> None:  # pragma: no cover
     """Debug function."""
     from iot_calendar import load_settings
 
@@ -317,7 +321,7 @@ def check():  # pragma: no cover
         ],
     ]
 
-    absents = [
+    absents: List[List[Dict[str, Any]]] = [
         [
             {
                 "end": get_relative_date(23, 23, 59, 59),
