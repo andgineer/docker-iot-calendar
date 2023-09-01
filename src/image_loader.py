@@ -1,5 +1,5 @@
 """Load mathplot images from files."""
-
+from typing import Dict
 
 import matplotlib.image as mpimg
 import numpy as np
@@ -14,12 +14,12 @@ class ImageLoader(metaclass=Singleton):
     Return default image if file does not exist or if file name is empty.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Init."""
-        self._cache = {}
-        self._non_existed = np.array([[[255, 255, 255]]], dtype=np.uint8)
+        self._cache: Dict[str, np.ndarray] = {}  # type: ignore[type-arg]
+        self._non_existed: np.ndarray = np.array([[[255, 255, 255]]], dtype=np.uint8)  # type: ignore[type-arg]
 
-    def by_file_name(self, image_file_name: str) -> np.ndarray:
+    def by_file_name(self, image_file_name: str) -> np.ndarray:  # type: ignore[type-arg]
         """Load by file name."""
         if not image_file_name:
             return self._non_existed
