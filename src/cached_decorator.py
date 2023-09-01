@@ -32,6 +32,8 @@ class cached:
         def f2()
                 pass
 
+        f.clear_cache() # clear cache for f
+
     If called later before cache_time_seconds passed with the same arguments, the cached value
     is returned, and not re-evaluated.
 
