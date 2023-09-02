@@ -218,9 +218,9 @@ def highlight_today(grid: List[List[Dict[str, Any]]], today: datetime) -> None:
 def draw_pies(
     grid: List[List[Dict[str, Any]]],
     image_loader: ImageLoader,
+    absent_grid_images: Dict[str, str],
+    empty_image_file_name: str,
     weeks: int = 4,
-    absent_grid_images: Optional[Dict[str, str]] = None,
-    empty_image_file_name: Optional[str] = None,
 ) -> None:
     """Draw pie charts or images for each day in the provided grid based on the data provided.
 
@@ -228,8 +228,8 @@ def draw_pies(
     :param image_loader: Instance responsible for loading images.
     :param weeks: Number of weeks to consider. Default is 4.
     :param absent_grid_images: Dictionary mapping absent summary to image file names, which comes from the
-                               "image_grid" key within the "absent" array in the settings. Optional.
-    :param empty_image_file_name: File name of the image to use when there's no data. Optional.
+                               "image_grid" key within the "absent" array in the settings.
+    :param empty_image_file_name: File name of the image to use when there's no data.
     :return: None
     """
     daily_max = get_daily_max(grid)
@@ -449,7 +449,7 @@ def draw_calendar(
     grid: List[List[Dict[str, Union[datetime, List[int]]]]],
     x: List[datetime],
     y: List[List[int]],
-    weather: Dict[str, List[Union[float, str, datetime]]],
+    weather: Dict[str, Union[str, List[float]]],
     dashboard: Dict[str, Union[str, List[Dict[str, str]]]],
     labels: List[Dict[str, str]],
     absent_labels: List[Dict[str, str]],
@@ -499,12 +499,17 @@ def draw_calendar(
             rect=[plot_left, plot_bottom, plot_width, plot_height],
             image_loader=image_loader,
         )
+        empty_image_file_name = dashboard["empty_image"]
+        if not isinstance(empty_image_file_name, str):
+            raise TypeError(
+                f"Expected filename in `empty_image`, got {type(empty_image_file_name)} instead: {empty_image_file_name}"
+            )
         draw_pies(
             grid,
             image_loader=image_loader,
             weeks=weeks,
             absent_grid_images=absent_grid_images,
-            empty_image_file_name=dashboard["empty_image"],
+            empty_image_file_name=empty_image_file_name,
         )
         plt.gcf().canvas.draw()
 
@@ -532,7 +537,7 @@ def create_image(rotation_degrees: int, format: str) -> PIL.Image:  # pragma: no
     return PIL.Image.fromarray(img_np)
 
 
-def check(show: bool = True):  # pragma: no cover
+def check(show: bool = True) -> None:  # pragma: no cover
     """Debugging function.
 
     To create the file with parameters for the check(), add the following code to the draw_calendar()
