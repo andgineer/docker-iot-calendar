@@ -170,6 +170,14 @@
       },
       {
         "date": "2018-09-05 00:00:00+03:00",
+        "absents": [
+          {
+            "summary": "Sick"
+          },
+          {
+            "summary": "Vacation"
+          }
+        ],
         "values": [
           0,
           0
@@ -177,6 +185,11 @@
       },
       {
         "date": "2018-09-06 00:00:00+03:00",
+        "absents": [
+          {
+            "summary": "Vacation"
+          }
+        ],
         "values": [
           0,
           0

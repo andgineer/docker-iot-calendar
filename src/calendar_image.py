@@ -100,15 +100,15 @@ def draw_week_headers(grid: List[List[Dict[str, Any]]]) -> None:
     :return: None
     """
     for week in range(weeks):
-        week_start_at = grid[week][0]["date"]
-        if not isinstance(week_start_at, datetime):
+        week_starts_at = grid[week][0]["date"]
+        if not isinstance(week_starts_at, datetime):
             raise TypeError(
-                f"Expected datetime.datetime, got {type(week_start_at)} instead: {week_start_at}"
+                f"Expected datetime.datetime, got {type(week_starts_at)} instead: {week_starts_at}"
             )
         plt.text(
             pie_row_header_width * 0.5,
             (week + 0.5) * pie_height,
-            week_start_at.strftime("%d\n%b"),
+            week_starts_at.strftime("%d\n%b"),
             horizontalalignment="center",
             verticalalignment="center",
             fontsize=14,
@@ -165,14 +165,22 @@ def draw_empty_pie(
     :param tomorrow: The datetime representing the start of the next day.
     :return: None
     """
+    week_starts_at = grid[week][day]["date"]
+    if not isinstance(week_starts_at, datetime):
+        raise TypeError(
+            f"Expected datetime.datetime, got {type(week_starts_at)} instead: {week_starts_at}"
+        )
     image_padding = pie_width / 5
     if "absents" in grid[week][day]:
-        image = image_loader.by_file_name(
-            absent_grid_images[grid[week][day]["absents"][0]["summary"]]
-        )
+        absents = grid[week][day]["absents"]
+        if not isinstance(absents, list):
+            raise TypeError(
+                f"Expected list, got {type(absents)} instead: {absents} for week {week} day {day}"
+            )
+        image = image_loader.by_file_name(absent_grid_images[absents[0]["summary"]])
     else:
         image = image_loader.by_file_name(empty_image_file_name)
-    if grid[week][day]["date"] < tomorrow:
+    if week_starts_at < tomorrow:
         plt.imshow(
             image,
             extent=(
