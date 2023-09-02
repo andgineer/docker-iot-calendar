@@ -182,4 +182,4 @@ class cached:
 
         To automatically bind the decorator's call to the object instance.
         """
-        return functools.partial(self.__call__, obj)  # type: ignore
+        return functools.partial(self.__call__, obj)

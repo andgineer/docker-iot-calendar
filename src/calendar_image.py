@@ -70,8 +70,6 @@ plot_width = 1 - watch_width - 0.025  # -0.02 to remove padding - tight layout d
 plot_height = 1 - pies_height - 0.125
 plot_bottom = 1 - plot_height - 0.025
 
-last_image = {}
-
 
 def get_daily_max(grid: List[List[Dict[str, List[int]]]]) -> int:
     """Maximum sum of 'values' for a day."""
@@ -95,17 +93,22 @@ def draw_day_headers(grid: List[List[Dict[str, Any]]]) -> None:
         )
 
 
-def draw_week_headers(grid: List[List[Dict[str, any]]]) -> None:
+def draw_week_headers(grid: List[List[Dict[str, Any]]]) -> None:
     """Draw headers for each week on the grid using the date from the first day of each week.
 
     :param grid: A 2D grid [week][day].
     :return: None
     """
     for week in range(weeks):
+        week_start_at = grid[week][0]["date"]
+        if not isinstance(week_start_at, datetime):
+            raise TypeError(
+                f"Expected datetime.datetime, got {type(week_start_at)} instead: {week_start_at}"
+            )
         plt.text(
             pie_row_header_width * 0.5,
             (week + 0.5) * pie_height,
-            grid[week][0]["date"].strftime("%d\n%b"),
+            week_start_at.strftime("%d\n%b"),
             horizontalalignment="center",
             verticalalignment="center",
             fontsize=14,
