@@ -328,7 +328,7 @@ def draw_weather(
 
 def place_text_and_image(
     ax: Axes,
-    x_pos: Union[int, float],
+    x_pos: datetime,
     y_pos: Union[int, float],
     label: WeatherLabel,
     image_loader: ImageLoader,
@@ -342,7 +342,7 @@ def place_text_and_image(
 
 def add_image_to_axes(
     ax: Axes,
-    x_pos: Union[int, float],
+    x_pos: datetime,
     y_pos: Union[int, float],
     label: WeatherLabel,
     image_loader: ImageLoader,

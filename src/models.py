@@ -16,5 +16,6 @@ class WeatherData(BaseModel):
 
 class WeatherLabel(BaseModel):
     """Weather label."""
+
     summary: str = Field(..., description="The summary of the weather")
     image: str = Field(..., description="The full path to the image to display on the plot")
