@@ -13,8 +13,9 @@ from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional, Union
 
 import matplotlib
+import matplotlib.font_manager
 
-from models import WeatherData
+from models import WeatherData, WeatherLabel
 
 # !!! that should be before importing pyplot
 with contextlib.suppress(ImportError):
@@ -25,8 +26,7 @@ with contextlib.suppress(ImportError):
 from collections import namedtuple
 from io import BytesIO
 
-import matplotlib.font_manager
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt  # pylint: disable=ungrouped-imports
 import numpy as np
 import PIL.Image
 from matplotlib import patches
@@ -330,13 +330,13 @@ def place_text_and_image(
     ax: Axes,
     x_pos: Union[int, float],
     y_pos: Union[int, float],
-    label: Dict[str, Union[str, float]],
+    label: WeatherLabel,
     image_loader: ImageLoader,
 ) -> None:
     """Place text and image on the axes."""
-    ax.text(x_pos, y_pos, label["summary"], horizontalalignment="center", verticalalignment="top")
+    ax.text(x_pos, y_pos, label.summary, horizontalalignment="center", verticalalignment="top")
 
-    if "image" in label:
+    if label.image:
         add_image_to_axes(ax, x_pos, y_pos, label, image_loader)
 
 
@@ -344,7 +344,7 @@ def add_image_to_axes(
     ax: Axes,
     x_pos: Union[int, float],
     y_pos: Union[int, float],
-    label: Dict[str, Union[str, float]],
+    label: WeatherLabel,
     image_loader: ImageLoader,
 ) -> None:
     """Add image to the axes."""
@@ -357,7 +357,7 @@ def add_image_to_axes(
     axes = plt.axes([plot_left, plot_bottom, plot_width, plot_height], label="2")
     configure_axes_for_image(axes)
     plt.imshow(
-        image_loader.by_file_name(label["image"]),
+        image_loader.by_file_name(label.image),
         extent=(
             x_val - legend_image_sz / 2,
             x_val + legend_image_sz / 2,
@@ -381,7 +381,7 @@ def configure_axes_for_image(axes: Axes) -> None:
 def draw_plot(
     x: List[datetime],
     y: List[List[float]],
-    labels: List[Dict[str, Union[str, float]]],
+    labels: List[WeatherLabel],
     rect: List[float],
     image_loader: ImageLoader,
     legend: str = "inside",
@@ -392,10 +392,7 @@ def draw_plot(
     :type x: List[datetime]
     :param y: 2D list where each inner list represents a dataset for the plot, meant to be stacked.
     :type y: List[List[float]]
-    :param labels: List of dictionaries containing labels for each dataset in `y`. Each dictionary can have:
-                   - 'summary': The name or description of the dataset.
-                   - 'image' (optional): Path to an image that represents the dataset.
-    :type labels: List[Dict[str, Union[str, float]]]
+    :param labels: List of dictionaries containing labels for each dataset in `y`.
     :param rect: A list of four floats denoting the [left, bottom, width, height] of the rectangle where the plot is drawn.
     :type rect: List[float]
     :param image_loader: Instance responsible for image operations.
@@ -416,7 +413,7 @@ def draw_plot(
         else:
             shortFmt = DateFormatter("%Y")
         ax.xaxis.set_major_formatter(shortFmt)
-    legend_labels = [label["summary"] for label in labels]
+    legend_labels = [label.summary for label in labels]
     polies = ax.stackplot(x, y)
     ax.xaxis.set_major_locator(plt.MaxNLocator(6))
     ax.patch.set_visible(False)
@@ -447,7 +444,7 @@ def draw_calendar(
     y: List[List[float]],
     weather: Optional[WeatherData],
     dashboard: Dict[str, Union[str, List[Dict[str, str]]]],
-    labels: List[Dict[str, str]],
+    events: List[Dict[str, str]],
     absent_labels: List[Dict[str, str]],
     params: "ImageParams",
 ) -> bytes:
@@ -490,7 +487,7 @@ def draw_calendar(
         draw_plot(
             x,
             y,
-            labels,
+            [WeatherLabel(summary=event["summary"], image=event["image"]) for event in events],
             rect=[plot_left, plot_bottom, plot_width, plot_height],
             image_loader=image_loader,
         )
@@ -559,7 +556,7 @@ def check(show: bool = True) -> None:  # pragma: no cover
         call_params["grid"],
         call_params["x"],
         call_params["y"],
-        call_params["weather"],
+        WeatherData(**call_params["weather"]),
         call_params["dashboard"],
         call_params["labels"],
         call_params["absent_labels"],

@@ -24,7 +24,7 @@ from calendar_image import (
     weeks,
     width_aspect, ImageParams,
 )
-from models import WeatherData
+from models import WeatherData, WeatherLabel
 
 
 @pytest.mark.parametrize(
@@ -337,8 +337,8 @@ def test_draw_plot():
     x = [datetime(2023, 1, 1), datetime(2023, 1, 2), datetime(2023, 1, 3)]
     y = [[1, 2, 3], [1, 2, 3]]
     labels = [
-        {"summary": "Label1", "image": "image1.png"},
-        {"summary": "Label2", "image": "image2.png"},
+        WeatherLabel(summary="Label1", image="image1.png"),
+        WeatherLabel(summary="Label2", image="image2.png"),
     ]
     rect = [0.1, 0.1, 0.8, 0.8]
     mock_image_loader = Mock()
@@ -388,14 +388,15 @@ def test_draw_calendar():
         temp_min=[15.0],
         temp_max=[20.0],
         icon=["cloudy"],
-        day=[datetime(2023, 8, 7)]
+        day=[datetime(2023, 8, 7)],
+        images_folder="",
     )
     dashboard = {
         "summary": "Summary",
         "empty_image": "path/to/image.jpg",
         "absent": [{"summary": "Holiday", "image_grid": "path/to/holiday.jpg"}],
     }
-    labels = [{"summary": "Summary", "image": "path/to/image.jpg"}]
+    events = [{"summary": "Summary", "image": "path/to/image.jpg"}]
     absent_labels = [
         {
             "summary": "Holiday",
@@ -431,7 +432,7 @@ def test_draw_calendar():
         mock_np_rot90.return_value = Mock()
         mock_fromarray.return_value = Mock(save=Mock())
 
-        result = draw_calendar(grid, x, y, weather, dashboard, labels, absent_labels, params)
+        result = draw_calendar(grid, x, y, weather, dashboard, events, absent_labels, params)
 
         mock_draw_weather.assert_called_once_with(
             weather,
@@ -441,7 +442,7 @@ def test_draw_calendar():
         mock_draw_plot.assert_called_once_with(
             x,
             y,
-            labels,
+            [WeatherLabel(summary=event["summary"], image=event["image"]) for event in events],
             rect=[0.3, 0.6833333333333333, 0.6749999999999999, 0.29166666666666663],
             image_loader=mock_image_loader.return_value,
         )

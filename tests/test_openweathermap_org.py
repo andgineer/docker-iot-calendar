@@ -74,6 +74,7 @@ def test_get_weather_success():
             temp_max=[25.0],
             icon=["skc"],
             day=[datetime.datetime(2023, 8, 13, 0, 0)],
+            images_folder="",
         )
 
 
@@ -224,6 +225,7 @@ def test_get_weather_2_days():
                 datetime.datetime(2023, 8, 13, 0, 0),
                 datetime.datetime(2023, 8, 14, 0, 0),
             ],
+            images_folder="",
         )
 
 
@@ -269,6 +271,7 @@ def test_get_weather_another_2_days():
                 datetime.datetime(2023, 8, 13, 0, 0),
                 datetime.datetime(2023, 8, 14, 0, 0),
             ],
+            images_folder="",
         )
 
 

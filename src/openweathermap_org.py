@@ -157,7 +157,7 @@ class Weather:
                 icons.append(icon)
                 dates.append(date)
 
-        return WeatherData(temp_min=lows, temp_max=highs, icon=icons, day=dates)
+        return WeatherData(temp_min=lows, temp_max=highs, icon=icons, day=dates, images_folder="")
 
 
 if __name__ == "__main__":  # pragma: no cover

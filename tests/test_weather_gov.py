@@ -38,7 +38,9 @@ class TestWeather:
         result = weather.get_weather(40.7128, -74.0060)
 
         assert result == WeatherData(
-            temp_min=[20], temp_max=[30], icon=["icon"], day=[datetime.strptime("2023-08-20", "%Y-%m-%d")]
+            temp_min=[20], temp_max=[30], icon=["icon"],
+            day=[datetime.strptime("2023-08-20", "%Y-%m-%d")],
+            images_folder="",
         )
 
     @patch('weather_gov.urlopen')

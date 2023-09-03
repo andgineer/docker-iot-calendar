@@ -1,5 +1,6 @@
 import json
 import os
+from datetime import datetime
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -7,6 +8,7 @@ import tornado.httputil
 import tornado.web
 
 from iot_calendar import Application, DashboardImageHandler, DashboardListHandler, load_settings
+from models import WeatherData
 
 
 # Sample test file for the load_settings function
@@ -89,11 +91,13 @@ class MockWeather:
         pass
 
     def get_weather(self, latitude, longitude):
-        return {
-            "temperature": 72,
-            "condition": "Sunny",
-            "images_folder": "mock/path",
-        }
+        return WeatherData(
+            images_folder="mock/path",
+            temp_min=[1, 2, 3],
+            temp_max=[4, 5, 6],
+            icon=["mock_icon"],
+            day=[datetime(2020, 1, 1)],
+        )
 
 
 def test_load_params_default_values(mock_request_list_handler):

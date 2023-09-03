@@ -54,7 +54,9 @@ class Weather:
             day_list: List[datetime.datetime] = [
                 (day_one + datetime.timedelta(days=i)) for i in range(days)
             ]
-            return WeatherData(temp_min=lows, temp_max=highs, icon=icons, day=day_list)
+            return WeatherData(
+                temp_min=lows, temp_max=highs, icon=icons, day=day_list, images_folder=""
+            )
         except InvalidXMLDataException as e:
             error_excerpt = dom.toprettyxml(indent="  ")[:10000]
             print(f"Error extracting weather from weather.gov: {e}\n{error_excerpt}")
