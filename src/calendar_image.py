@@ -283,13 +283,9 @@ def draw_weather(
 ) -> None:
     """Render the weather data onto a specified rectangle using matplotlib.
 
-    :param weather: A dictionary containing weather data. The dictionary should have the following keys:
-                    - 'temp_min': List of minimum temperatures (only the first element is used).
-                    - 'temp_max': List of maximum temperatures (only the first element is used).
-                    - 'images_folder': Path to the folder containing weather icons.
-                    - 'icon': List containing the name of the icon file (without extension, only the first element is used).
+    :param weather: Weather data to render.
+                    Only data for 1st day is used.
                     If weather is None, only the date is rendered.
-    :type weather: Optional[Dict[str, Union[str, List[float]]]]
 
     :param rect: A list of four float numbers [left, bottom, width, height] specifying the rectangle where the
                  weather data will be rendered.
@@ -448,7 +444,7 @@ def draw_plot(
 def draw_calendar(
     grid: List[List[Dict[str, Union[datetime, List[int]]]]],
     x: List[datetime],
-    y: List[List[int]],
+    y: List[List[float]],
     weather: Optional[WeatherData],
     dashboard: Dict[str, Union[str, List[Dict[str, str]]]],
     labels: List[Dict[str, str]],
@@ -464,8 +460,7 @@ def draw_calendar(
     :param x:
     :param y:
         y[event_list][x]
-    :param weather:
-        {'temp_min': [], 'temp_max': [], 'icon': [], 'day': []}
+    :param weather: WeatherData
     :param dashboard: {
         'summary': summary,
         'empty_image': full_path_to_empty_cell_image,

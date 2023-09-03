@@ -125,7 +125,7 @@ class DashboardImageHandler(HandlerWithParams):
         wth = Weather(settings)
         weather = wth.get_weather(settings["latitude"], settings["longitude"])
         if weather:
-            weather["images_folder"] = settings["images_folder"]
+            weather.images_folder = settings["images_folder"]
         dashboard = settings["dashboards"][params.dashboard]
         if "images_folder" not in dashboard:
             dashboard["images_folder"] = settings["images_folder"]
