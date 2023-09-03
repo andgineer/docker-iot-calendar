@@ -1,6 +1,7 @@
 # we use andgineer/matplotlib so we exclude already installed packages to separate requirements file
 tornado
 requests
+pydantic
 python-dateutil
 oauth2client
 google-api-python-client

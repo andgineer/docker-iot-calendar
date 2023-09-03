@@ -24,6 +24,7 @@ from calendar_image import (
     weeks,
     width_aspect, ImageParams,
 )
+from models import WeatherData
 
 
 @pytest.mark.parametrize(
@@ -301,12 +302,13 @@ def test_draw_pies():
 
 def test_draw_weather():
     # Sample data
-    weather_data = {
-        "temp_min": [15.5],
-        "temp_max": [25.8],
-        "images_folder": "path_to_folder",
-        "icon": ["sample_icon"],
-    }
+    weather_data = WeatherData(
+        temp_min=[15.5],
+        temp_max=[25.8],
+        images_folder="path_to_folder",
+        icon=["sample_icon"],
+        day=[],
+    )
     rect = [0, 0, 1, 1]
 
     mock_image_loader = Mock(spec=ImageLoader)
@@ -322,7 +324,7 @@ def test_draw_weather():
 
     # Asserts
     # Check if the image cache was called with the expected path
-    expected_path = os.path.join(weather_data["images_folder"], weather_data["icon"][0] + ".png")
+    expected_path = os.path.join(weather_data.images_folder, weather_data.icon[0] + ".png")
     mock_image_loader.by_file_name.assert_called_with(expected_path)
 
     # Assert the image was drawn at the expected extent
@@ -382,12 +384,12 @@ def test_draw_calendar():
     grid = [[{"date": datetime(2023, 8, 7), "values": [10, 20]}]]
     x = [datetime(2023, 8, 7)]
     y = [[10]]
-    weather = {
-        "temp_min": [15.0],
-        "temp_max": [20.0],
-        "icon": ["cloudy"],
-        "day": [datetime(2023, 8, 7)],
-    }
+    weather = WeatherData(
+        temp_min=[15.0],
+        temp_max=[20.0],
+        icon=["cloudy"],
+        day=[datetime(2023, 8, 7)]
+    )
     dashboard = {
         "summary": "Summary",
         "empty_image": "path/to/image.jpg",

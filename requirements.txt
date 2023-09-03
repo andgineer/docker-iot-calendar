@@ -4,6 +4,10 @@
 #
 #    pip-compile requirements.in
 #
+annotated-types==0.5.0
+    # via
+    #   -r requirements.docker.txt
+    #   pydantic
 cachetools==5.3.1
     # via
     #   -r requirements.docker.txt
@@ -107,6 +111,12 @@ pycparser==2.21
     # via
     #   -r requirements.docker.txt
     #   cffi
+pydantic==2.3.0
+    # via -r requirements.docker.txt
+pydantic-core==2.6.3
+    # via
+    #   -r requirements.docker.txt
+    #   pydantic
 pyparsing==3.1.1
     # via
     #   -r requirements.docker.txt
@@ -139,6 +149,11 @@ tinycss2==1.2.1
     #   cssselect2
 tornado==6.3.3
     # via -r requirements.docker.txt
+typing-extensions==4.7.1
+    # via
+    #   -r requirements.docker.txt
+    #   pydantic
+    #   pydantic-core
 uritemplate==4.1.1
     # via
     #   -r requirements.docker.txt

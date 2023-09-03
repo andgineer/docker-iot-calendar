@@ -12,6 +12,7 @@ from typing import Any, Dict, List, Optional, Union
 import requests
 
 from cached_decorator import cached
+from models import WeatherData
 
 WEATHER_KEY_PARAM = "openweathermap_key_file_name"
 MIN_API_CALL_DELAY_SECONDS = 60 * 10
@@ -88,7 +89,7 @@ class Weather:
     )
     def get_weather(
         self, latitude: float, longitude: float, days: int = 1, units: str = "m"
-    ) -> Optional[Dict[str, Union[List[float], List[str], List[datetime.datetime]]]]:
+    ) -> Optional[WeatherData]:
         """Fetch weather data for the given latitude and longitude.
 
         :param latitude:
@@ -158,7 +159,7 @@ class Weather:
                 icons.append(icon)
                 dates.append(date)
 
-        return {"temp_min": lows, "temp_max": highs, "icon": icons, "day": dates}
+        return WeatherData(temp_min=lows, temp_max=highs, icon=icons, day=dates)
 
 
 if __name__ == "__main__":  # pragma: no cover

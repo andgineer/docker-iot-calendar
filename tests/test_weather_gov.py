@@ -2,6 +2,8 @@ import pytest
 from unittest.mock import patch, Mock
 from datetime import datetime
 from xml.dom import minidom
+
+from models import WeatherData
 from weather_gov import Weather  # Adjust the import according to your setup
 
 class TestWeather:
@@ -35,9 +37,9 @@ class TestWeather:
         weather = Weather()
         result = weather.get_weather(40.7128, -74.0060)
 
-        assert result == {
-            "temp_min": [20], "temp_max": [30], "icon": ["icon"], "day": [datetime.strptime("2023-08-20", "%Y-%m-%d")]
-        }
+        assert result == WeatherData(
+            temp_min=[20], temp_max=[30], icon=["icon"], day=[datetime.strptime("2023-08-20", "%Y-%m-%d")]
+        )
 
     @patch('weather_gov.urlopen')
     def test_get_weather_error(self, mock_urlopen):

@@ -3,6 +3,7 @@ from unittest.mock import Mock, mock_open, patch
 
 import pytest
 
+from models import WeatherData
 from openweathermap_org import WEATHER_KEY_PARAM, Weather
 
 
@@ -68,12 +69,12 @@ def test_get_weather_success():
     ):
         weather = Weather(settings={WEATHER_KEY_PARAM: "fake_path"})
         weather_data = weather.get_weather(51.5, 0.12)
-        assert weather_data == {
-            "temp_min": [20.0],
-            "temp_max": [25.0],
-            "icon": ["skc"],
-            "day": [datetime.datetime(2023, 8, 13, 0, 0)],
-        }
+        assert weather_data == WeatherData(
+            temp_min=[20.0],
+            temp_max=[25.0],
+            icon=["skc"],
+            day=[datetime.datetime(2023, 8, 13, 0, 0)],
+        )
 
 
 def test_get_weather_wrong_key():
@@ -137,8 +138,8 @@ def test_get_weather_metric_units():
     ):
         weather = Weather(settings={WEATHER_KEY_PARAM: "fake_path"})
         weather_data = weather.get_weather(51.5, 0.12, units="m")
-        assert weather_data["temp_min"] == [20.0]
-        assert weather_data["temp_max"] == [25.0]
+        assert weather_data.temp_min == [20.0]
+        assert weather_data.temp_max == [25.0]
 
 
 def test_get_weather_imperial_units():
@@ -160,8 +161,8 @@ def test_get_weather_imperial_units():
     ):
         weather = Weather(settings={WEATHER_KEY_PARAM: "fake_path"})
         weather_data = weather.get_weather(51.5, 0.12, units="e")
-        assert weather_data["temp_min"] == [20.0]
-        assert weather_data["temp_max"] == [25.0]
+        assert weather_data.temp_min == [20.0]
+        assert weather_data.temp_max == [25.0]
 
 
 def test_get_weather_shower_rain():
@@ -183,7 +184,7 @@ def test_get_weather_shower_rain():
     ):
         weather = Weather(settings={WEATHER_KEY_PARAM: "fake_path"})
         weather_data = weather.get_weather(51.5, 0.12)
-        assert weather_data["icon"] == ["shra"]
+        assert weather_data.icon == ["shra"]
 
 
 def test_get_weather_2_days():
@@ -215,15 +216,15 @@ def test_get_weather_2_days():
     ):
         weather = Weather(settings={WEATHER_KEY_PARAM: "fake_path"})
         weather_data = weather.get_weather(51.5, 0.12, days=2)
-        assert weather_data == {
-            "temp_min": [20.0, 21.0],
-            "temp_max": [25.0, 27.0],
-            "icon": ["skc", "skc"],
-            "day": [
+        assert weather_data == WeatherData(
+            temp_min=[20.0, 21.0],
+            temp_max=[25.0, 27.0],
+            icon=["skc", "skc"],
+            day=[
                 datetime.datetime(2023, 8, 13, 0, 0),
                 datetime.datetime(2023, 8, 14, 0, 0),
             ],
-        }
+        )
 
 
 def test_get_weather_another_2_days():
@@ -260,15 +261,15 @@ def test_get_weather_another_2_days():
     ):
         weather = Weather(settings={WEATHER_KEY_PARAM: "fake_path"})
         weather_data = weather.get_weather(51.5, 0.12, days=2)
-        assert weather_data == {
-            "temp_min": [21.0, 19.0],
-            "temp_max": [25.0, 27.0],
-            "icon": ["skc", "skc"],
-            "day": [
+        assert weather_data == WeatherData(
+            temp_min=[21.0, 19.0],
+            temp_max=[25.0, 27.0],
+            icon=["skc", "skc"],
+            day=[
                 datetime.datetime(2023, 8, 13, 0, 0),
                 datetime.datetime(2023, 8, 14, 0, 0),
             ],
-        }
+        )
 
 
 def test_get_weather_wrong_units():

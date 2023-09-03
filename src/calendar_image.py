@@ -14,6 +14,8 @@ from typing import Any, Dict, List, Optional, Union
 
 import matplotlib
 
+from models import WeatherData
+
 # !!! that should be before importing pyplot
 with contextlib.suppress(ImportError):
     import tkinter  # noqa: F401  # pylint: disable=unused-import  # check if tkinter is installed
@@ -275,7 +277,7 @@ def draw_pies(
 
 
 def draw_weather(
-    weather: Optional[Dict[str, Union[str, List[float]]]],
+    weather: Optional[WeatherData],
     rect: List[float],
     image_loader: ImageLoader,
 ) -> None:
@@ -317,14 +319,12 @@ def draw_weather(
     ax.text(
         0.5,
         0,
-        f"{round(weather['temp_min'][0], 1)} °C … {round(weather['temp_max'][0], 1)} °C",
+        f"{round(weather.temp_min[0], 1)} °C … {round(weather.temp_max[0], 1)} °C",
         horizontalalignment="center",
         verticalalignment="bottom",
     )
     plt.imshow(
-        image_loader.by_file_name(
-            os.path.join(weather["images_folder"], weather["icon"][0] + ".png")
-        ),
+        image_loader.by_file_name(os.path.join(weather.images_folder, f"{weather.icon[0]}.png")),
         extent=[0.15, 0.85, 0.15, 0.85],
         interpolation="bilinear",  # 'bicubic'
     )
@@ -449,7 +449,7 @@ def draw_calendar(
     grid: List[List[Dict[str, Union[datetime, List[int]]]]],
     x: List[datetime],
     y: List[List[int]],
-    weather: Dict[str, Union[str, List[float]]],
+    weather: Optional[WeatherData],
     dashboard: Dict[str, Union[str, List[Dict[str, str]]]],
     labels: List[Dict[str, str]],
     absent_labels: List[Dict[str, str]],
