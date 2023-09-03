@@ -11,9 +11,14 @@ from typing import List, Optional, Tuple
 from urllib.request import urlopen
 from xml.dom import minidom
 from xml.dom.minicompat import NodeList
-from xml.dom.minidom import Element
+from xml.dom.minidom import Document, Element
 
 from models import WeatherData
+
+
+class InvalidXMLDataException(Exception):
+    """Invalid XML data."""
+    pass
 
 
 class Weather:
@@ -29,21 +34,16 @@ class Weather:
             f"&format=24+hourly&numDays={days}&Unit={units}"
         ).read()
         dom = minidom.parseString(weather_xml)
-        error = dom.getElementsByTagName("error")
-        if error:
+        if dom.getElementsByTagName("error"):
             print(weather_xml)
             return None
 
         xml_temperatures = dom.getElementsByTagName("temperature")
         highs, lows = self.highs_and_lows(days, xml_temperatures)
 
-        xml_icons = dom.getElementsByTagName("icon-link")
-        icons: List[Optional[str]] = [None] * days
-        for i, xml_icon in enumerate(xml_icons):
-            if xml_icon.firstChild:
-                icons[i] = (
-                    xml_icon.firstChild.nodeValue.split("/")[-1].split(".")[0].rstrip("0123456789")  # type: ignore
-                )
+        icons = self.get_day_icons(days, dom)
+        if not icons:
+            return None
 
         start_time_nodes = dom.getElementsByTagName("start-valid-time")
         if not start_time_nodes or not start_time_nodes[0].firstChild:
@@ -56,8 +56,34 @@ class Weather:
 
         return WeatherData(temp_min=lows, temp_max=highs, icon=icons, day=day_list)
 
+    @staticmethod
+    def get_day_icons(days: int, dom: Document) -> Optional[List[str]]:
+        """Get icons for days."""
+        icons: List[str] = []
+        try:
+            xml_icons = dom.getElementsByTagName("icon-link")
+            for xml_icon in xml_icons:
+                if not xml_icon.childNodes:
+                    raise InvalidXMLDataException("xml_icon.firstChild is None.")
+                if icon_value := xml_icon.childNodes[0].nodeValue:
+                    icons.append(icon_value.split("/")[-1].split(".")[0].rstrip("0123456789"))
+                else:
+                    raise InvalidXMLDataException("nodeValue of xml_icon.firstChild is None.")
+            if not icons:
+                raise InvalidXMLDataException("xml_icons is None.")
+            if len(icons) != days:
+                raise InvalidXMLDataException(
+                    f"Number of xml_icons ({len(icons)}) is not equal to days ({days})."
+                )
+        except (AttributeError, InvalidXMLDataException) as e:
+            error_excerpt = dom.toprettyxml(indent="  ")[:200]
+            print(f"Error accessing XML data: {e}. Excerpt:\n{error_excerpt}")
+            return None
+        return icons
+
+    @staticmethod
     def highs_and_lows(
-        self, days: int, xml_temperatures: NodeList[Element]
+        days: int, xml_temperatures: NodeList[Element]
     ) -> Tuple[List[Optional[float]], List[Optional[float]]]:
         """Parse highs and lows from XML."""
 

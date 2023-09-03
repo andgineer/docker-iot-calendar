@@ -10,5 +10,5 @@ class WeatherData(BaseModel):
     temp_min: List[Optional[float]]
     temp_max: List[Optional[float]]
     images_folder: Optional[str] = None
-    icon: List[Optional[str]]
+    icon: List[str]
     day: List[datetime]

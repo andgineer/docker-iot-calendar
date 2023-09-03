@@ -96,9 +96,7 @@ class Weather:
         :param longitude:
         :param days:
         :param units: m - metric, e - USA
-        :return:
-         {'temp_min': [], 'temp_max': [], 'icon': [], 'day': []}
-         or None if no key or load error
+        :return: None if no key or load error
         """
         if not self.key:
             print("Exiting because no API key")
