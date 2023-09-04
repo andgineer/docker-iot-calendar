@@ -76,6 +76,7 @@ benchmark.json
 .dmypy.json
 docs/docstrings
 site
+.mypy_cache/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

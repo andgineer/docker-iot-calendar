@@ -37,7 +37,7 @@ Place your secrets to this folder copy.
 
 Run in the `docker-iot-calendar` folder:
 ```
-docker run --rm -it -v $PWD/../amazon-dash-private:/amazon-dash-private:ro -p 4444:4444 andgineer/iot-calendar
+make run
 ```
 
 Local address for the calendar page `http://localhost:4444`

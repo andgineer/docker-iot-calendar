@@ -1,2 +1,9 @@
 venv/
 __pycache__/
+.mypy_cache/
+.pytest_cache/
+amazon-dash-private/
+synology/
+site/
+scripts/
+docs/
