@@ -1,6 +1,6 @@
 
 run:
-	docker run --rm -it -v $PWD/../amazon-dash-private:/amazon-dash-private:ro -p 4444:4444 andgineer/iot-calendar
+	docker run --rm -it -v '$(PWD)/../amazon-dash-private:/amazon-dash-private:ro' -p '4444:4444' 'andgineer/iot-calendar'
 
 reqs:
 	pre-commit autoupdate
