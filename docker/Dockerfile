@@ -23,7 +23,7 @@ COPY src  /iot_calendar/
 COPY tests /tests
 COPY pytest.ini /
 COPY conftest.py /
-COPY test.sh /
+COPY docker/test.sh /
 
 EXPOSE 4444
 
