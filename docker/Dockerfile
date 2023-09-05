@@ -20,6 +20,8 @@ ENV _HOME /root
 COPY docker/fonts/* ${_HOME}/.fonts/
 
 COPY src  /iot_calendar/
+COPY static  /static/
+COPY templates  /templates/
 COPY tests /tests
 COPY pytest.ini /
 COPY conftest.py /

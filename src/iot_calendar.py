@@ -190,7 +190,7 @@ class Application(tornado.web.Application):
         """Init."""
         if settings is None:
             settings = {
-                "template_path": os.path.join(os.path.dirname(__file__), "templates"),
+                "template_path": os.path.join(os.path.dirname(__file__), "../templates"),
                 "debug": True,
             }
         if handlers is None:
@@ -202,17 +202,17 @@ class Application(tornado.web.Application):
                 (
                     r"/img/(.*)",
                     tornado.web.StaticFileHandler,
-                    {"path": os.path.join(os.path.dirname(__file__), "static/img")},
+                    {"path": os.path.join(os.path.dirname(__file__), "../static/img")},
                 ),
                 (
                     r"/styles/(.*)",
                     tornado.web.StaticFileHandler,
-                    {"path": os.path.join(os.path.dirname(__file__), "static/styles/")},
+                    {"path": os.path.join(os.path.dirname(__file__), "../static/styles/")},
                 ),
                 (
                     r"/scripts/(.*)",
                     tornado.web.StaticFileHandler,
-                    {"path": os.path.join(os.path.dirname(__file__), "static/scripts/")},
+                    {"path": os.path.join(os.path.dirname(__file__), "../static/scripts/")},
                 ),
             ]
         tornado.web.Application.__init__(self, cast(_RuleList, handlers), **settings)

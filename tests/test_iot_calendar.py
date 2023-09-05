@@ -57,7 +57,7 @@ class MockConnection:
 @pytest.fixture
 def mock_request_list_handler():
     mock_settings = dict(
-        template_path=os.path.join(os.path.dirname(__file__), "../src/templates"),
+        template_path=os.path.join(os.path.dirname(__file__), "../templates"),
         debug=True,
     )
     application = Application(settings=mock_settings)
@@ -118,7 +118,7 @@ def test_load_params_overrides(mock_request_list_handler):
 @pytest.fixture
 def mock_request_inage_handler():
     mock_settings = dict(
-        template_path=os.path.join(os.path.dirname(__file__), "../src/templates"),
+        template_path=os.path.join(os.path.dirname(__file__), "../templates"),
         debug=True,
     )
     application = tornado.web.Application(settings=mock_settings)
