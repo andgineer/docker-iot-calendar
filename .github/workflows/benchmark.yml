@@ -7,7 +7,9 @@ on:
     branches:
       - master
 
-concurrency: gh-pages-${{ github.run_id }}
+concurrency:
+  group: gh-pages-${{ github.run_id }}
+  cancel-in-progress: false
 
 permissions:
   # deployments permission to deploy GitHub pages website

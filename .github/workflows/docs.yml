@@ -13,7 +13,9 @@ on:
       - main
       - master
 
-concurrency: gh-pages-${{ github.run_id }}
+concurrency:
+  group: gh-pages-${{ github.run_id }}
+  cancel-in-progress: false
 
 jobs:
   deploy:
