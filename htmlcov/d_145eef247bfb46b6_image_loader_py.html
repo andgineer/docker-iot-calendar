@@ -64,8 +64,8 @@
             <a id="indexLink" class="nav" href="index.html">&Hat; index</a> &nbsp; &nbsp;
             <a id="nextFileLink" class="nav" href="d_145eef247bfb46b6_iot_calendar_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
-            <a class="nav" href="https://coverage.readthedocs.io/en/7.3.0">coverage.py v7.3.0</a>,
-            created at 2023-09-05 06:13 +0000
+            <a class="nav" href="https://coverage.readthedocs.io/en/7.3.1">coverage.py v7.3.1</a>,
+            created at 2023-09-22 11:25 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"/>
@@ -98,10 +98,10 @@
     <p class="pln"><span class="n"><a id="t16" href="#t16">16</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t17" href="#t17">17</a></span><span class="t">    <span class="key">def</span> <span class="nam">__init__</span><span class="op">(</span><span class="nam">self</span><span class="op">)</span> <span class="op">-></span> <span class="key">None</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t18" href="#t18">18</a></span><span class="t">        <span class="str">"""Init."""</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t19" href="#t19">19</a></span><span class="t">        <span class="nam">self</span><span class="op">.</span><span class="nam">_cache</span><span class="op">:</span> <span class="nam">Dict</span><span class="op">[</span><span class="nam">str</span><span class="op">,</span> <span class="nam">np</span><span class="op">.</span><span class="nam">ndarray</span><span class="op">]</span> <span class="op">=</span> <span class="op">{</span><span class="op">}</span>  <span class="com"># type: ignore[type-arg]</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t20" href="#t20">20</a></span><span class="t">        <span class="nam">self</span><span class="op">.</span><span class="nam">_non_existed</span><span class="op">:</span> <span class="nam">np</span><span class="op">.</span><span class="nam">ndarray</span> <span class="op">=</span> <span class="nam">np</span><span class="op">.</span><span class="nam">array</span><span class="op">(</span><span class="op">[</span><span class="op">[</span><span class="op">[</span><span class="num">255</span><span class="op">,</span> <span class="num">255</span><span class="op">,</span> <span class="num">255</span><span class="op">]</span><span class="op">]</span><span class="op">]</span><span class="op">,</span> <span class="nam">dtype</span><span class="op">=</span><span class="nam">np</span><span class="op">.</span><span class="nam">uint8</span><span class="op">)</span>  <span class="com"># type: ignore[type-arg]</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t19" href="#t19">19</a></span><span class="t">        <span class="nam">self</span><span class="op">.</span><span class="nam">_cache</span><span class="op">:</span> <span class="nam">Dict</span><span class="op">[</span><span class="nam">str</span><span class="op">,</span> <span class="nam">np</span><span class="op">.</span><span class="nam">ndarray</span><span class="op">]</span> <span class="op">=</span> <span class="op">{</span><span class="op">}</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t20" href="#t20">20</a></span><span class="t">        <span class="nam">self</span><span class="op">.</span><span class="nam">_non_existed</span><span class="op">:</span> <span class="nam">np</span><span class="op">.</span><span class="nam">ndarray</span> <span class="op">=</span> <span class="nam">np</span><span class="op">.</span><span class="nam">array</span><span class="op">(</span><span class="op">[</span><span class="op">[</span><span class="op">[</span><span class="num">255</span><span class="op">,</span> <span class="num">255</span><span class="op">,</span> <span class="num">255</span><span class="op">]</span><span class="op">]</span><span class="op">]</span><span class="op">,</span> <span class="nam">dtype</span><span class="op">=</span><span class="nam">np</span><span class="op">.</span><span class="nam">uint8</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t21" href="#t21">21</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t22" href="#t22">22</a></span><span class="t">    <span class="key">def</span> <span class="nam">by_file_name</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">image_file_name</span><span class="op">:</span> <span class="nam">str</span><span class="op">)</span> <span class="op">-></span> <span class="nam">np</span><span class="op">.</span><span class="nam">ndarray</span><span class="op">:</span>  <span class="com"># type: ignore[type-arg]</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t22" href="#t22">22</a></span><span class="t">    <span class="key">def</span> <span class="nam">by_file_name</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">image_file_name</span><span class="op">:</span> <span class="nam">str</span><span class="op">)</span> <span class="op">-></span> <span class="nam">np</span><span class="op">.</span><span class="nam">ndarray</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t23" href="#t23">23</a></span><span class="t">        <span class="str">"""Load by file name."""</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t24" href="#t24">24</a></span><span class="t">        <span class="key">if</span> <span class="key">not</span> <span class="nam">image_file_name</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t25" href="#t25">25</a></span><span class="t">            <span class="key">return</span> <span class="nam">self</span><span class="op">.</span><span class="nam">_non_existed</span>&nbsp;</span><span class="r"></span></p>
@@ -120,8 +120,8 @@
             <a id="indexLink" class="nav" href="index.html">&Hat; index</a> &nbsp; &nbsp;
             <a id="nextFileLink" class="nav" href="d_145eef247bfb46b6_iot_calendar_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
-            <a class="nav" href="https://coverage.readthedocs.io/en/7.3.0">coverage.py v7.3.0</a>,
-            created at 2023-09-05 06:13 +0000
+            <a class="nav" href="https://coverage.readthedocs.io/en/7.3.1">coverage.py v7.3.1</a>,
+            created at 2023-09-22 11:25 +0000
         </p>
     </div>
 </footer>
