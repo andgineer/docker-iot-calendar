@@ -32,7 +32,7 @@ class TestWeather:
     @patch('weather_gov.urlopen')
     def test_get_weather_success(self, mock_urlopen):
         # Mocking the urlopen response with the success XML
-        mock_urlopen.return_value.read.return_value = self.SUCCESS_XML
+        mock_urlopen.return_value.__enter__.return_value.read.return_value = self.SUCCESS_XML
 
         weather = Weather()
         result = weather.get_weather(40.7128, -74.0060)
