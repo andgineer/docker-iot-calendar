@@ -163,9 +163,9 @@ class Weather:
 
 
 if __name__ == "__main__":  # pragma: no cover
-    from pprint import pprint
+    from pprint import pprint  # pylint: disable=import-outside-toplevel
 
-    from iot_calendar import load_settings
+    from iot_calendar import load_settings  # pylint: disable=import-outside-toplevel,cyclic-import
 
     settings = load_settings(secrets_folder="../amazon-dash-private")
     weather = Weather(settings)
