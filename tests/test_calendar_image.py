@@ -21,7 +21,7 @@ from calendar_image import (
     pie_row_header_width,
     pie_scale,
     pie_width,
-    weeks,
+    WEEKS,
     width_aspect, ImageParams,
 )
 from models import WeatherData, WeatherLabel
@@ -47,7 +47,7 @@ def test_draw_day_headers(input_grid):
     expected_calls = [
         call(
             (pie_row_header_width + (day + 0.5) * pie_width) * width_aspect,
-            weeks * pie_height + 0.5 * pie_col_header_height,
+            WEEKS * pie_height + 0.5 * pie_col_header_height,
             day_name,
             horizontalalignment="center",
             verticalalignment="center",

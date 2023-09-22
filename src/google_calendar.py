@@ -189,9 +189,13 @@ def collect_events(
     return events, absents
 
 
-if __name__ == "__main__":  # pragma: no cover
-    from calendar_data import calendar_events_list, dashboard_absent_events_list
-    from iot_calendar import load_settings
+def check() -> None:  # pragma: no cover
+    """Check."""
+    from calendar_data import (  # pylint: disable=import-outside-toplevel
+        calendar_events_list,
+        dashboard_absent_events_list,
+    )
+    from iot_calendar import load_settings  # pylint: disable=import-outside-toplevel,cyclic-import
 
     settings = load_settings(secrets_folder="../amazon-dash-private")
     calendar_events = calendar_events_list(settings, "anna_work_out")
@@ -202,3 +206,7 @@ if __name__ == "__main__":  # pragma: no cover
     pprint(events)
     print("=" * 20, "absents")
     pprint(absents)
+
+
+if __name__ == "__main__":  # pragma: no cover
+    check()

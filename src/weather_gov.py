@@ -26,13 +26,18 @@ class Weather:
     def get_weather(
         self, latitude: str, longitude: str, days: int = 1, units: str = "m"
     ) -> Optional[WeatherData]:
-        """Get weather from weather.gov."""
+        """Get weather from weather.gov.
+
+        For days more than 1 it returns "No data were found using the following input"
+        """
         try:
-            weather_xml = urlopen(
+            url = (
                 f"http://graphical.weather.gov/xml/SOAP_server/ndfdSOAPclientByDay.php?"
                 f"whichClient=NDFDgenByDay&lat={latitude}&lon={longitude}"
                 f"&format=24+hourly&numDays={days}&Unit={units}"
-            ).read()
+            )
+            with urlopen(url) as response:
+                weather_xml = response.read()
             dom = minidom.parseString(weather_xml)
             if error := dom.getElementsByTagName("error"):
                 print(
@@ -118,4 +123,4 @@ if __name__ == "__main__":  # pragma: no cover
     from pprint import pprint
 
     weather = Weather()
-    pprint(weather.get_weather("39.3286", "-76.6169", days=5))
+    pprint(weather.get_weather("39.3286", "-76.6169", days=1))

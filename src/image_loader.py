@@ -16,10 +16,10 @@ class ImageLoader(metaclass=Singleton):
 
     def __init__(self) -> None:
         """Init."""
-        self._cache: Dict[str, np.ndarray] = {}  # type: ignore[type-arg]
-        self._non_existed: np.ndarray = np.array([[[255, 255, 255]]], dtype=np.uint8)  # type: ignore[type-arg]
+        self._cache: Dict[str, np.ndarray] = {}
+        self._non_existed: np.ndarray = np.array([[[255, 255, 255]]], dtype=np.uint8)
 
-    def by_file_name(self, image_file_name: str) -> np.ndarray:  # type: ignore[type-arg]
+    def by_file_name(self, image_file_name: str) -> np.ndarray:
         """Load by file name."""
         if not image_file_name:
             return self._non_existed

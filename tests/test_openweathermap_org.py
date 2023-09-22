@@ -19,7 +19,7 @@ from openweathermap_org import WEATHER_KEY_PARAM, Weather
 )
 def test_openweathermap_icons(icon_code, condition_code, expected_icon):
     weather = Weather(
-        settings={}
+        props={}
     )  # Assuming empty settings because we won't be using the API in these tests
     result_icon = weather.openweathermap_icons(icon_code, condition_code)
     assert result_icon == expected_icon
@@ -31,13 +31,13 @@ def test_load_key_success():
     with patch("os.path.isfile", return_value=True), patch(
         "builtins.open", mock_open(read_data='{"key": "test_key"}')
     ):
-        weather = Weather(settings={WEATHER_KEY_PARAM: "fake_path"})
+        weather = Weather(props={WEATHER_KEY_PARAM: "fake_path"})
         assert weather.key == "test_key"
 
 
 def test_load_key_file_not_exists():
     with patch("os.path.isfile", return_value=False):
-        weather = Weather(settings={WEATHER_KEY_PARAM: "nonexistent_path"})
+        weather = Weather(props={WEATHER_KEY_PARAM: "nonexistent_path"})
         assert weather.key is None
 
 
@@ -47,7 +47,7 @@ def test_load_key_invalid_format():
         "builtins.open", mock_open(read_data='{"invalid_key": "test_value"}')
     ):
         with pytest.raises(KeyError):
-            Weather(settings={WEATHER_KEY_PARAM: "fake_path"})
+            Weather(props={WEATHER_KEY_PARAM: "fake_path"})
 
 
 def test_get_weather_success():
@@ -67,7 +67,7 @@ def test_get_weather_success():
     with patch("requests.get", return_value=mock_response), patch.object(
         Weather, "load_key", return_value="dummy_key"
     ):
-        weather = Weather(settings={WEATHER_KEY_PARAM: "fake_path"})
+        weather = Weather(props={WEATHER_KEY_PARAM: "fake_path"})
         weather_data = weather.get_weather(51.5, 0.12)
         assert weather_data == WeatherData(
             temp_min=[20.0],
@@ -87,7 +87,7 @@ def test_get_weather_wrong_key():
     }
 
     with patch("requests.get", return_value=mock_response):
-        weather = Weather(settings={WEATHER_KEY_PARAM: "fake_path"})
+        weather = Weather(props={WEATHER_KEY_PARAM: "fake_path"})
         weather_data = weather.get_weather(51.5, 0.12)
         assert weather_data is None
 
@@ -101,7 +101,7 @@ def test_get_weather_error_invalid_key():
     with patch("requests.get", return_value=mock_response), patch.object(
         Weather, "load_key", return_value="dummy_key"
     ):
-        weather = Weather(settings={WEATHER_KEY_PARAM: "fake_path"})
+        weather = Weather(props={WEATHER_KEY_PARAM: "fake_path"})
         weather_data = weather.get_weather(51.5, 0.12, units="m")
         assert weather_data is None
 
@@ -115,7 +115,7 @@ def test_get_weather_error_unexpected():
     with patch("requests.get", return_value=mock_response), patch.object(
         Weather, "load_key", return_value="dummy_key"
     ):
-        weather = Weather(settings={WEATHER_KEY_PARAM: "fake_path"})
+        weather = Weather(props={WEATHER_KEY_PARAM: "fake_path"})
         weather_data = weather.get_weather(51.5, 0.12, units="m")
         assert weather_data is None
 
@@ -137,7 +137,7 @@ def test_get_weather_metric_units():
     with patch("requests.get", return_value=mock_response), patch.object(
         Weather, "load_key", return_value="dummy_key"
     ):
-        weather = Weather(settings={WEATHER_KEY_PARAM: "fake_path"})
+        weather = Weather(props={WEATHER_KEY_PARAM: "fake_path"})
         weather_data = weather.get_weather(51.5, 0.12, units="m")
         assert weather_data.temp_min == [20.0]
         assert weather_data.temp_max == [25.0]
@@ -160,7 +160,7 @@ def test_get_weather_imperial_units():
     with patch("requests.get", return_value=mock_response), patch.object(
         Weather, "load_key", return_value="dummy_key"
     ):
-        weather = Weather(settings={WEATHER_KEY_PARAM: "fake_path"})
+        weather = Weather(props={WEATHER_KEY_PARAM: "fake_path"})
         weather_data = weather.get_weather(51.5, 0.12, units="e")
         assert weather_data.temp_min == [20.0]
         assert weather_data.temp_max == [25.0]
@@ -183,7 +183,7 @@ def test_get_weather_shower_rain():
     with patch("requests.get", return_value=mock_response), patch.object(
         Weather, "load_key", return_value="dummy_key"
     ):
-        weather = Weather(settings={WEATHER_KEY_PARAM: "fake_path"})
+        weather = Weather(props={WEATHER_KEY_PARAM: "fake_path"})
         weather_data = weather.get_weather(51.5, 0.12)
         assert weather_data.icon == ["shra"]
 
@@ -215,7 +215,7 @@ def test_get_weather_2_days():
     with patch("requests.get", return_value=mock_response), patch.object(
         Weather, "load_key", return_value="dummy_key"
     ):
-        weather = Weather(settings={WEATHER_KEY_PARAM: "fake_path"})
+        weather = Weather(props={WEATHER_KEY_PARAM: "fake_path"})
         weather_data = weather.get_weather(51.5, 0.12, days=2)
         assert weather_data == WeatherData(
             temp_min=[20.0, 21.0],
@@ -261,7 +261,7 @@ def test_get_weather_another_2_days():
     with patch("requests.get", return_value=mock_response), patch.object(
         Weather, "load_key", return_value="dummy_key"
     ):
-        weather = Weather(settings={WEATHER_KEY_PARAM: "fake_path"})
+        weather = Weather(props={WEATHER_KEY_PARAM: "fake_path"})
         weather_data = weather.get_weather(51.5, 0.12, days=2)
         assert weather_data == WeatherData(
             temp_min=[21.0, 19.0],
@@ -292,6 +292,6 @@ def test_get_weather_wrong_units():
     with patch("requests.get", return_value=mock_response), patch.object(
         Weather, "load_key", return_value="dummy_key"
     ):
-        weather = Weather(settings={WEATHER_KEY_PARAM: "fake_path"})
+        weather = Weather(props={WEATHER_KEY_PARAM: "fake_path"})
         weather_data = weather.get_weather(51.5, 0.12, units="x")
         assert weather_data is None

@@ -195,22 +195,23 @@ def events_to_array(
 
 def check() -> None:  # pragma: no cover
     """Debug function."""
-    from iot_calendar import load_settings
+    from iot_calendar import load_settings  # pylint: disable=import-outside-toplevel
 
     settings = load_settings()
     print(calendar_events_list(settings, "anna_work_out"))
-    from datetime import datetime, timedelta
 
-    from dateutil.tz import tzoffset
+    from dateutil.tz import tzoffset  # pylint: disable=import-outside-toplevel
 
     # Set the timezone offset
     three_hour_offset = tzoffset(None, 10800)
 
     # Set today's date
-    calendar_start = datetime.now(tz=three_hour_offset) - timedelta(days=25)
+    calendar_start = datetime.datetime.now(tz=three_hour_offset) - datetime.timedelta(days=25)
 
-    def get_relative_date(days_diff: int, hour: int, minute: int, second: int) -> datetime:
-        return (calendar_start + timedelta(days=days_diff)).replace(
+    def get_relative_date(
+        days_diff: int, hour: int, minute: int, second: int
+    ) -> datetime.datetime:
+        return (calendar_start + datetime.timedelta(days=days_diff)).replace(
             hour=hour, minute=minute, second=second, microsecond=0
         )
 

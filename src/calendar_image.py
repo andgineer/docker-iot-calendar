@@ -41,7 +41,7 @@ matplotlib.font_manager._load_fontmanager(try_read_cache=False)
 IMAGE_CACHED_SECONDS = 60 * 60 * 24 * 30
 ImageParams = namedtuple("ImageParams", "dashboard format style xkcd rotate")
 
-weeks = 4
+WEEKS = 4
 
 dpi = 100
 picture_width = 800 // dpi
@@ -54,8 +54,8 @@ pies_top = 1 - pies_height
 WEEK_DAYS = 7
 pie_row_header_width = (1 / WEEK_DAYS) / 3
 pie_width = (1 - pie_row_header_width) / WEEK_DAYS
-pie_col_header_height = (pies_height / weeks) / 5
-pie_height = (pies_height - pie_col_header_height) / weeks
+pie_col_header_height = (pies_height / WEEKS) / 5
+pie_height = (pies_height - pie_col_header_height) / WEEKS
 pie_scale = 0.9
 
 legend_image_sz = 0.2  # size of legend icons in 1 x 1
@@ -87,7 +87,7 @@ def draw_day_headers(grid: List[List[Dict[str, Any]]]) -> None:
     for day in range(WEEK_DAYS):
         plt.text(
             (pie_row_header_width + (day + 0.5) * pie_width) * width_aspect,
-            weeks * pie_height + 0.5 * pie_col_header_height,
+            WEEKS * pie_height + 0.5 * pie_col_header_height,
             grid[0][day]["date"].strftime("%A"),
             horizontalalignment="center",
             verticalalignment="center",
@@ -101,7 +101,7 @@ def draw_week_headers(grid: List[List[Dict[str, Any]]]) -> None:
     :param grid: A 2D grid [week][day].
     :return: None
     """
-    for week in range(weeks):
+    for week in range(WEEKS):
         week_starts_at = grid[week][0]["date"]
         if not isinstance(week_starts_at, datetime):
             raise TypeError(
@@ -499,7 +499,7 @@ def draw_calendar(
         draw_pies(
             grid,
             image_loader=image_loader,
-            weeks=weeks,
+            weeks=WEEKS,
             absent_grid_images=absent_grid_images,
             empty_image_file_name=empty_image_file_name,
         )
@@ -539,13 +539,13 @@ def check(show: bool = True) -> None:  # pragma: no cover
         import json
         json.dump(call_params, open('draw_calendar_params.json', 'w'), default=str)
     """
-    import json
+    import json  # pylint: disable=import-outside-toplevel
 
-    import dateutil
+    import dateutil  # pylint: disable=import-outside-toplevel
 
-    call_params = json.load(
-        open("tests/resources/draw_calendar_params_2.json", "r", encoding="utf-8")
-    )
+    with open("tests/resources/draw_calendar_params_2.json", "r", encoding="utf-8") as file:
+        call_params = json.load(file)
+
     for row in call_params["grid"]:
         for col in row:
             col["date"] = dateutil.parser.parse(col["date"])

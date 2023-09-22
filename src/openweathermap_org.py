@@ -21,10 +21,10 @@ MIN_API_CALL_DELAY_SECONDS = 60 * 10
 class Weather:
     """Load weather from OpenWeatherMap.org."""
 
-    def __init__(self, settings: Dict[str, Any]) -> None:
+    def __init__(self, props: Dict[str, Any]) -> None:
         """Init.
 
-        :param settings:
+        :param props:
             settings['openweathermap_key_file_name'] - name and path of json file
             with "key", like
 
@@ -32,7 +32,7 @@ class Weather:
              "key": "your key from https://home.openweathermap.org/users/sign_up"
              }
         """
-        self.settings = settings
+        self.settings = props
         self.key = self.load_key()
 
     def load_key(self) -> Optional[str]:
@@ -121,24 +121,26 @@ class Weather:
         )
 
         print("Got weather from openweathermap.org:", weather_response.text[:100])
-        weather = weather_response.json()
+        weather_data = weather_response.json()
 
-        if str(weather["cod"]) != "200":
-            if str(weather["cod"]) == "401" and weather["message"].startswith("Invalid API key"):
+        if str(weather_data["cod"]) != "200":
+            if str(weather_data["cod"]) == "401" and weather_data["message"].startswith(
+                "Invalid API key"
+            ):
                 print(
                     "#" * 5,
                     f"""You should get your key from https://home.openweathermap.org/users/sign_up
                     and place it into {self.settings["openweathermap_key_file_name"]}""",
                 )
             else:
-                print("#" * 5, "ERROR:", weather["message"])
+                print("#" * 5, "ERROR:", weather_data["message"])
             return None
 
         highs: List[float] = []
         lows: List[float] = []
         icons = []
         dates: List[datetime.datetime] = []
-        for weather_day in weather["list"]:
+        for weather_day in weather_data["list"]:
             date = datetime.datetime.strptime(weather_day["dt_txt"], "%Y-%m-%d %H:%M:%S")
             date = date.replace(hour=0, minute=0, second=0, microsecond=0)
             temp_min = weather_day["main"]["temp_min"]

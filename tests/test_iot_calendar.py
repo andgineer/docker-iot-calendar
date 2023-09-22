@@ -60,7 +60,7 @@ def mock_request_list_handler():
         template_path=os.path.join(os.path.dirname(__file__), "../templates"),
         debug=True,
     )
-    application = Application(settings=mock_settings)
+    application = Application(server_settings=mock_settings)
     connection = MockConnection()
     request = tornado.httputil.HTTPServerRequest(
         method="GET", uri="/", version="HTTP/1.1", headers=None, body=None, connection=connection

@@ -1,4 +1,6 @@
-# we use andgineer/matplotlib so we exclude already installed packages to separate requirements file
+# dependencies list to build requirements.docker.txt with pip-compile (from pip-tools package)
+# Dependencies additional to already installed in the base image
+
 tornado
 requests
 pydantic

@@ -1,2 +1,12 @@
-matplotlib
+# dependencies list to build requirements.txt with pip-compile (from pip-tools package)
+# This is full dependency list to run the app outside of docker
+#
+# (!) Do not add any other dependencies here
+# Use requirements.docker.in for that
+
+# "txt" to test exactly the same versions as in Docker
 -r requirements.docker.txt
+
+# are already installed in our docker's parent image - andgineer/matplotlib
+matplotlib
+numpy

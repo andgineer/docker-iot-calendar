@@ -51,33 +51,33 @@ def load_settings(secrets_folder: Optional[str] = None) -> Dict[str, Any]:
         print(NO_SETTINGS_FILE.format(SETTINGS_FILE_NAME))
         sys.exit(1)
     with open(SETTINGS_FILE_NAME, "r", encoding="utf-8-sig") as settings_file:
-        settings: Dict[str, Any] = json.loads(settings_file.read())
+        result: Dict[str, Any] = json.loads(settings_file.read())
 
     if secrets_folder:
-        g_path, g_name = os.path.split(settings[GOOGLE_CREDENTIALS_PARAM])
-        settings[GOOGLE_CREDENTIALS_PARAM] = os.path.join(secrets_folder, g_name)
-        w_path, w_name = os.path.split(settings[WEATHER_KEY_PARAM])
-        settings[WEATHER_KEY_PARAM] = os.path.join(secrets_folder, w_name)
-    if "images_folder" in settings:
-        images_folder = settings["images_folder"]
-        for dashboard in settings["dashboards"]:
-            set_folder(settings["dashboards"][dashboard], "image", images_folder)
-            if "absent" in settings["dashboards"][dashboard]:
-                for absent_event in settings["dashboards"][dashboard]["absent"]:
+        g_path, g_name = os.path.split(result[GOOGLE_CREDENTIALS_PARAM])
+        result[GOOGLE_CREDENTIALS_PARAM] = os.path.join(secrets_folder, g_name)
+        w_path, w_name = os.path.split(result[WEATHER_KEY_PARAM])
+        result[WEATHER_KEY_PARAM] = os.path.join(secrets_folder, w_name)
+    if "images_folder" in result:
+        images_folder = result["images_folder"]
+        for dashboard in result["dashboards"]:
+            set_folder(result["dashboards"][dashboard], "image", images_folder)
+            if "absent" in result["dashboards"][dashboard]:
+                for absent_event in result["dashboards"][dashboard]["absent"]:
                     set_folder(absent_event, "image", images_folder)
-        for button in settings["actions"]:
-            if "summary" in settings["actions"][button]:
-                for summary in settings["actions"][button]["summary"]:
+        for button in result["actions"]:
+            if "summary" in result["actions"][button]:
+                for summary in result["actions"][button]["summary"]:
                     set_folder(summary, "image", images_folder)
-            for action in settings["actions"][button]["actions"]:
+            for action in result["actions"][button]["actions"]:
                 set_folder(action, "image", images_folder)
     print("Processed settings:")
-    pprint.pprint(settings)
+    pprint.pprint(result)
     print()
-    return settings
+    return result
 
 
-class HandlerWithParams(tornado.web.RequestHandler):
+class HandlerWithParams(tornado.web.RequestHandler):  # type: ignore
     """Handler with params."""
 
     def load_params(self, **kw: Any) -> ImageParams:
@@ -179,17 +179,17 @@ HandlersType = Optional[
 ]
 
 
-class Application(tornado.web.Application):
+class Application(tornado.web.Application):  # type: ignore
     """Application."""
 
     def __init__(
         self,
-        settings: Optional[Dict[str, Any]] = None,
+        server_settings: Optional[Dict[str, Any]] = None,
         handlers: HandlersType = None,
     ):
         """Init."""
-        if settings is None:
-            settings = {
+        if server_settings is None:
+            server_settings = {
                 "template_path": os.path.join(os.path.dirname(__file__), "../templates"),
                 "debug": True,
             }
@@ -215,10 +215,12 @@ class Application(tornado.web.Application):
                     {"path": os.path.join(os.path.dirname(__file__), "../static/scripts/")},
                 ),
             ]
-        tornado.web.Application.__init__(self, cast(_RuleList, handlers), **settings)
+        tornado.web.Application.__init__(self, cast(_RuleList, handlers), **server_settings)
 
 
-if __name__ == "__main__":  # pragma: no cover
+def check() -> None:  # pragma: no cover
+    """Check."""
+    global settings  # pylint: disable=global-statement
     define("port", default=4444, help="run on the given port", type=int)
     define("secrets", default=None, help="path to files with secrets", type=str)
     tornado.options.parse_command_line()
@@ -226,5 +228,8 @@ if __name__ == "__main__":  # pragma: no cover
     http_server = tornado.httpserver.HTTPServer(Application())
     print(f"Running on port {options.port}")
     http_server.listen(options.port)
-
     tornado.ioloop.IOLoop.instance().start()
+
+
+if __name__ == "__main__":  # pragma: no cover
+    check()

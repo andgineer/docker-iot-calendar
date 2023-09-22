@@ -4,7 +4,7 @@ from typing import List
 from pydantic import BaseModel, Field
 
 
-class WeatherData(BaseModel):
+class WeatherData(BaseModel):  # type: ignore
     """Weather data."""
 
     temp_min: List[float]
@@ -14,7 +14,7 @@ class WeatherData(BaseModel):
     day: List[datetime]
 
 
-class WeatherLabel(BaseModel):
+class WeatherLabel(BaseModel):  # type: ignore
     """Weather label."""
 
     summary: str = Field(..., description="The summary of the weather")

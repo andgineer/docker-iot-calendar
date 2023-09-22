@@ -7,10 +7,8 @@ RUN apk --no-cache --update \
       freetype-dev lcms2-dev tk-dev tcl-dev
 
 COPY requirements.docker.txt /requirements.docker.txt
-COPY requirements.dev.txt /requirements.dev.txt
 
-RUN pip install --no-cache-dir -r requirements.dev.txt \
-    && pip install --no-cache-dir -r requirements.docker.txt \
+RUN pip install --no-cache-dir -r requirements.docker.txt \
     && rm -rf ~/.pip/cache/ \
     && rm -rf /var/cache/apk/*
 

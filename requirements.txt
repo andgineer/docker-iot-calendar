@@ -30,7 +30,7 @@ charset-normalizer==3.2.0
     # via
     #   -r requirements.docker.txt
     #   requests
-contourpy==1.1.0
+contourpy==1.1.1
     # via matplotlib
 cssselect2==0.7.0
     # via
@@ -48,15 +48,15 @@ google-api-core==2.11.1
     # via
     #   -r requirements.docker.txt
     #   google-api-python-client
-google-api-python-client==2.97.0
+google-api-python-client==2.100.0
     # via -r requirements.docker.txt
-google-auth==2.22.0
+google-auth==2.23.0
     # via
     #   -r requirements.docker.txt
     #   google-api-core
     #   google-api-python-client
     #   google-auth-httplib2
-google-auth-httplib2==0.1.0
+google-auth-httplib2==0.1.1
     # via
     #   -r requirements.docker.txt
     #   google-api-python-client
@@ -76,22 +76,23 @@ idna==3.4
     #   requests
 kiwisolver==1.4.5
     # via matplotlib
-matplotlib==3.7.1
+matplotlib==3.8.0
     # via -r requirements.in
-numpy==1.25.2
+numpy==1.26.0
     # via
+    #   -r requirements.in
     #   contourpy
     #   matplotlib
 oauth2client==4.1.3
     # via -r requirements.docker.txt
 packaging==23.1
     # via matplotlib
-pillow==10.0.0
+pillow==10.0.1
     # via
     #   -r requirements.docker.txt
     #   cairosvg
     #   matplotlib
-protobuf==4.24.2
+protobuf==4.24.3
     # via
     #   -r requirements.docker.txt
     #   google-api-core
@@ -138,8 +139,6 @@ rsa==4.9
 six==1.16.0
     # via
     #   -r requirements.docker.txt
-    #   google-auth
-    #   google-auth-httplib2
     #   oauth2client
     #   python-dateutil
 tinycss2==1.2.1
@@ -149,7 +148,7 @@ tinycss2==1.2.1
     #   cssselect2
 tornado==6.3.3
     # via -r requirements.docker.txt
-typing-extensions==4.7.1
+typing-extensions==4.8.0
     # via
     #   -r requirements.docker.txt
     #   pydantic
