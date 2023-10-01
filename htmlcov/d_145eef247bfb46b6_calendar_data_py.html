@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="d_145eef247bfb46b6_calendar_image_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.3.1">coverage.py v7.3.1</a>,
-            created at 2023-09-22 11:25 +0000
+            created at 2023-10-01 10:58 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"/>
@@ -154,7 +154,7 @@
     <p class="pln"><span class="n"><a id="t72" href="#t72">72</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t73" href="#t73">73</a></span><span class="t">    <span class="nam">all_actions</span> <span class="op">=</span> <span class="op">[</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t74" href="#t74">74</a></span><span class="t">        <span class="nam">action</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t75" href="#t75">75</a></span><span class="t">        <span class="key">for</span> <span class="nam">button</span><span class="op">,</span> <span class="nam">button_actions</span> <span class="key">in</span> <span class="nam">settings</span><span class="op">[</span><span class="str">"actions"</span><span class="op">]</span><span class="op">.</span><span class="nam">items</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t75" href="#t75">75</a></span><span class="t">        <span class="key">for</span> <span class="nam">button</span><span class="op">,</span> <span class="nam">button_actions</span> <span class="key">in</span> <span class="nam">settings</span><span class="op">[</span><span class="str">"events"</span><span class="op">]</span><span class="op">.</span><span class="nam">items</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t76" href="#t76">76</a></span><span class="t">        <span class="key">if</span> <span class="nam">button</span> <span class="op">!=</span> <span class="str">"__DEFAULT__"</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t77" href="#t77">77</a></span><span class="t">        <span class="key">for</span> <span class="nam">action</span> <span class="key">in</span> <span class="nam">preprocess_actions</span><span class="op">(</span><span class="nam">button</span><span class="op">,</span> <span class="nam">button_actions</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t78" href="#t78">78</a></span><span class="t">        <span class="key">if</span> <span class="nam">is_relevant_action</span><span class="op">(</span><span class="nam">action</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
@@ -277,9 +277,9 @@
     <p class="pln"><span class="n"><a id="t195" href="#t195">195</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="exc show_exc"><span class="n"><a id="t196" href="#t196">196</a></span><span class="t"><span class="key">def</span> <span class="nam">check</span><span class="op">(</span><span class="op">)</span> <span class="op">-></span> <span class="key">None</span><span class="op">:</span>  <span class="com"># pragma: no cover</span>&nbsp;</span><span class="r"></span></p>
     <p class="exc show_exc"><span class="n"><a id="t197" href="#t197">197</a></span><span class="t">    <span class="str">"""Debug function."""</span>&nbsp;</span><span class="r"></span></p>
-    <p class="exc show_exc"><span class="n"><a id="t198" href="#t198">198</a></span><span class="t">    <span class="key">from</span> <span class="nam">iot_calendar</span> <span class="key">import</span> <span class="nam">load_settings</span>  <span class="com"># pylint: disable=import-outside-toplevel</span>&nbsp;</span><span class="r"></span></p>
+    <p class="exc show_exc"><span class="n"><a id="t198" href="#t198">198</a></span><span class="t">    <span class="key">from</span> <span class="nam">iot_calendar</span> <span class="key">import</span> <span class="nam">load_settings</span>  <span class="com"># pylint: disable=import-outside-toplevel,cyclic-import</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t199" href="#t199">199</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="exc show_exc"><span class="n"><a id="t200" href="#t200">200</a></span><span class="t">    <span class="nam">settings</span> <span class="op">=</span> <span class="nam">load_settings</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="exc show_exc"><span class="n"><a id="t200" href="#t200">200</a></span><span class="t">    <span class="nam">settings</span> <span class="op">=</span> <span class="nam">load_settings</span><span class="op">(</span><span class="nam">load_secrets</span><span class="op">=</span><span class="key">False</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="exc show_exc"><span class="n"><a id="t201" href="#t201">201</a></span><span class="t">    <span class="nam">print</span><span class="op">(</span><span class="nam">calendar_events_list</span><span class="op">(</span><span class="nam">settings</span><span class="op">,</span> <span class="str">"anna_work_out"</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t202" href="#t202">202</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="exc show_exc"><span class="n"><a id="t203" href="#t203">203</a></span><span class="t">    <span class="key">from</span> <span class="nam">dateutil</span><span class="op">.</span><span class="nam">tz</span> <span class="key">import</span> <span class="nam">tzoffset</span>  <span class="com"># pylint: disable=import-outside-toplevel</span>&nbsp;</span><span class="r"></span></p>
@@ -432,7 +432,7 @@
             <a id="nextFileLink" class="nav" href="d_145eef247bfb46b6_calendar_image_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.3.1">coverage.py v7.3.1</a>,
-            created at 2023-09-22 11:25 +0000
+            created at 2023-10-01 10:58 +0000
         </p>
     </div>
 </footer>
