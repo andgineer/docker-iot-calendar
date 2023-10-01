@@ -197,7 +197,7 @@ def check() -> None:  # pragma: no cover
     )
     from iot_calendar import load_settings  # pylint: disable=import-outside-toplevel,cyclic-import
 
-    settings = load_settings(secrets_folder="../amazon-dash-private")
+    settings = load_settings()
     calendar_events = calendar_events_list(settings, "anna_work_out")
     absent_events = dashboard_absent_events_list(settings, "anna_work_out")
     pprint(absent_events)

@@ -167,7 +167,7 @@ if __name__ == "__main__":  # pragma: no cover
 
     from iot_calendar import load_settings  # pylint: disable=import-outside-toplevel,cyclic-import
 
-    settings = load_settings(secrets_folder="../amazon-dash-private")
+    settings = load_settings()
     weather = Weather(settings)
     pprint(weather.get_weather("60.002228", "30.296947", days=4))
     weather = Weather(settings)

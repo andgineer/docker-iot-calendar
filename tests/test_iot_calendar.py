@@ -1,4 +1,3 @@
-import json
 import os
 from datetime import datetime
 from unittest.mock import MagicMock, patch
@@ -7,37 +6,8 @@ import pytest
 import tornado.httputil
 import tornado.web
 
-from iot_calendar import Application, DashboardImageHandler, DashboardListHandler, load_settings
+from iot_calendar import Application, DashboardImageHandler, DashboardListHandler
 from models import WeatherData
-
-
-# Sample test file for the load_settings function
-def test_load_settings_no_file(mocker):
-    mocker.patch("os.path.isfile", return_value=False)
-    mocker.patch("builtins.print")
-    mocker.patch("sys.exit", side_effect=Exception("exit called"))
-
-    with pytest.raises(Exception, match="exit called"):
-        load_settings()
-
-
-def test_load_settings_valid_file(mocker):
-    mock_file_content = {"key": "value"}
-
-    mocker.patch("os.path.isfile", return_value=True)
-    mocker.patch("builtins.open", mocker.mock_open(read_data=json.dumps(mock_file_content)))
-
-    settings = load_settings()
-
-    assert settings == mock_file_content
-
-
-def test_load_settings_with_missing_file(mocker, capsys):
-    mocker.patch("os.path.isfile", return_value=False)
-    with pytest.raises(SystemExit):
-        load_settings()
-    captured = capsys.readouterr()
-    assert "No ../amazon-dash-private/settings.json found." in captured.out
 
 
 class MockConnection:

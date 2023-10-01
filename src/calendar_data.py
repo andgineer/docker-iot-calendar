@@ -72,7 +72,7 @@ def calendar_events_list(
 
     all_actions = [
         action
-        for button, button_actions in settings["actions"].items()
+        for button, button_actions in settings["events"].items()
         if button != "__DEFAULT__"
         for action in preprocess_actions(button, button_actions)
         if is_relevant_action(action)
@@ -195,9 +195,9 @@ def events_to_array(
 
 def check() -> None:  # pragma: no cover
     """Debug function."""
-    from iot_calendar import load_settings  # pylint: disable=import-outside-toplevel
+    from iot_calendar import load_settings  # pylint: disable=import-outside-toplevel,cyclic-import
 
-    settings = load_settings()
+    settings = load_settings(load_secrets=False)
     print(calendar_events_list(settings, "anna_work_out"))
 
     from dateutil.tz import tzoffset  # pylint: disable=import-outside-toplevel

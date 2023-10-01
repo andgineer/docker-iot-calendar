@@ -46,7 +46,7 @@ def test_preprocess_actions_basic():
 
 def test_calendar_events_list_basic():
     settings = {
-        "actions": {
+        "events": {
             "MyButton": {
                 "actions": [
                     {"type": "calendar", "dashboard": "TestDashboard", "summary": "Do something"}
@@ -138,7 +138,7 @@ def test_preprocess_actions_substitution():
 
 def test_calendar_events_list_default():
     settings = {
-        "actions": {
+        "events": {
             "__DEFAULT__": {
                 "actions": [
                     {

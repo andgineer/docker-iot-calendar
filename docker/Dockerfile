@@ -29,4 +29,4 @@ EXPOSE 4444
 
 WORKDIR /iot_calendar
 
-CMD ["python3", "iot_calendar.py"]
+CMD ["python3", "iot_calendar.py", "--port=4444", "folder=../amazon-dash-private"]

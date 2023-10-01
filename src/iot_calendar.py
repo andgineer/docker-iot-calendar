@@ -6,6 +6,7 @@ import os
 import os.path
 import pprint
 import sys
+from pathlib import Path
 from typing import Any, Awaitable, Dict, Optional, Sequence, Tuple, Union, cast
 
 import tornado.auth
@@ -27,7 +28,8 @@ from calendar_image import ImageParams, draw_calendar
 from google_calendar import GOOGLE_CREDENTIALS_PARAM, collect_events
 from openweathermap_org import WEATHER_KEY_PARAM, Weather
 
-SETTINGS_FILE_NAME = "../amazon-dash-private/settings.json"
+SETTINGS_FOLDER = "../amazon-dash-private"
+SETTINGS_FILE_NAME = "settings.json"
 
 settings: Dict[str, Any] = {}
 
@@ -37,7 +39,7 @@ should connect volume with setting files, like
     -v $PWD/amazon-dash-private:/amazon-dash-private:ro"""
 
 
-def load_settings(secrets_folder: Optional[str] = None) -> Dict[str, Any]:
+def load_settings(folder: Optional[str] = None, load_secrets: bool = True) -> Dict[str, Any]:
     """Load settings."""
 
     def set_folder(params: Dict[str, Any], substr: str, folder: str) -> None:
@@ -47,17 +49,19 @@ def load_settings(secrets_folder: Optional[str] = None) -> Dict[str, Any]:
                 _, name = os.path.split(params[param])
                 params[param] = os.path.join(folder, name)
 
-    if not os.path.isfile(SETTINGS_FILE_NAME):
-        print(NO_SETTINGS_FILE.format(SETTINGS_FILE_NAME))
+    if folder is None:
+        folder = SETTINGS_FOLDER
+    settings_path = Path(os.path.join(folder, SETTINGS_FILE_NAME))
+    if not settings_path.is_file():
+        print(NO_SETTINGS_FILE.format(settings_path))
         sys.exit(1)
-    with open(SETTINGS_FILE_NAME, "r", encoding="utf-8-sig") as settings_file:
-        result: Dict[str, Any] = json.loads(settings_file.read())
+    result: Dict[str, Any] = json.loads(settings_path.read_text(encoding="utf-8-sig"))
 
-    if secrets_folder:
+    if load_secrets:
         g_path, g_name = os.path.split(result[GOOGLE_CREDENTIALS_PARAM])
-        result[GOOGLE_CREDENTIALS_PARAM] = os.path.join(secrets_folder, g_name)
+        result[GOOGLE_CREDENTIALS_PARAM] = os.path.join(folder, g_name)
         w_path, w_name = os.path.split(result[WEATHER_KEY_PARAM])
-        result[WEATHER_KEY_PARAM] = os.path.join(secrets_folder, w_name)
+        result[WEATHER_KEY_PARAM] = os.path.join(folder, w_name)
     if "images_folder" in result:
         images_folder = result["images_folder"]
         for dashboard in result["dashboards"]:
@@ -65,11 +69,11 @@ def load_settings(secrets_folder: Optional[str] = None) -> Dict[str, Any]:
             if "absent" in result["dashboards"][dashboard]:
                 for absent_event in result["dashboards"][dashboard]["absent"]:
                     set_folder(absent_event, "image", images_folder)
-        for button in result["actions"]:
-            if "summary" in result["actions"][button]:
-                for summary in result["actions"][button]["summary"]:
+        for button in result["events"]:
+            if "summary" in result["events"][button]:
+                for summary in result["events"][button]["summary"]:
                     set_folder(summary, "image", images_folder)
-            for action in result["actions"][button]["actions"]:
+            for action in result["events"][button]["actions"]:
                 set_folder(action, "image", images_folder)
     print("Processed settings:")
     pprint.pprint(result)
@@ -218,18 +222,21 @@ class Application(tornado.web.Application):  # type: ignore
         tornado.web.Application.__init__(self, cast(_RuleList, handlers), **server_settings)
 
 
-def check() -> None:  # pragma: no cover
+def main() -> None:  # pragma: no cover
     """Check."""
     global settings  # pylint: disable=global-statement
+
     define("port", default=4444, help="run on the given port", type=int)
-    define("secrets", default=None, help="path to files with secrets", type=str)
+    define("folder", default=None, help="path to settings and files with secrets", type=str)
     tornado.options.parse_command_line()
-    settings = load_settings(options.secrets)
+
+    settings = load_settings(folder=options.folder)
     http_server = tornado.httpserver.HTTPServer(Application())
     print(f"Running on port {options.port}")
+
     http_server.listen(options.port)
     tornado.ioloop.IOLoop.instance().start()
 
 
 if __name__ == "__main__":  # pragma: no cover
-    check()
+    main()
