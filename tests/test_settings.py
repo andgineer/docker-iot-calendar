@@ -20,14 +20,19 @@ def test_load_settings_images_and_dashboards(mocker):
         },
         "events": {
             "event1": {
-                "summary": {
-                    "summary1": {
+                "summary": [
+                    {
+                        "summary": "",
                         "image": "event_image.jpg"
                     }
-                },
+                ],
                 "actions": [
                     {"image": "action_image.jpg"}
                 ]
+            },
+            "event2": {
+              "summary": "{button}",
+              "actions": []
             }
         }
     }
@@ -44,7 +49,7 @@ def test_load_settings_images_and_dashboards(mocker):
     assert settings["images_folder"] == "/dummy/path"
     assert settings["dashboards"]["dashboard1"]["image1"] == "/dummy/path/test_image_1.jpg"
     assert settings["dashboards"]["dashboard1"]["absent"][0]["image"] == "/dummy/path/absent_image.jpg"
-    assert settings["events"]["event1"]["summary"]["summary1"]["image"] == "/dummy/path/event_image.jpg"
+    assert settings["events"]["event1"]["summary"][0]["image"] == "/dummy/path/event_image.jpg"
     assert settings["events"]["event1"]["actions"][0]["image"] == "/dummy/path/action_image.jpg"
 
 

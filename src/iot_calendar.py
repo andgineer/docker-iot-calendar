@@ -70,7 +70,9 @@ def load_settings(folder: Optional[str] = None, load_secrets: bool = True) -> Di
                 for absent_event in result["dashboards"][dashboard]["absent"]:
                     set_folder(absent_event, "image", images_folder)
         for button in result["events"]:
-            if "summary" in result["events"][button]:
+            if "summary" in result["events"][button] and isinstance(
+                result["events"][button]["summary"], list
+            ):
                 for summary in result["events"][button]["summary"]:
                     set_folder(summary, "image", images_folder)
             for action in result["events"][button]["actions"]:
