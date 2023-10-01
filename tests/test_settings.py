@@ -93,7 +93,7 @@ def test_load_settings_no_file_print_error(mocker, capsys):
 def test_load_settings_valid_file(mocker):
     mock_file_content = {"key": "value"}
 
-    mocker.patch("os.path.isfile", return_value=True)
+    mocker.patch("pathlib.Path.is_file", return_value=True)
     mocker.patch("pathlib.Path.read_text", return_value=json.dumps(mock_file_content))
 
     settings = load_settings(load_secrets=False)
