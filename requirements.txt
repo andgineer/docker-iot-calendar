@@ -157,7 +157,7 @@ uritemplate==4.1.1
     # via
     #   -r requirements.docker.txt
     #   google-api-python-client
-urllib3==2.0.6
+urllib3==2.0.7
     # via
     #   -r requirements.docker.txt
     #   requests
