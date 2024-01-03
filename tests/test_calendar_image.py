@@ -329,7 +329,7 @@ def test_draw_weather():
 
     # Assert the image was drawn at the expected extent
     mock_imshow.assert_called_once_with(
-        "test_image_path", extent=[0.15, 0.85, 0.15, 0.85], interpolation="bilinear"
+        "test_image_path", extent=(0.15, 0.85, 0.15, 0.85), interpolation="bilinear"
     )
 
 
@@ -436,14 +436,14 @@ def test_draw_calendar():
 
         mock_draw_weather.assert_called_once_with(
             weather,
-            rect=[0, 0.6833333333333333, 0.24, 0.29166666666666663],
+            rect=(0, 0.6833333333333333, 0.24, 0.29166666666666663),
             image_loader=mock_image_loader.return_value,
         )
         mock_draw_plot.assert_called_once_with(
             x,
             y,
             [WeatherLabel(summary=event["summary"], image=event["image"]) for event in events],
-            rect=[0.3, 0.6833333333333333, 0.6749999999999999, 0.29166666666666663],
+            rect=(0.3, 0.6833333333333333, 0.6749999999999999, 0.29166666666666663),
             image_loader=mock_image_loader.return_value,
         )
         mock_draw_pies.assert_called_once_with(
