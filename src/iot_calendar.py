@@ -83,7 +83,7 @@ def load_settings(folder: Optional[str] = None, load_secrets: bool = True) -> Di
     return result
 
 
-class HandlerWithParams(tornado.web.RequestHandler):  # type: ignore
+class HandlerWithParams(tornado.web.RequestHandler):
     """Handler with params."""
 
     def load_params(self, **kw: Any) -> ImageParams:
@@ -185,7 +185,7 @@ HandlersType = Optional[
 ]
 
 
-class Application(tornado.web.Application):  # type: ignore
+class Application(tornado.web.Application):
     """Application."""
 
     def __init__(
