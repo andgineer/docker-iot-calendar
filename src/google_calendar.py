@@ -64,7 +64,7 @@ You can get new one from https://console.developers.google.com/start/api?id=cale
             "calendar",
             "v3",
             http=self.http,
-            cache_discovery=False  # file cash bug: https://github.com/google/google-api-python-client/issues/299
+            cache_discovery=False,  # file cash bug: https://github.com/google/google-api-python-client/issues/299
             # also we can use older pip uninstall oauth2client ; pip install oauth2client==3.0.0
         )
 
@@ -91,7 +91,7 @@ You can get new one from https://console.developers.google.com/start/api?id=cale
         """
 
         def get_event_interval(
-            event: Dict[str, Any]
+            event: Dict[str, Any],
         ) -> Tuple[datetime.datetime, datetime.datetime]:
             """Get event interval.
 
