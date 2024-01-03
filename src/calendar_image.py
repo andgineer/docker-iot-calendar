@@ -10,7 +10,7 @@ import contextlib
 import io
 import os
 from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union, Tuple
 
 import matplotlib
 import matplotlib.font_manager
@@ -36,7 +36,6 @@ from matplotlib.dates import DateFormatter, date2num
 from cached_decorator import cached
 from image_loader import ImageLoader
 
-matplotlib.font_manager._load_fontmanager(try_read_cache=False)
 
 IMAGE_CACHED_SECONDS = 60 * 60 * 24 * 30
 ImageParams = namedtuple("ImageParams", "dashboard format style xkcd rotate")
@@ -240,12 +239,12 @@ def draw_pies(
     )
     tomorrow = today + timedelta(days=1)
     ax = plt.gcf().add_axes(
-        [
+        (
             left_gap,
             0,
             1,
             pies_height,
-        ],  # left, bottom, width, height, in fractions of figure width and height
+        ),  # left, bottom, width, height, in fractions of figure width and height
         frameon=False,
         autoscale_on=False,
     )
@@ -278,7 +277,7 @@ def draw_pies(
 
 def draw_weather(
     weather: Optional[WeatherData],
-    rect: List[float],
+    rect: Tuple[float, float, float, float],
     image_loader: ImageLoader,
 ) -> None:
     """Render the weather data onto a specified rectangle using matplotlib.
@@ -321,7 +320,7 @@ def draw_weather(
     )
     plt.imshow(
         image_loader.by_file_name(os.path.join(weather.images_folder, f"{weather.icon[0]}.png")),
-        extent=[0.15, 0.85, 0.15, 0.85],
+        extent=(0.15, 0.85, 0.15, 0.85),
         interpolation="bilinear",  # 'bicubic'
     )
 
@@ -334,7 +333,7 @@ def place_text_and_image(
     image_loader: ImageLoader,
 ) -> None:
     """Place text and image on the axes."""
-    ax.text(x_pos, y_pos, label.summary, horizontalalignment="center", verticalalignment="top")
+    ax.text(x_pos, y_pos, label.summary, horizontalalignment="center", verticalalignment="top")  # type: ignore
 
     if label.image:
         add_image_to_axes(ax, x_pos, y_pos, label, image_loader)
@@ -352,9 +351,9 @@ def add_image_to_axes(
     xlim, ylim = ax.get_xlim(), ax.get_ylim()
     xsz, ysz = xlim[1] - xlim[0], ylim[1] - ylim[0]
     x_scale = 1 / plot_height  # Clarify the logic behind this.
-    x_val, y_val = (date2num(x_pos) - xlim[0]) / xsz * x_scale, (y_pos - ylim[0]) / ysz
+    x_val, y_val = (date2num(x_pos) - xlim[0]) / xsz * x_scale, (y_pos - ylim[0]) / ysz  # type: ignore
 
-    axes = plt.axes([plot_left, plot_bottom, plot_width, plot_height], label="2")
+    axes = plt.axes((plot_left, plot_bottom, plot_width, plot_height), label="2")
     configure_axes_for_image(axes)
     plt.imshow(
         image_loader.by_file_name(label.image),
@@ -382,7 +381,7 @@ def draw_plot(
     x: List[datetime],
     y: List[List[float]],
     labels: List[WeatherLabel],
-    rect: List[float],
+    rect: Tuple[float, float, float, float],
     image_loader: ImageLoader,
     legend: str = "inside",
 ) -> None:
@@ -407,14 +406,14 @@ def draw_plot(
     if len(x) > 0:
         days_on_plot = (x[-1] - x[0]).days
         if days_on_plot < 5 * 30:
-            shortFmt = DateFormatter("%b %d")
+            shortFmt = DateFormatter("%b %d")  # type: ignore
         elif days_on_plot < 5 * 365:
-            shortFmt = DateFormatter("%d")
+            shortFmt = DateFormatter("%d")  # type: ignore
         else:
-            shortFmt = DateFormatter("%Y")
+            shortFmt = DateFormatter("%Y")  # type: ignore
         ax.xaxis.set_major_formatter(shortFmt)
     legend_labels = [label.summary for label in labels]
-    polies = ax.stackplot(x, y)
+    polies = ax.stackplot(x, y)  # type: ignore
     ax.xaxis.set_major_locator(plt.MaxNLocator(6))
     ax.patch.set_visible(False)
     if legend == "rectangle":
@@ -482,13 +481,13 @@ def draw_calendar(
         if int(params.xkcd):
             plt.xkcd()
         draw_weather(
-            weather, rect=[0, plot_bottom, plot_left * 0.8, plot_height], image_loader=image_loader
+            weather, rect=(0, plot_bottom, plot_left * 0.8, plot_height), image_loader=image_loader
         )
         draw_plot(
             x,
             y,
             [WeatherLabel(summary=event["summary"], image=event["image"]) for event in events],
-            rect=[plot_left, plot_bottom, plot_width, plot_height],
+            rect=(plot_left, plot_bottom, plot_width, plot_height),
             image_loader=image_loader,
         )
         empty_image_file_name = dashboard["empty_image"]
@@ -541,16 +540,16 @@ def check(show: bool = True) -> None:  # pragma: no cover
     """
     import json  # pylint: disable=import-outside-toplevel
 
-    import dateutil  # pylint: disable=import-outside-toplevel
+    from dateutil import parser  # pylint: disable=import-outside-toplevel
 
     with open("tests/resources/draw_calendar_params_2.json", "r", encoding="utf-8") as file:
         call_params = json.load(file)
 
     for row in call_params["grid"]:
         for col in row:
-            col["date"] = dateutil.parser.parse(col["date"])
+            col["date"] = parser.parse(col["date"])
     for i, day in enumerate(call_params["x"]):
-        call_params["x"][i] = dateutil.parser.parse(call_params["x"][i])
+        call_params["x"][i] = parser.parse(call_params["x"][i])
     t0 = datetime.now()
     image_data = draw_calendar(
         call_params["grid"],

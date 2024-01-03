@@ -1,8 +1,9 @@
 """Load mathplot images from files."""
-from typing import Dict
+from typing import Dict, Any
 
 import matplotlib.image as mpimg
 import numpy as np
+import numpy.typing as npt
 
 from singleton import Singleton
 
@@ -16,10 +17,10 @@ class ImageLoader(metaclass=Singleton):
 
     def __init__(self) -> None:
         """Init."""
-        self._cache: Dict[str, np.ndarray] = {}
-        self._non_existed: np.ndarray = np.array([[[255, 255, 255]]], dtype=np.uint8)
+        self._cache: Dict[str, npt.NDArray[Any]] = {}
+        self._non_existed: npt.NDArray[Any] = np.array([[[255, 255, 255]]], dtype=np.uint8)
 
-    def by_file_name(self, image_file_name: str) -> np.ndarray:
+    def by_file_name(self, image_file_name: str) -> npt.NDArray[Any]:
         """Load by file name."""
         if not image_file_name:
             return self._non_existed
