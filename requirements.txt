@@ -42,15 +42,15 @@ defusedxml==0.7.1
     # via
     #   -r requirements.docker.txt
     #   cairosvg
-fonttools==4.47.0
+fonttools==4.47.2
     # via matplotlib
 google-api-core==2.15.0
     # via
     #   -r requirements.docker.txt
     #   google-api-python-client
-google-api-python-client==2.111.0
+google-api-python-client==2.114.0
     # via -r requirements.docker.txt
-google-auth==2.25.2
+google-auth==2.26.2
     # via
     #   -r requirements.docker.txt
     #   google-api-core
@@ -94,7 +94,7 @@ pillow==10.2.0
     #   -r requirements.docker.txt
     #   cairosvg
     #   matplotlib
-protobuf==4.25.1
+protobuf==4.25.2
     # via
     #   -r requirements.docker.txt
     #   google-api-core

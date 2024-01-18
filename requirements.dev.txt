@@ -74,7 +74,7 @@ exceptiongroup==1.2.0
     # via pytest
 filelock==3.13.1
     # via virtualenv
-fonttools==4.47.0
+fonttools==4.47.2
     # via
     #   -r requirements.txt
     #   matplotlib
@@ -84,9 +84,9 @@ google-api-core==2.15.0
     # via
     #   -r requirements.txt
     #   google-api-python-client
-google-api-python-client==2.111.0
+google-api-python-client==2.114.0
     # via -r requirements.txt
-google-auth==2.25.2
+google-auth==2.26.2
     # via
     #   -r requirements.txt
     #   google-api-core
@@ -125,7 +125,7 @@ iniconfig==2.0.0
     # via pytest
 isort==5.13.2
     # via pylint
-jinja2==3.1.2
+jinja2==3.1.3
     # via mkdocs
 kiwisolver==1.4.5
     # via
@@ -133,7 +133,7 @@ kiwisolver==1.4.5
     #   matplotlib
 lazydocs==0.4.8
     # via -r requirements.dev.in
-markdown==3.5.1
+markdown==3.5.2
     # via mkdocs
 markupsafe==2.1.3
     # via
@@ -197,7 +197,7 @@ pluggy==1.3.0
     # via pytest
 pre-commit==3.6.0
     # via -r requirements.dev.in
-protobuf==4.25.1
+protobuf==4.25.2
     # via
     #   -r requirements.txt
     #   google-api-core
