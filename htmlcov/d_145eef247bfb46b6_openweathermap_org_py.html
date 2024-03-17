@@ -64,8 +64,8 @@
             <a id="indexLink" class="nav" href="index.html">&Hat; index</a> &nbsp; &nbsp;
             <a id="nextFileLink" class="nav" href="d_145eef247bfb46b6_singleton_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
-            <a class="nav" href="https://coverage.readthedocs.io/en/7.4.0">coverage.py v7.4.0</a>,
-            created at 2024-01-18 05:18 +0000
+            <a class="nav" href="https://coverage.readthedocs.io/en/7.4.4">coverage.py v7.4.4</a>,
+            created at 2024-03-17 08:16 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"/>
@@ -187,7 +187,7 @@
     <p class="run"><span class="n"><a id="t105" href="#t105">105</a></span><span class="t">        <span class="nam">UNITS</span> <span class="op">=</span> <span class="op">{</span><span class="str">"e"</span><span class="op">:</span> <span class="str">"imperial"</span><span class="op">,</span> <span class="str">"m"</span><span class="op">:</span> <span class="str">"metric"</span><span class="op">}</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t106" href="#t106">106</a></span><span class="t">        <span class="nam">units_code</span> <span class="op">=</span> <span class="nam">UNITS</span><span class="op">.</span><span class="nam">get</span><span class="op">(</span><span class="nam">units</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t107" href="#t107">107</a></span><span class="t">        <span class="key">if</span> <span class="nam">units_code</span> <span class="key">is</span> <span class="key">None</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t108" href="#t108">108</a></span><span class="t">            <span class="nam">print</span><span class="op">(</span><span class="str">f"Exiting because unknown units '{units}', supported {UNITS}"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t108" href="#t108">108</a></span><span class="t">            <span class="nam">print</span><span class="op">(</span><span class="fst">f"</span><span class="fst">Exiting because unknown units '</span><span class="op">{</span><span class="nam">units</span><span class="op">}</span><span class="fst">', supported </span><span class="op">{</span><span class="nam">UNITS</span><span class="op">}</span><span class="fst">"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t109" href="#t109">109</a></span><span class="t">            <span class="key">return</span> <span class="key">None</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t110" href="#t110">110</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t111" href="#t111">111</a></span><span class="t">        <span class="nam">params</span><span class="op">:</span> <span class="nam">Dict</span><span class="op">[</span><span class="nam">str</span><span class="op">,</span> <span class="nam">Union</span><span class="op">[</span><span class="nam">str</span><span class="op">,</span> <span class="nam">int</span><span class="op">,</span> <span class="nam">float</span><span class="op">]</span><span class="op">]</span> <span class="op">=</span> <span class="op">{</span>&nbsp;</span><span class="r"></span></p>
@@ -211,8 +211,8 @@
     <p class="pln"><span class="n"><a id="t129" href="#t129">129</a></span><span class="t">            <span class="op">)</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t130" href="#t130">130</a></span><span class="t">                <span class="nam">print</span><span class="op">(</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t131" href="#t131">131</a></span><span class="t">                    <span class="str">"#"</span> <span class="op">*</span> <span class="num">5</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t132" href="#t132">132</a></span><span class="t">                    <span class="str">f"""You should get your key from https://home.openweathermap.org/users/sign_up</span>&nbsp;</span><span class="r"></span></p>
-    <p class="pln"><span class="n"><a id="t133" href="#t133">133</a></span><span class="t"><span class="str">                    and place it into {self.settings["openweathermap_key_file_name"]}"""</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t132" href="#t132">132</a></span><span class="t">                    <span class="fst">f"""</span><span class="fst">You should get your key from https://home.openweathermap.org/users/sign_up</span>&nbsp;</span><span class="r"></span></p>
+    <p class="pln"><span class="n"><a id="t133" href="#t133">133</a></span><span class="t"><span class="fst">                    and place it into </span><span class="op">{</span><span class="nam">self</span><span class="op">.</span><span class="nam">settings</span><span class="op">[</span><span class="str">"openweathermap_key_file_name"</span><span class="op">]</span><span class="op">}</span><span class="fst">"""</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t134" href="#t134">134</a></span><span class="t">                <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t135" href="#t135">135</a></span><span class="t">            <span class="key">else</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t136" href="#t136">136</a></span><span class="t">                <span class="nam">print</span><span class="op">(</span><span class="str">"#"</span> <span class="op">*</span> <span class="num">5</span><span class="op">,</span> <span class="str">"ERROR:"</span><span class="op">,</span> <span class="nam">weather_data</span><span class="op">[</span><span class="str">"message"</span><span class="op">]</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
@@ -267,8 +267,8 @@
             <a id="indexLink" class="nav" href="index.html">&Hat; index</a> &nbsp; &nbsp;
             <a id="nextFileLink" class="nav" href="d_145eef247bfb46b6_singleton_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
-            <a class="nav" href="https://coverage.readthedocs.io/en/7.4.0">coverage.py v7.4.0</a>,
-            created at 2024-01-18 05:18 +0000
+            <a class="nav" href="https://coverage.readthedocs.io/en/7.4.4">coverage.py v7.4.4</a>,
+            created at 2024-03-17 08:16 +0000
         </p>
     </div>
 </footer>

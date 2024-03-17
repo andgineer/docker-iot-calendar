@@ -64,8 +64,8 @@
             <a id="indexLink" class="nav" href="index.html">&Hat; index</a> &nbsp; &nbsp;
             <a id="nextFileLink" class="nav" href="d_145eef247bfb46b6_models_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
-            <a class="nav" href="https://coverage.readthedocs.io/en/7.4.0">coverage.py v7.4.0</a>,
-            created at 2024-01-18 05:18 +0000
+            <a class="nav" href="https://coverage.readthedocs.io/en/7.4.4">coverage.py v7.4.4</a>,
+            created at 2024-03-17 08:16 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"/>
@@ -221,7 +221,7 @@
     <p class="pln"><span class="n"><a id="t139" href="#t139">139</a></span><span class="t">            <span class="nam">grid</span><span class="op">,</span> <span class="nam">x</span><span class="op">,</span> <span class="nam">y</span><span class="op">,</span> <span class="nam">weather</span><span class="op">,</span> <span class="nam">dashboard</span><span class="op">,</span> <span class="nam">calendar_events</span><span class="op">,</span> <span class="nam">absent_events</span><span class="op">,</span> <span class="nam">params</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t140" href="#t140">140</a></span><span class="t">        <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t141" href="#t141">141</a></span><span class="t">        <span class="nam">self</span><span class="op">.</span><span class="nam">write</span><span class="op">(</span><span class="nam">image</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t142" href="#t142">142</a></span><span class="t">        <span class="nam">self</span><span class="op">.</span><span class="nam">set_header</span><span class="op">(</span><span class="str">"Content-type"</span><span class="op">,</span> <span class="str">f"image/{image_format}"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t142" href="#t142">142</a></span><span class="t">        <span class="nam">self</span><span class="op">.</span><span class="nam">set_header</span><span class="op">(</span><span class="str">"Content-type"</span><span class="op">,</span> <span class="fst">f"</span><span class="fst">image/</span><span class="op">{</span><span class="nam">image_format</span><span class="op">}</span><span class="fst">"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t143" href="#t143">143</a></span><span class="t">        <span class="nam">self</span><span class="op">.</span><span class="nam">flush</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t144" href="#t144">144</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="run"><span class="n"><a id="t145" href="#t145">145</a></span><span class="t">    <span class="key">def</span> <span class="nam">data_received</span><span class="op">(</span><span class="nam">self</span><span class="op">,</span> <span class="nam">chunk</span><span class="op">:</span> <span class="nam">bytes</span><span class="op">)</span> <span class="op">-></span> <span class="nam">Optional</span><span class="op">[</span><span class="nam">Awaitable</span><span class="op">[</span><span class="key">None</span><span class="op">]</span><span class="op">]</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
@@ -316,7 +316,7 @@
     <p class="pln"><span class="n"><a id="t234" href="#t234">234</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="exc show_exc"><span class="n"><a id="t235" href="#t235">235</a></span><span class="t">    <span class="nam">settings</span> <span class="op">=</span> <span class="nam">load_settings</span><span class="op">(</span><span class="nam">folder</span><span class="op">=</span><span class="nam">options</span><span class="op">.</span><span class="nam">folder</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="exc show_exc"><span class="n"><a id="t236" href="#t236">236</a></span><span class="t">    <span class="nam">http_server</span> <span class="op">=</span> <span class="nam">tornado</span><span class="op">.</span><span class="nam">httpserver</span><span class="op">.</span><span class="nam">HTTPServer</span><span class="op">(</span><span class="nam">Application</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
-    <p class="exc show_exc"><span class="n"><a id="t237" href="#t237">237</a></span><span class="t">    <span class="nam">print</span><span class="op">(</span><span class="str">f"Running on port {options.port}"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="exc show_exc"><span class="n"><a id="t237" href="#t237">237</a></span><span class="t">    <span class="nam">print</span><span class="op">(</span><span class="fst">f"</span><span class="fst">Running on port </span><span class="op">{</span><span class="nam">options</span><span class="op">.</span><span class="nam">port</span><span class="op">}</span><span class="fst">"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t238" href="#t238">238</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="exc show_exc"><span class="n"><a id="t239" href="#t239">239</a></span><span class="t">    <span class="nam">http_server</span><span class="op">.</span><span class="nam">listen</span><span class="op">(</span><span class="nam">options</span><span class="op">.</span><span class="nam">port</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="exc show_exc"><span class="n"><a id="t240" href="#t240">240</a></span><span class="t">    <span class="nam">tornado</span><span class="op">.</span><span class="nam">ioloop</span><span class="op">.</span><span class="nam">IOLoop</span><span class="op">.</span><span class="nam">instance</span><span class="op">(</span><span class="op">)</span><span class="op">.</span><span class="nam">start</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
@@ -332,8 +332,8 @@
             <a id="indexLink" class="nav" href="index.html">&Hat; index</a> &nbsp; &nbsp;
             <a id="nextFileLink" class="nav" href="d_145eef247bfb46b6_models_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
-            <a class="nav" href="https://coverage.readthedocs.io/en/7.4.0">coverage.py v7.4.0</a>,
-            created at 2024-01-18 05:18 +0000
+            <a class="nav" href="https://coverage.readthedocs.io/en/7.4.4">coverage.py v7.4.4</a>,
+            created at 2024-03-17 08:16 +0000
         </p>
     </div>
 </footer>
