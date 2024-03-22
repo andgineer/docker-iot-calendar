@@ -5,7 +5,7 @@
 [Docker Hub container](https://hub.docker.com/r/andgineer/iot-calendar)
 that generates image for Amazon Kindle.
 
-![calendar](docs/include/calendar.png)
+![calendar](docs/src/en/images/calendar.png)
 
 The image contains calendar with events from Google Calendar - supposedly events from your IoT devices
 (like [Smart wifi button (Amazon Dash Button hack)](https://sorokin.engineer/posts/en/amazon_dash_button_hack.html)).

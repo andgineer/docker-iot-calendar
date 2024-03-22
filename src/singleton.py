@@ -1,4 +1,5 @@
 """Singleton meta class."""
+
 from typing import Any, Dict
 
 

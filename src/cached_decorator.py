@@ -3,6 +3,7 @@
 lru_cache was not used due to its lack of support for cache duration.
 To be honest, this was implemented primarily for educational purposes.
 """
+
 import datetime
 import functools
 import hashlib

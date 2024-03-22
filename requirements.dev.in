@@ -11,8 +11,9 @@ pytest-benchmark
 pytest-cov
 
 # docs
-lazydocs
-mkdocs
+mkdocstrings[python]
+mkdocs-material
+pymdown-extensions
 mkdocs-awesome-pages-plugin
 
 pip-tools

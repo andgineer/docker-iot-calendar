@@ -5,7 +5,6 @@ Usage
     see details in the function description
 """
 
-
 import contextlib
 import io
 import os

@@ -1,4 +1,5 @@
 """Load mathplot images from files."""
+
 from typing import Dict, Any
 
 import matplotlib.image as mpimg

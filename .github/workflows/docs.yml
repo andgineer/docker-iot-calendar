@@ -18,7 +18,8 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  deploy:
+  docs:
+    if: ${{ false }}  # disable as we have blog post
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -29,4 +30,5 @@ jobs:
           pip install -r requirements.dev.txt
           pip install -r requirements.txt
       - run: scripts/build-docs.sh
-      - run: mkdocs gh-deploy --force
+      - run: |
+          ghp-import --no-jekyll --push --force site

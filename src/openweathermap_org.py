@@ -4,6 +4,7 @@ Usage:
     Weather(settings).get_weather(latitude, longitude)
 
 """
+
 import datetime
 import json
 import os.path

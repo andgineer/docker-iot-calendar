@@ -3,10 +3,11 @@
 # Create docs in docs/
 #
 
-lazydocs \
-    --output-path="./docs/docstrings" \
-    --overview-file="README.md" \
-    --src-base-url="https://github.com/andgineer/docker-iot-calendar/blob/master/" \
-    src
+./scripts/docstrings.sh
 
-mkdocs build
+for lang in en ru; do  # en should be the first language as it clears the root of the site
+    scripts/docs-render-config.sh $lang
+    cp -r ./docs/src/en/images/ ./docs/src/$lang/images/
+    mkdocs build --dirty --config-file docs/_mkdocs.yml
+    rm docs/_mkdocs.yml
+done
