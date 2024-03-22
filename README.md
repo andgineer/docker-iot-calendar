@@ -46,6 +46,8 @@ Local address for the calendar page `http://localhost:4444`
 
 ## Development
 
+### Packages
+
 At first I thought it would be great idea to use
 [svgwrite](http://svgwrite.readthedocs.io/en/master/attributes/presentation.html),
 and [cairosvg](http://cairosvg.org/documentation/), but then decided otherwise
@@ -68,8 +70,23 @@ and [Comic Neue](https://fonts.google.com/specimen/Comic+Neue).
 If you already had matplotlib installed, after font installation you have to remove `~/.matplotlib/fontList.json`.
 
 ### HTTP server
+
 As HTTP server I use [tornado](http://www.tornadoweb.org/en/stable/).
+
+### Local debug
+
+Create and/or virtual environment (note two dots):
+
+    . ./activate.sh
+
+Now you can run debug code or debug the application, for example
+
+    python src/iot_calendar.py
 
 ## Performance
 
 https://andgineer.github.io/docker-iot-calendar/dev/bench
+
+## Coverage report
+* [Codecov](https://app.codecov.io/gh/andgineer/docker-iot-calendar/tree/master/src)
+* [Coveralls](https://coveralls.io/github/andgineer/docker-iot-calendar)

@@ -1,13 +1,22 @@
-#!/usr/bin/env bash
+!/usr/bin/env bash
 #
 # Pin current dependencies versions.
 #
+unset CONDA_PREFIX  # if conda is installed, it will mess with the virtual env
 
-rm -f requirements.txt
-rm -f requirements.docker.txt
-rm -f requirements.dev.txt
+START_TIME=$(date +%s)
 
 # The order is important, because of dependencies between files.
-pip-compile requirements.docker.in
-pip-compile requirements.in
-pip-compile requirements.dev.in
+uv pip compile requirements.docker.in --output-file=requirements.docker.txt
+REQS_DOCKER_TIME=$(date +%s)
+
+uv pip compile requirements.in --output-file=requirements.txt
+REQS_TIME=$(date +%s)
+
+uv pip compile requirements.dev.in --output-file=requirements.dev.txt
+END_TIME=$(date +%s)
+
+echo "Req‘s docker compilation time: $((REQS_DOCKER_TIME - $START_TIME)) seconds"
+echo "Req‘s compilation time: $((REQS_TIME - REQS_DOCKER_TIME)) seconds"
+echo "Req‘s dev compilation time: $((END_TIME - $REQS_TIME)) seconds"
+echo "Total execution time: $((END_TIME - $START_TIME)) seconds"
