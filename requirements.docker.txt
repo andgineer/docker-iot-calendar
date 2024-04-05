@@ -37,7 +37,7 @@ httplib2==0.22.0
 idna==3.6
     # via requests
 oauth2client==4.1.3
-pillow==10.2.0
+pillow==10.3.0
     # via cairosvg
 protobuf==4.25.2
     # via
