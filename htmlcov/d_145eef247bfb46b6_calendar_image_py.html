@@ -65,7 +65,7 @@
             <a id="nextFileLink" class="nav" href="d_145eef247bfb46b6_google_calendar_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.4.4">coverage.py v7.4.4</a>,
-            created at 2024-03-22 08:51 +0000
+            created at 2024-04-05 04:27 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"/>
@@ -591,7 +591,7 @@
     <p class="run"><span class="n"><a id="t509" href="#t509">509</a></span><span class="t">        <span class="key">return</span> <span class="nam">bytes_file</span><span class="op">.</span><span class="nam">getvalue</span><span class="op">(</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t510" href="#t510">510</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t511" href="#t511">511</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="exc show_exc"><span class="n"><a id="t512" href="#t512">512</a></span><span class="t"><span class="key">def</span> <span class="nam">create_image</span><span class="op">(</span><span class="nam">rotation_degrees</span><span class="op">:</span> <span class="nam">int</span><span class="op">,</span> <span class="nam">format</span><span class="op">:</span> <span class="nam">str</span><span class="op">)</span> <span class="op">-></span> <span class="nam">PIL</span><span class="op">.</span><span class="nam">Image</span><span class="op">:</span>  <span class="com"># pragma: no cover</span>&nbsp;</span><span class="r"></span></p>
+    <p class="exc show_exc"><span class="n"><a id="t512" href="#t512">512</a></span><span class="t"><span class="key">def</span> <span class="nam">create_image</span><span class="op">(</span><span class="nam">rotation_degrees</span><span class="op">:</span> <span class="nam">int</span><span class="op">,</span> <span class="nam">format</span><span class="op">:</span> <span class="nam">str</span><span class="op">)</span> <span class="op">-></span> <span class="nam">PIL</span><span class="op">.</span><span class="nam">Image</span><span class="op">.</span><span class="nam">Image</span><span class="op">:</span>  <span class="com"># pragma: no cover</span>&nbsp;</span><span class="r"></span></p>
     <p class="exc show_exc"><span class="n"><a id="t513" href="#t513">513</a></span><span class="t">    <span class="str">"""Create image from matplotlib canvas."""</span>&nbsp;</span><span class="r"></span></p>
     <p class="exc show_exc"><span class="n"><a id="t514" href="#t514">514</a></span><span class="t">    <span class="key">if</span> <span class="nam">rotation_degrees</span> <span class="op">%</span> <span class="num">90</span> <span class="op">!=</span> <span class="num">0</span><span class="op">:</span>&nbsp;</span><span class="r"></span></p>
     <p class="exc show_exc"><span class="n"><a id="t515" href="#t515">515</a></span><span class="t">        <span class="key">raise</span> <span class="nam">ValueError</span><span class="op">(</span><span class="str">"Degrees should be a multiple of 90"</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
@@ -606,7 +606,7 @@
     <p class="exc show_exc"><span class="n"><a id="t524" href="#t524">524</a></span><span class="t">    <span class="nam">img_np</span> <span class="op">=</span> <span class="nam">np</span><span class="op">.</span><span class="nam">array</span><span class="op">(</span><span class="nam">image</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="exc show_exc"><span class="n"><a id="t525" href="#t525">525</a></span><span class="t">    <span class="nam">img_np</span> <span class="op">=</span> <span class="nam">np</span><span class="op">.</span><span class="nam">rot90</span><span class="op">(</span><span class="nam">img_np</span><span class="op">,</span> <span class="nam">k</span><span class="op">=</span><span class="nam">num_90_rotations</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t526" href="#t526">526</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="exc show_exc"><span class="n"><a id="t527" href="#t527">527</a></span><span class="t">    <span class="key">return</span> <span class="nam">PIL</span><span class="op">.</span><span class="nam">Image</span><span class="op">.</span><span class="nam">fromarray</span><span class="op">(</span><span class="nam">img_np</span><span class="op">)</span>&nbsp;</span><span class="r"></span></p>
+    <p class="exc show_exc"><span class="n"><a id="t527" href="#t527">527</a></span><span class="t">    <span class="key">return</span> <span class="nam">PIL</span><span class="op">.</span><span class="nam">Image</span><span class="op">.</span><span class="nam">fromarray</span><span class="op">(</span><span class="nam">img_np</span><span class="op">)</span>  <span class="com"># type: ignore</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t528" href="#t528">528</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t529" href="#t529">529</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="exc show_exc"><span class="n"><a id="t530" href="#t530">530</a></span><span class="t"><span class="key">def</span> <span class="nam">check</span><span class="op">(</span><span class="nam">show</span><span class="op">:</span> <span class="nam">bool</span> <span class="op">=</span> <span class="key">True</span><span class="op">)</span> <span class="op">-></span> <span class="key">None</span><span class="op">:</span>  <span class="com"># pragma: no cover</span>&nbsp;</span><span class="r"></span></p>
@@ -661,7 +661,7 @@
             <a id="nextFileLink" class="nav" href="d_145eef247bfb46b6_google_calendar_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
             <a class="nav" href="https://coverage.readthedocs.io/en/7.4.4">coverage.py v7.4.4</a>,
-            created at 2024-03-22 08:51 +0000
+            created at 2024-04-05 04:27 +0000
         </p>
     </div>
 </footer>
