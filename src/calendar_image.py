@@ -509,7 +509,7 @@ def draw_calendar(
         return bytes_file.getvalue()
 
 
-def create_image(rotation_degrees: int, format: str) -> PIL.Image:  # pragma: no cover
+def create_image(rotation_degrees: int, format: str) -> PIL.Image.Image:  # pragma: no cover
     """Create image from matplotlib canvas."""
     if rotation_degrees % 90 != 0:
         raise ValueError("Degrees should be a multiple of 90")
@@ -524,7 +524,7 @@ def create_image(rotation_degrees: int, format: str) -> PIL.Image:  # pragma: no
     img_np = np.array(image)
     img_np = np.rot90(img_np, k=num_90_rotations)
 
-    return PIL.Image.fromarray(img_np)
+    return PIL.Image.fromarray(img_np)  # type: ignore
 
 
 def check(show: bool = True) -> None:  # pragma: no cover
