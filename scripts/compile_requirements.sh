@@ -7,10 +7,10 @@ unset CONDA_PREFIX  # if conda is installed, it will mess with the virtual env
 START_TIME=$(date +%s)
 
 # The order is important, because of dependencies between files.
-uv pip compile requirements.docker.in --output-file=requirements.docker.txt
+uv pip compile requirements.docker.in --output-file=requirements.docker.txt --upgrade
 REQS_DOCKER_TIME=$(date +%s)
 
-uv pip compile requirements.in --output-file=requirements.txt
+uv pip compile requirements.in --output-file=requirements.txt --upgrade
 REQS_TIME=$(date +%s)
 
 uv pip compile requirements.dev.in --output-file=requirements.dev.txt
