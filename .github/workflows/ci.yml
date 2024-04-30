@@ -55,7 +55,6 @@ jobs:
       run: uv pip install -r requirements.dev.txt
 
     - name: test
-      if: ${{ matrix.python-version == env.PRIMARY_PYTHON_VERSION && matrix.platform == env.PRIMARY_PLATFORM }}
       run: ${{ env.PYTEST_CMD }}
 
     - name: Coverage comment
