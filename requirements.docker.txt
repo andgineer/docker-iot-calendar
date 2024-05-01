@@ -17,7 +17,7 @@ cssselect2==0.7.0
     # via cairosvg
 defusedxml==0.7.1
     # via cairosvg
-google-api-core==2.18.0
+google-api-core==2.19.0
     # via google-api-python-client
 google-api-python-client==2.127.0
 google-auth==2.29.0
