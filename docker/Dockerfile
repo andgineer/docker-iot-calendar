@@ -23,7 +23,6 @@ COPY templates  /templates/
 COPY tests /tests
 COPY pytest.ini /
 COPY conftest.py /
-COPY docker/test.sh /
 
 EXPOSE 4444
 

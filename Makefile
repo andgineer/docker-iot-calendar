@@ -12,6 +12,14 @@ pull:
 run:
 	docker run --rm -it -v '$(PWD)/../amazon-dash-private:/amazon-dash-private:ro' -p '4444:4444' 'andgineer/iot-calendar'
 
+.HELP: test  ## Test
+test:
+	python -m pytest tests/
+
+.HELP: bench  ## Benchmark
+bench:
+	python -m pytest --benchmark-json benchmark.json -m benchmark tests/
+
 .HELP: reqs  ## Upgrade requirements including pre-commit
 reqs:
 	pre-commit autoupdate

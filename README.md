@@ -85,7 +85,7 @@ Now you can run debug code or debug the application, for example
 
 ## Performance
 
-https://andgineer.github.io/docker-iot-calendar/dev/bench
+https://andgineer.github.io/docker-iot-calendar/builds/benchmark
 
 ## Coverage report
 * [Codecov](https://app.codecov.io/gh/andgineer/docker-iot-calendar/tree/master/src)

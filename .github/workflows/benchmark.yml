@@ -33,7 +33,14 @@ jobs:
           python -m pip install -r requirements.dev.txt
       - name: Benchmark
         run: |
-          coverage run -m pytest --benchmark-json benchmark.json -m benchmark
+          python -m pytest --benchmark-json benchmark.json -m benchmark tests/
+
+      # Download previous benchmark result from cache (if exists)
+      - name: Download previous benchmark data
+        uses: actions/cache@v4
+        with:
+          path: ./cache
+          key: ${{ runner.os }}-benchmark
 
       # gh-pages branch is updated and pushed automatically with extracted benchmark data
       - name: Store benchmark result
@@ -41,5 +48,13 @@ jobs:
         with:
           tool: 'pytest'
           output-file-path: benchmark.json
-          auto-push: true
+          external-data-json-path: ./cache/benchmark-data.json
+          fail-on-alert: true
+          # GitHub API token to make a commit comment and push to gh-pages branch
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          # Enable alert commit comment
+          comment-on-alert: true
+          summary-always: true
+          # Push and deploy GitHub pages branch automatically
+          auto-push: true
+          benchmark-data-dir-path: builds/benchmark
