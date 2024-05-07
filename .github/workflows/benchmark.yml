@@ -35,20 +35,12 @@ jobs:
         run: |
           python -m pytest --benchmark-json benchmark.json -m benchmark tests/
 
-      # Download previous benchmark result from cache (if exists)
-      - name: Download previous benchmark data
-        uses: actions/cache@v4
-        with:
-          path: ./cache
-          key: ${{ runner.os }}-benchmark
-
       # gh-pages branch is updated and pushed automatically with extracted benchmark data
       - name: Store benchmark result
         uses: benchmark-action/github-action-benchmark@v1
         with:
           tool: 'pytest'
           output-file-path: benchmark.json
-          external-data-json-path: ./cache/benchmark-data.json
           fail-on-alert: true
           # GitHub API token to make a commit comment and push to gh-pages branch
           github-token: ${{ secrets.GITHUB_TOKEN }}
