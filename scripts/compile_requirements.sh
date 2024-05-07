@@ -13,7 +13,7 @@ REQS_DOCKER_TIME=$(date +%s)
 uv pip compile requirements.in --output-file=requirements.txt --upgrade
 REQS_TIME=$(date +%s)
 
-uv pip compile requirements.dev.in --output-file=requirements.dev.txt
+uv pip compile requirements.dev.in --output-file=requirements.dev.txt --upgrade
 END_TIME=$(date +%s)
 
 echo "Req‘s docker compilation time: $((REQS_DOCKER_TIME - $START_TIME)) seconds"
