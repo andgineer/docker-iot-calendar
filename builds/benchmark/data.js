@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1717827670956,
+  "lastUpdate": 1717827870607,
   "repoUrl": "https://github.com/andgineer/docker-iot-calendar",
   "entries": {
     "Benchmark": [
@@ -93,6 +93,37 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.00007955326165537115",
             "extra": "mean: 2.383253599998625 msec\nrounds: 5"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "Andrei_Sorokin2@epam.com",
+            "name": "Andrei Sorokin",
+            "username": "andgineer"
+          },
+          "committer": {
+            "email": "Andrei_Sorokin2@epam.com",
+            "name": "Andrei Sorokin",
+            "username": "andgineer"
+          },
+          "distinct": true,
+          "id": "2aacc16ca89e8a262a38484cab32e7b4e48ce2b1",
+          "message": "setup UV venv in static workflow",
+          "timestamp": "2024-06-08T08:23:41+02:00",
+          "tree_id": "362ffd77fa23d62ea0d89fe5ca12fd9ba11203cd",
+          "url": "https://github.com/andgineer/docker-iot-calendar/commit/2aacc16ca89e8a262a38484cab32e7b4e48ce2b1"
+        },
+        "date": 1717827870087,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/test_calendar_image.py::test_draw_benchmark",
+            "value": 427.56157699013846,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00009550577572900093",
+            "extra": "mean: 2.3388444000033815 msec\nrounds: 5"
           }
         ]
       }
