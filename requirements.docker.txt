@@ -19,7 +19,7 @@ defusedxml==0.7.1
     # via cairosvg
 google-api-core==2.19.0
     # via google-api-python-client
-google-api-python-client==2.132.0
+google-api-python-client==2.133.0
 google-auth==2.30.0
     # via
     #   google-api-core
@@ -57,7 +57,7 @@ pyasn1-modules==0.4.0
     #   oauth2client
 pycparser==2.22
     # via cffi
-pydantic==2.7.3
+pydantic==2.7.4
 pydantic-core==2.18.4
     # via pydantic
 pyparsing==3.1.2
