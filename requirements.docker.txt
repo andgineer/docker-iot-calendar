@@ -2,12 +2,13 @@
 #    uv pip compile requirements.docker.in --output-file=requirements.docker.txt
 annotated-types==0.7.0
     # via pydantic
-cachetools==5.3.3
+cachetools==5.4.0
     # via google-auth
-cairocffi==1.7.0
+cairocffi==1.7.1
     # via cairosvg
 cairosvg==2.7.1
-certifi==2024.6.2
+    # via -r requirements.docker.in
+certifi==2024.7.4
     # via requests
 cffi==1.16.0
     # via cairocffi
@@ -17,17 +18,18 @@ cssselect2==0.7.0
     # via cairosvg
 defusedxml==0.7.1
     # via cairosvg
-google-api-core==2.19.0
+google-api-core==2.19.1
     # via google-api-python-client
-google-api-python-client==2.133.0
-google-auth==2.30.0
+google-api-python-client==2.137.0
+    # via -r requirements.docker.in
+google-auth==2.32.0
     # via
     #   google-api-core
     #   google-api-python-client
     #   google-auth-httplib2
 google-auth-httplib2==0.2.0
     # via google-api-python-client
-googleapis-common-protos==1.63.1
+googleapis-common-protos==1.63.2
     # via google-api-core
 httplib2==0.22.0
     # via
@@ -37,11 +39,14 @@ httplib2==0.22.0
 idna==3.7
     # via requests
 oauth2client==4.1.3
-pillow==10.3.0
-    # via cairosvg
-proto-plus==1.23.0
+    # via -r requirements.docker.in
+pillow==10.4.0
+    # via
+    #   -r requirements.docker.in
+    #   cairosvg
+proto-plus==1.24.0
     # via google-api-core
-protobuf==4.25.3
+protobuf==5.27.2
     # via
     #   google-api-core
     #   googleapis-common-protos
@@ -57,19 +62,24 @@ pyasn1-modules==0.4.0
     #   oauth2client
 pycparser==2.22
     # via cffi
-pydantic==2.7.4
-pydantic-core==2.18.4
+pydantic==2.8.2
+    # via -r requirements.docker.in
+pydantic-core==2.20.1
     # via pydantic
 pyparsing==3.1.2
     # via httplib2
 python-dateutil==2.9.0.post0
+    # via -r requirements.docker.in
 requests==2.32.3
-    # via google-api-core
+    # via
+    #   -r requirements.docker.in
+    #   google-api-core
 rsa==4.9
     # via
     #   google-auth
     #   oauth2client
-setuptools==70.0.0
+setuptools==71.1.0
+    # via -r requirements.docker.in
 six==1.16.0
     # via
     #   oauth2client
@@ -79,6 +89,7 @@ tinycss2==1.3.0
     #   cairosvg
     #   cssselect2
 tornado==6.4.1
+    # via -r requirements.docker.in
 typing-extensions==4.12.2
     # via
     #   pydantic
