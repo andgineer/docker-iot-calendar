@@ -524,7 +524,7 @@ def create_image(rotation_degrees: int, format: str) -> PIL.Image.Image:  # prag
     img_np = np.array(image)
     img_np = np.rot90(img_np, k=num_90_rotations)
 
-    return PIL.Image.fromarray(img_np)  # type: ignore
+    return PIL.Image.fromarray(img_np)
 
 
 def check(show: bool = True) -> None:  # pragma: no cover
