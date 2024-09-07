@@ -8,9 +8,7 @@ RUN apk --no-cache --update \
 
 COPY requirements.docker.txt /requirements.docker.txt
 
-RUN pip install --no-cache-dir -r requirements.docker.txt \
-    && rm -rf ~/.pip/cache/ \
-    && rm -rf /var/cache/apk/*
+RUN uv pip install --no-cache-dir -r requirements.docker.txt
 
 # At build time $HOME is not defined. And we cannot use ARG - COPY do not substitute it
 # As do not want to mess with system defined HOME, thus use _HOME
