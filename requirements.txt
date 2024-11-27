@@ -4,7 +4,7 @@ annotated-types==0.7.0
     # via
     #   -r requirements.docker.txt
     #   pydantic
-cachetools==5.4.0
+cachetools==5.5.0
     # via
     #   -r requirements.docker.txt
     #   google-auth
@@ -14,19 +14,19 @@ cairocffi==1.7.1
     #   cairosvg
 cairosvg==2.7.1
     # via -r requirements.docker.txt
-certifi==2024.7.4
+certifi==2024.8.30
     # via
     #   -r requirements.docker.txt
     #   requests
-cffi==1.16.0
+cffi==1.17.1
     # via
     #   -r requirements.docker.txt
     #   cairocffi
-charset-normalizer==3.3.2
+charset-normalizer==3.4.0
     # via
     #   -r requirements.docker.txt
     #   requests
-contourpy==1.2.1
+contourpy==1.3.1
     # via matplotlib
 cssselect2==0.7.0
     # via
@@ -38,15 +38,15 @@ defusedxml==0.7.1
     # via
     #   -r requirements.docker.txt
     #   cairosvg
-fonttools==4.53.1
+fonttools==4.55.0
     # via matplotlib
-google-api-core==2.19.1
+google-api-core==2.23.0
     # via
     #   -r requirements.docker.txt
     #   google-api-python-client
-google-api-python-client==2.137.0
+google-api-python-client==2.154.0
     # via -r requirements.docker.txt
-google-auth==2.32.0
+google-auth==2.36.0
     # via
     #   -r requirements.docker.txt
     #   google-api-core
@@ -56,7 +56,7 @@ google-auth-httplib2==0.2.0
     # via
     #   -r requirements.docker.txt
     #   google-api-python-client
-googleapis-common-protos==1.63.2
+googleapis-common-protos==1.66.0
     # via
     #   -r requirements.docker.txt
     #   google-api-core
@@ -66,45 +66,45 @@ httplib2==0.22.0
     #   google-api-python-client
     #   google-auth-httplib2
     #   oauth2client
-idna==3.7
+idna==3.10
     # via
     #   -r requirements.docker.txt
     #   requests
-kiwisolver==1.4.5
+kiwisolver==1.4.7
     # via matplotlib
-matplotlib==3.9.1
+matplotlib==3.9.2
     # via -r requirements.in
-numpy==2.0.1
+numpy==2.1.3
     # via
     #   -r requirements.in
     #   contourpy
     #   matplotlib
 oauth2client==4.1.3
     # via -r requirements.docker.txt
-packaging==24.1
+packaging==24.2
     # via matplotlib
-pillow==10.4.0
+pillow==11.0.0
     # via
     #   -r requirements.docker.txt
     #   cairosvg
     #   matplotlib
-proto-plus==1.24.0
+proto-plus==1.25.0
     # via
     #   -r requirements.docker.txt
     #   google-api-core
-protobuf==5.27.2
+protobuf==5.28.3
     # via
     #   -r requirements.docker.txt
     #   google-api-core
     #   googleapis-common-protos
     #   proto-plus
-pyasn1==0.6.0
+pyasn1==0.6.1
     # via
     #   -r requirements.docker.txt
     #   oauth2client
     #   pyasn1-modules
     #   rsa
-pyasn1-modules==0.4.0
+pyasn1-modules==0.4.1
     # via
     #   -r requirements.docker.txt
     #   google-auth
@@ -113,13 +113,13 @@ pycparser==2.22
     # via
     #   -r requirements.docker.txt
     #   cffi
-pydantic==2.8.2
+pydantic==2.10.2
     # via -r requirements.docker.txt
-pydantic-core==2.20.1
+pydantic-core==2.27.1
     # via
     #   -r requirements.docker.txt
     #   pydantic
-pyparsing==3.1.2
+pyparsing==3.2.0
     # via
     #   -r requirements.docker.txt
     #   httplib2
@@ -137,19 +137,19 @@ rsa==4.9
     #   -r requirements.docker.txt
     #   google-auth
     #   oauth2client
-setuptools==71.1.0
+setuptools==75.6.0
     # via -r requirements.docker.txt
 six==1.16.0
     # via
     #   -r requirements.docker.txt
     #   oauth2client
     #   python-dateutil
-tinycss2==1.3.0
+tinycss2==1.4.0
     # via
     #   -r requirements.docker.txt
     #   cairosvg
     #   cssselect2
-tornado==6.4.1
+tornado==6.4.2
     # via -r requirements.docker.txt
 typing-extensions==4.12.2
     # via
@@ -160,7 +160,7 @@ uritemplate==4.1.1
     # via
     #   -r requirements.docker.txt
     #   google-api-python-client
-urllib3==2.2.2
+urllib3==2.2.3
     # via
     #   -r requirements.docker.txt
     #   requests

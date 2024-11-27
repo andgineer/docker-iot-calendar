@@ -142,7 +142,7 @@ def draw_pie(
     )
 
 
-def draw_empty_pie(
+def draw_empty_pie(  # pylint: disable=too-many-positional-arguments
     grid: List[List[Dict[str, Union[datetime, List[Dict[str, Any]]]]]],
     image_loader: ImageLoader,
     week: int,
@@ -376,7 +376,7 @@ def configure_axes_for_image(axes: Axes) -> None:
     axes.set_xlim(0, 1 / plot_height)  # Used the earlier logic for x_scale directly here.
 
 
-def draw_plot(
+def draw_plot(  # pylint: disable=too-many-positional-arguments
     x: List[datetime],
     y: List[List[float]],
     labels: List[WeatherLabel],
@@ -436,7 +436,7 @@ def draw_plot(
     trace_fmt="Use stored imaged without rendering (from {time})",
     daily_refresh=True,
 )
-def draw_calendar(
+def draw_calendar(  # pylint: disable=too-many-positional-arguments
     grid: List[List[Dict[str, Union[datetime, List[int]]]]],
     x: List[datetime],
     y: List[List[float]],
