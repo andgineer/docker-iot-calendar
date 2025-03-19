@@ -22,7 +22,7 @@ from calendar_image import (
     pie_scale,
     pie_width,
     WEEKS,
-    width_aspect, ImageParams,
+    width_aspect,
 )
 from models import WeatherData, WeatherLabel
 
@@ -268,15 +268,14 @@ def test_draw_pies():
     # Mocking plt functions and your draw_pie and draw_empty_pie functions
     import matplotlib.pyplot as plt
 
-    with patch.object(plt, "gcf", return_value=Mock()), patch(
-        "calendar_image.draw_pie"
-    ) as mock_draw_pie, patch("calendar_image.draw_empty_pie") as mock_draw_empty_pie, patch(
-        "calendar_image.highlight_today"
-    ) as mock_highlight_today, patch(
-        "calendar_image.draw_day_headers"
-    ) as mock_draw_day_headers, patch(
-        "calendar_image.draw_week_headers"
-    ) as mock_draw_week_headers:
+    with (
+        patch.object(plt, "gcf", return_value=Mock()),
+        patch("calendar_image.draw_pie") as mock_draw_pie,
+        patch("calendar_image.draw_empty_pie") as mock_draw_empty_pie,
+        patch("calendar_image.highlight_today") as mock_highlight_today,
+        patch("calendar_image.draw_day_headers") as mock_draw_day_headers,
+        patch("calendar_image.draw_week_headers") as mock_draw_week_headers,
+    ):
         draw_pies(
             sample_grid,
             mock_image_loader,
@@ -317,9 +316,11 @@ def test_draw_weather():
     # Mock plt functions
     import matplotlib.pyplot as plt
 
-    with patch.object(plt, "axes", return_value=Mock()), patch.object(plt, "axis"), patch.object(
-        plt, "imshow"
-    ) as mock_imshow:
+    with (
+        patch.object(plt, "axes", return_value=Mock()),
+        patch.object(plt, "axis"),
+        patch.object(plt, "imshow") as mock_imshow,
+    ):
         draw_weather(weather_data, rect, mock_image_loader)
 
     # Asserts
@@ -350,12 +351,12 @@ def test_draw_plot():
 
     import matplotlib.pyplot as plt
 
-    with patch.object(plt, "axes", return_value=mock_axes), patch.object(
-        plt, "axis", return_value=Mock()
-    ), patch.object(plt, "imshow", return_value=Mock()), patch.object(
-        plt, "legend", return_value=Mock()
-    ), patch.object(
-        plt, "text", return_value=Mock()
+    with (
+        patch.object(plt, "axes", return_value=mock_axes),
+        patch.object(plt, "axis", return_value=Mock()),
+        patch.object(plt, "imshow", return_value=Mock()),
+        patch.object(plt, "legend", return_value=Mock()),
+        patch.object(plt, "text", return_value=Mock()),
     ):
         draw_plot(x, y, labels, rect, mock_image_loader)
 
@@ -411,23 +412,19 @@ def test_draw_calendar():
     params.rotate = "0"
 
     # Mocking plt and other external calls
-    with patch("matplotlib.pyplot.clf"), patch("matplotlib.pyplot.figure"), patch(
-        "matplotlib.pyplot.rcParams.update"
-    ), patch("matplotlib.pyplot.style.context"), patch(
-        "calendar_image.draw_weather"
-    ) as mock_draw_weather, patch(
-        "calendar_image.draw_plot"
-    ) as mock_draw_plot, patch(
-        "calendar_image.draw_pies"
-    ) as mock_draw_pies, patch(
-        "calendar_image.ImageLoader"
-    ) as mock_image_loader, patch(
-        "numpy.rot90"
-    ) as mock_np_rot90, patch(
-        "PIL.Image.fromarray"
-    ) as mock_fromarray, patch(
-        "PIL.Image.open"
-    ) as mock_image_open:
+    with (
+        patch("matplotlib.pyplot.clf"),
+        patch("matplotlib.pyplot.figure"),
+        patch("matplotlib.pyplot.rcParams.update"),
+        patch("matplotlib.pyplot.style.context"),
+        patch("calendar_image.draw_weather") as mock_draw_weather,
+        patch("calendar_image.draw_plot") as mock_draw_plot,
+        patch("calendar_image.draw_pies") as mock_draw_pies,
+        patch("calendar_image.ImageLoader") as mock_image_loader,
+        patch("numpy.rot90") as mock_np_rot90,
+        patch("PIL.Image.fromarray") as mock_fromarray,
+        patch("PIL.Image.open") as mock_image_open,
+    ):
         mock_image_loader.return_value = Mock()
         mock_np_rot90.return_value = Mock()
         mock_fromarray.return_value = Mock(save=Mock())

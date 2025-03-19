@@ -2,34 +2,34 @@
 #    uv pip compile requirements.docker.in --output-file=requirements.docker.txt
 annotated-types==0.7.0
     # via pydantic
-cachetools==5.5.0
+cachetools==5.5.2
     # via google-auth
 cairocffi==1.7.1
     # via cairosvg
 cairosvg==2.7.1
     # via -r requirements.docker.in
-certifi==2024.12.14
+certifi==2025.1.31
     # via requests
 cffi==1.17.1
     # via cairocffi
 charset-normalizer==3.4.1
     # via requests
-cssselect2==0.7.0
+cssselect2==0.8.0
     # via cairosvg
 defusedxml==0.7.1
     # via cairosvg
-google-api-core==2.24.0
+google-api-core==2.24.2
     # via google-api-python-client
-google-api-python-client==2.159.0
+google-api-python-client==2.164.0
     # via -r requirements.docker.in
-google-auth==2.37.0
+google-auth==2.38.0
     # via
     #   google-api-core
     #   google-api-python-client
     #   google-auth-httplib2
 google-auth-httplib2==0.2.0
     # via google-api-python-client
-googleapis-common-protos==1.66.0
+googleapis-common-protos==1.69.2
     # via google-api-core
 httplib2==0.22.0
     # via
@@ -44,9 +44,9 @@ pillow==11.1.0
     # via
     #   -r requirements.docker.in
     #   cairosvg
-proto-plus==1.25.0
+proto-plus==1.26.1
     # via google-api-core
-protobuf==5.29.3
+protobuf==6.30.1
     # via
     #   google-api-core
     #   googleapis-common-protos
@@ -62,7 +62,7 @@ pyasn1-modules==0.4.1
     #   oauth2client
 pycparser==2.22
     # via cffi
-pydantic==2.10.5
+pydantic==2.10.6
     # via -r requirements.docker.in
 pydantic-core==2.27.2
     # via pydantic
@@ -78,7 +78,7 @@ rsa==4.9
     # via
     #   google-auth
     #   oauth2client
-setuptools==75.8.0
+setuptools==76.1.0
     # via -r requirements.docker.in
 six==1.17.0
     # via

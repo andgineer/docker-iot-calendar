@@ -4,7 +4,6 @@ from unittest.mock import MagicMock, patch
 
 import dateutil.tz
 import pytest
-from dateutil.tz import tzoffset
 
 from google_calendar import Calendar, collect_events, GOOGLE_CREDENTIALS_PARAM
 
@@ -18,9 +17,7 @@ sample_event = {
 
 @pytest.fixture
 def mock_google_calendar():
-    with patch(
-        "google_calendar.Calendar.get_last_events", return_value=[sample_event]
-    ) as mock_get:
+    with patch("google_calendar.Calendar.get_last_events", return_value=[sample_event]) as mock_get:
         yield mock_get
 
 
@@ -99,26 +96,32 @@ def test_time_to_str(mock_google_calendar):
 # Test setup fixtures
 @pytest.fixture
 def setup_calendar():
-    settings = {GOOGLE_CREDENTIALS_PARAM: 'path/to/credentials.json'}
+    settings = {GOOGLE_CREDENTIALS_PARAM: "path/to/credentials.json"}
     return Calendar(settings, "sample_calendar_id")
+
 
 def test_missing_credentials_in_settings():
     with pytest.raises(ValueError) as excinfo:
         Calendar({}, "sample_calendar_id")
     assert str(excinfo.value) == f"'{GOOGLE_CREDENTIALS_PARAM}' not found in settings."
 
+
 def test_file_not_found(setup_calendar, capsys):
     with patch("os.path.isfile", return_value=False):
         assert setup_calendar.get_credentials_http() is None
         captured = capsys.readouterr()
-        assert 'Google API credentials file path/to/credentials.json not found.' in captured.out
+        assert "Google API credentials file path/to/credentials.json not found." in captured.out
 
-@patch('google_calendar.ServiceAccountCredentials.from_json_keyfile_name', side_effect=Exception())
+
+@patch("google_calendar.ServiceAccountCredentials.from_json_keyfile_name", side_effect=Exception())
 def test_service_account_credentials_error(mock_from_json, setup_calendar, capsys):
     with patch("os.path.isfile", return_value=True):
         assert setup_calendar.get_credentials_http() is None
         captured = capsys.readouterr()
-        assert 'Cannot login to Google API - check your credential file path/to/credentials.json.' in captured.out
+        assert (
+            "Cannot login to Google API:\nCheck your credential file path/to/credentials.json."
+            in captured.out
+        )
 
 
 @pytest.fixture
@@ -128,10 +131,12 @@ def mock_calendar():
     calendar.google_time_format = MagicMock(return_value="formatted_time")
     return calendar
 
+
 def test_no_service(mock_calendar):
     mock_calendar.service = None
     events = mock_calendar.get_last_events("Test Event")
     assert events == []
+
 
 def test_get_last_events_single_page(mock_calendar):
     # Mocking the service instance within mock_calendar
@@ -142,7 +147,7 @@ def test_get_last_events_single_page(mock_calendar):
             {
                 "start": {"dateTime": "2022-04-01T10:00:00"},
                 "end": {"dateTime": "2022-04-01T11:00:00"},
-                "summary": "Test Event"
+                "summary": "Test Event",
             }
         ]
     }
@@ -150,11 +155,12 @@ def test_get_last_events_single_page(mock_calendar):
     events = mock_calendar.get_last_events("Test Event")
 
     assert len(events) == 1
-    assert events[0]['summary'] == 'Test Event'
-    assert events[0]['start'] == datetime.datetime(2022, 4, 1, 10, 0)
-    assert events[0]['end'] == datetime.datetime(2022, 4, 1, 11, 0)
+    assert events[0]["summary"] == "Test Event"
+    assert events[0]["start"] == datetime.datetime(2022, 4, 1, 10, 0)
+    assert events[0]["end"] == datetime.datetime(2022, 4, 1, 11, 0)
 
-def test_get_last_events_single_page(mock_calendar):
+
+def test_get_last_events_paged(mock_calendar):
     # Mocking the service instance within mock_calendar
     mock_service = MagicMock()
     mock_calendar.service = mock_service
@@ -164,28 +170,28 @@ def test_get_last_events_single_page(mock_calendar):
                 {
                     "start": {"dateTime": "2022-04-01T10:00:00"},
                     "end": {"dateTime": "2022-04-01T11:00:00"},
-                    "summary": "Test Event 1"
+                    "summary": "Test Event 1",
                 }
             ],
-            "nextPageToken": "token_1"
+            "nextPageToken": "token_1",
         },
         {
             "items": [
                 {
                     "start": {"dateTime": "2022-04-02T10:00:00"},
                     "end": {"dateTime": "2022-04-02T11:00:00"},
-                    "summary": "Test Event 2"
+                    "summary": "Test Event 2",
                 }
             ]
-        }
+        },
     ]
 
     events = mock_calendar.get_last_events("Test Event")
 
     assert len(events) == 2
-    assert events[0]['summary'] == 'Test Event 1'
-    assert events[0]['start'] == datetime.datetime(2022, 4, 1, 10, 0)
-    assert events[0]['end'] == datetime.datetime(2022, 4, 1, 11, 0)
-    assert events[1]['summary'] == 'Test Event 2'
-    assert events[1]['start'] == datetime.datetime(2022, 4, 2, 10, 0)
-    assert events[1]['end'] == datetime.datetime(2022, 4, 2, 11, 0)
+    assert events[0]["summary"] == "Test Event 1"
+    assert events[0]["start"] == datetime.datetime(2022, 4, 1, 10, 0)
+    assert events[0]["end"] == datetime.datetime(2022, 4, 1, 11, 0)
+    assert events[1]["summary"] == "Test Event 2"
+    assert events[1]["start"] == datetime.datetime(2022, 4, 2, 10, 0)
+    assert events[1]["end"] == datetime.datetime(2022, 4, 2, 11, 0)

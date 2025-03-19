@@ -249,6 +249,7 @@ def test_clear_cache():
     assert counter == 2
     assert result3 == 10
 
+
 def test_cache_none():
     counter = [0]
 
@@ -277,4 +278,3 @@ def test_cache_none():
     # Call func2 again with x=0, the result should be cached because cache_none is True
     assert func2(0) is None
     assert counter[0] == 3
-

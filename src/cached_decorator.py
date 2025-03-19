@@ -7,12 +7,12 @@ To be honest, this was implemented primarily for educational purposes.
 import datetime
 import functools
 import hashlib
-from typing import Any, Callable, Dict, Optional, Tuple, Union
+from typing import Any, Callable, Optional, Union
 
 Func = Callable[..., Any]
 
 
-class cached:
+class cached:  # noqa: N801
     """Decorator that caches a function's or class method's return value for cache_time_seconds.
 
     Usage:
@@ -38,9 +38,10 @@ class cached:
     If called later before cache_time_seconds passed with the same arguments, the cached value
     is returned, and not re-evaluated.
 
-    ! For object method it should be the only decorator applied because it saves ref to decorated function
-    and if it changed by other decorator it would treat method call as function call, and
-    in this case if the class is not singleton it would cache different instances with different hashes.
+    ! For object method it should be the only decorator applied because
+    it saves ref to decorated function and if it changed by other decorator
+    it would treat method call as function call, and in this case if the class is not singleton
+    it would cache different instances with different hashes.
     And would not use the object attributes in hash.
 
     All instances of the same class would be the same for cache decorator if they has the same
@@ -69,7 +70,7 @@ class cached:
     be other decorator instance.
     """
 
-    def __init__(
+    def __init__(  # noqa: PLR0913
         self,
         func: Optional[Func] = None,
         *,
@@ -85,7 +86,8 @@ class cached:
         :param daily_refresh: re-evaluate if current day is not the same as cached value
         :param trace_fmt: if specified the string will be printed if cached value returned.
                                 Inside string can be '{time}' parameter.
-        :param per_instance: if False in case of object method the same cache would be used for all instances
+        :param per_instance: if False in case of object method the same cache would be used
+                                for all instances
         :param cache_none: if False the function would be re-evaluated if cached value is None
         """
         super().__init__()
@@ -95,14 +97,14 @@ class cached:
         self.time = datetime.datetime.now() - datetime.timedelta(seconds=seconds + 1)
         self.cache_per_instance = per_instance
         self.cache_none = cache_none
-        self.cache: Dict[str, Dict[str, Any]] = {}
+        self.cache: dict[str, dict[str, Any]] = {}
         self.func = func
 
         if func:
             # @cached without arguments
             self.__call__ = self.decorate(func)  # type: ignore
 
-    def is_self_in_args(self, args: Tuple[Any, ...], func: Func) -> bool:
+    def is_self_in_args(self, args: tuple[Any, ...], func: Func) -> bool:
         """Check if the first argument is object with the same method as decorated function."""
         if not args:
             return False
@@ -113,10 +115,8 @@ class cached:
             return False
 
         # Check if the first argument's class has the function as one of its methods
-        if not hasattr(first_arg.__class__, func.__name__):
-            return False  # todo check if it is the same function, not just the same name
-
-        return True
+        # todo check if it is the same function, not just the same name
+        return hasattr(first_arg.__class__, func.__name__)
 
     def __call__(self, *args: Any, **kwargs: Any) -> Any:  # pylint: disable=method-hidden
         """Call the decorated function/method.
@@ -140,7 +140,7 @@ class cached:
         def cached_func(*args: Any, **kw: Any) -> Any:
             """Cache function."""
             if self.is_self_in_args(args, func):
-                # the first argument is 'self', this is objects's method so add the object attributes
+                # has 'self' thus object method, adding its attributes
                 if self.cache_per_instance:
                     # Use object's id in the hash for separate instance caching
                     hash_list = [str(id(args[0])), str(args[0].__dict__), str(args[1:]), str(kw)]
@@ -148,30 +148,29 @@ class cached:
                     hash_list = [str(args[0].__dict__), str(args[1:]), str(kw)]
             else:
                 hash_list = ["", func.__name__, str(args), str(kw)]
-            hash = hashlib.sha256("\n".join(hash_list).encode("utf-8")).hexdigest()
+            obj_hash = hashlib.sha256("\n".join(hash_list).encode("utf-8")).hexdigest()
             now = datetime.datetime.now()
             for item in list(self.cache):  # we have to keep cache clean
                 if (now - self.cache[item]["time"]).total_seconds() > self.cache_time_seconds:
                     del self.cache[item]
             today = now.replace(hour=0, minute=0, second=0, microsecond=0)
-            if hash in self.cache and (
+            if obj_hash in self.cache and (
                 today
-                == self.cache[hash]["time"].replace(hour=0, minute=0, second=0, microsecond=0)
+                == self.cache[obj_hash]["time"].replace(hour=0, minute=0, second=0, microsecond=0)
                 or not self.evaluate_on_day_change
             ):
                 # cache hit and the day the same of no need to track day change
-                if not self.cache_none and self.cache[hash]["value"] is None:
+                if not self.cache_none and self.cache[obj_hash]["value"] is None:
                     # Re-evaluate the function if cache_none is False and cached value is None
-                    self.cache[hash] = {"value": func(*args, **kw), "time": now}
-                else:
-                    if self.print_if_cached:
-                        print(self.print_if_cached.format(time=self.cache[hash]["time"]))
+                    self.cache[obj_hash] = {"value": func(*args, **kw), "time": now}
+                elif self.print_if_cached:
+                    print(self.print_if_cached.format(time=self.cache[obj_hash]["time"]))
             else:
-                self.cache[hash] = {"value": func(*args, **kw), "time": now}
-            return self.cache[hash]["value"]
+                self.cache[obj_hash] = {"value": func(*args, **kw), "time": now}
+            return self.cache[obj_hash]["value"]
 
         self.func = cached_func
-        cached_func._original_func = (  # type: ignore
+        cached_func._original_func = (  # type: ignore  # noqa: SLF001
             func  # Store the original function to be sure we decorate class
         )
         cached_func.clear_cache = self.clear_cache  # type: ignore  # Add clear_cache method to cached_func

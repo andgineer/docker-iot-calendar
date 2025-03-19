@@ -1,6 +1,6 @@
 """Singleton meta class."""
 
-from typing import Any, Dict
+from typing import Any
 
 
 class Singleton(type):
@@ -13,13 +13,13 @@ class Singleton(type):
     To create new instance use YourClass.new_instance()
     """
 
-    _instances: Dict[Any, Any] = {}
+    _instances: dict[Any, Any] = {}
 
     def __call__(cls, *args: Any, **kwargs: Any) -> Any:
         # sourcery skip: instance-method-first-arg-name
         """Call method."""
         if cls not in cls._instances:
-            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
+            cls._instances[cls] = super().__call__(*args, **kwargs)
         return cls._instances[cls]
 
     def new_instance(cls) -> Any:

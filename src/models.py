@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import List
 
 from pydantic import BaseModel, Field
 
@@ -7,11 +6,11 @@ from pydantic import BaseModel, Field
 class WeatherData(BaseModel):
     """Weather data."""
 
-    temp_min: List[float]
-    temp_max: List[float]
+    temp_min: list[float]
+    temp_max: list[float]
     images_folder: str
-    icon: List[str]
-    day: List[datetime]
+    icon: list[str]
+    day: list[datetime]
 
 
 class WeatherLabel(BaseModel):

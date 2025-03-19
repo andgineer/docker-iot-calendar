@@ -8,7 +8,7 @@ Usage:
 import datetime
 import json
 import os.path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Optional, Union
 
 import requests
 
@@ -22,7 +22,7 @@ MIN_API_CALL_DELAY_SECONDS = 60 * 10
 class Weather:
     """Load weather from OpenWeatherMap.org."""
 
-    def __init__(self, props: Dict[str, Any]) -> None:
+    def __init__(self, props: dict[str, Any]) -> None:
         """Init.
 
         :param props:
@@ -42,7 +42,7 @@ class Weather:
         :return: The API key as a string, or None if the key couldn't be loaded.
         """
         if WEATHER_KEY_PARAM in self.settings and os.path.isfile(self.settings[WEATHER_KEY_PARAM]):
-            with open(self.settings[WEATHER_KEY_PARAM], "r", encoding="utf8") as key_file:
+            with open(self.settings[WEATHER_KEY_PARAM], encoding="utf8") as key_file:
                 return json.loads(key_file.read())["key"]  # type: ignore
         else:
             return None
@@ -89,7 +89,11 @@ class Weather:
         cache_none=False,
     )
     def get_weather(
-        self, latitude: float, longitude: float, days: int = 1, units: str = "m"
+        self,
+        latitude: float,
+        longitude: float,
+        days: int = 1,
+        units: str = "m",
     ) -> Optional[WeatherData]:
         """Fetch weather data for the given latitude and longitude.
 
@@ -103,13 +107,13 @@ class Weather:
             print("Exiting because no API key")
             return None
 
-        UNITS = {"e": "imperial", "m": "metric"}
-        units_code = UNITS.get(units)
+        units_map = {"e": "imperial", "m": "metric"}
+        units_code = units_map.get(units)
         if units_code is None:
-            print(f"Exiting because unknown units '{units}', supported {UNITS}")
+            print(f"Exiting because unknown units '{units}', supported {units_map}")
             return None
 
-        params: Dict[str, Union[str, int, float]] = {
+        params: dict[str, Union[str, int, float]] = {
             "units": units_code,
             "lat": latitude,
             "lon": longitude,
@@ -126,7 +130,7 @@ class Weather:
 
         if str(weather_data["cod"]) != "200":
             if str(weather_data["cod"]) == "401" and weather_data["message"].startswith(
-                "Invalid API key"
+                "Invalid API key",
             ):
                 print(
                     "#" * 5,
@@ -137,10 +141,10 @@ class Weather:
                 print("#" * 5, "ERROR:", weather_data["message"])
             return None
 
-        highs: List[float] = []
-        lows: List[float] = []
+        highs: list[float] = []
+        lows: list[float] = []
         icons = []
-        dates: List[datetime.datetime] = []
+        dates: list[datetime.datetime] = []
         for weather_day in weather_data["list"]:
             date = datetime.datetime.strptime(weather_day["dt_txt"], "%Y-%m-%d %H:%M:%S")
             date = date.replace(hour=0, minute=0, second=0, microsecond=0)

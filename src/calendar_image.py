@@ -9,7 +9,7 @@ import contextlib
 import io
 import os
 from datetime import datetime, timedelta
-from typing import Any, Dict, List, Optional, Union, Tuple
+from typing import Any, Optional, Union
 
 import matplotlib
 import matplotlib.font_manager
@@ -34,7 +34,6 @@ from matplotlib.dates import DateFormatter, date2num
 
 from cached_decorator import cached
 from image_loader import ImageLoader
-
 
 IMAGE_CACHED_SECONDS = 60 * 60 * 24 * 30
 ImageParams = namedtuple("ImageParams", "dashboard format style xkcd rotate")
@@ -71,12 +70,12 @@ plot_height = 1 - pies_height - 0.125
 plot_bottom = 1 - plot_height - 0.025
 
 
-def get_daily_max(grid: List[List[Dict[str, List[int]]]]) -> int:
+def get_daily_max(grid: list[list[dict[str, list[int]]]]) -> int:
     """Maximum sum of 'values' for a day."""
     return max((sum(day["values"]) for week in grid for day in week), default=0)
 
 
-def draw_day_headers(grid: List[List[Dict[str, Any]]]) -> None:
+def draw_day_headers(grid: list[list[dict[str, Any]]]) -> None:
     """Draws the day headers for a grid.
 
     :param grid: A 2D grid [week][day].
@@ -93,7 +92,7 @@ def draw_day_headers(grid: List[List[Dict[str, Any]]]) -> None:
         )
 
 
-def draw_week_headers(grid: List[List[Dict[str, Any]]]) -> None:
+def draw_week_headers(grid: list[list[dict[str, Any]]]) -> None:
     """Draw headers for each week on the grid using the date from the first day of each week.
 
     :param grid: A 2D grid [week][day].
@@ -103,7 +102,7 @@ def draw_week_headers(grid: List[List[Dict[str, Any]]]) -> None:
         week_starts_at = grid[week][0]["date"]
         if not isinstance(week_starts_at, datetime):
             raise TypeError(
-                f"Expected datetime.datetime, got {type(week_starts_at)} instead: {week_starts_at}"
+                f"Expected datetime.datetime, got {type(week_starts_at)} instead: {week_starts_at}",
             )
         plt.text(
             pie_row_header_width * 0.5,
@@ -116,7 +115,10 @@ def draw_week_headers(grid: List[List[Dict[str, Any]]]) -> None:
 
 
 def draw_pie(
-    week: int, day: int, values: List[Union[int, float]], daily_max: Union[int, float]
+    week: int,
+    day: int,
+    values: list[Union[int, float]],
+    daily_max: Union[int, float],
 ) -> None:
     """Draws a pie chart for a specific day of a week based on the given values.
 
@@ -142,12 +144,12 @@ def draw_pie(
     )
 
 
-def draw_empty_pie(  # pylint: disable=too-many-positional-arguments
-    grid: List[List[Dict[str, Union[datetime, List[Dict[str, Any]]]]]],
+def draw_empty_pie(  # noqa: PLR0913
+    grid: list[list[dict[str, Union[datetime, list[dict[str, Any]]]]]],
     image_loader: ImageLoader,
     week: int,
     day: int,
-    absent_grid_images: Dict[str, str],
+    absent_grid_images: dict[str, str],
     empty_image_file_name: str,
     tomorrow: datetime,
 ) -> None:
@@ -168,14 +170,14 @@ def draw_empty_pie(  # pylint: disable=too-many-positional-arguments
     week_starts_at = grid[week][day]["date"]
     if not isinstance(week_starts_at, datetime):
         raise TypeError(
-            f"Expected datetime.datetime, got {type(week_starts_at)} instead: {week_starts_at}"
+            f"Expected datetime.datetime, got {type(week_starts_at)} instead: {week_starts_at}",
         )
     image_padding = pie_width / 5
     if "absents" in grid[week][day]:
         absents = grid[week][day]["absents"]
         if not isinstance(absents, list):
             raise TypeError(
-                f"Expected list, got {type(absents)} instead: {absents} for week {week} day {day}"
+                f"Expected list, got {type(absents)} instead: {absents} for week {week} day {day}",
             )
         image = image_loader.by_file_name(absent_grid_images[absents[0]["summary"]])
     else:
@@ -193,7 +195,7 @@ def draw_empty_pie(  # pylint: disable=too-many-positional-arguments
         )
 
 
-def highlight_today(grid: List[List[Dict[str, Any]]], today: datetime) -> None:
+def highlight_today(grid: list[list[dict[str, Any]]], today: datetime) -> None:
     """Draw a rectangle around the current day in the grid to highlight it.
 
     :param grid: The grid representing the schedule with structure [week][day]["date"].
@@ -211,14 +213,14 @@ def highlight_today(grid: List[List[Dict[str, Any]]], today: datetime) -> None:
             edgecolor="black",
             fill=False,
             linewidth=2,
-        )
+        ),
     )
 
 
 def draw_pies(
-    grid: List[List[Dict[str, Any]]],
+    grid: list[list[dict[str, Any]]],
     image_loader: ImageLoader,
-    absent_grid_images: Dict[str, str],
+    absent_grid_images: dict[str, str],
     empty_image_file_name: str,
     weeks: int = 4,
 ) -> None:
@@ -227,14 +229,18 @@ def draw_pies(
     :param grid: The grid representing the schedule [week][day]["date"]/["values"].
     :param image_loader: Instance responsible for loading images.
     :param weeks: Number of weeks to consider. Default is 4.
-    :param absent_grid_images: Dictionary mapping absent summary to image file names, which comes from the
+    :param absent_grid_images: Dictionary mapping absent summary to image file names,
+                                which comes from the
                                "image_grid" key within the "absent" array in the settings.
     :param empty_image_file_name: File name of the image to use when there's no data.
     :return: None
     """
     daily_max = get_daily_max(grid)
     today = datetime.now(grid[0][0]["date"].tzinfo).replace(
-        hour=0, minute=0, second=0, microsecond=0
+        hour=0,
+        minute=0,
+        second=0,
+        microsecond=0,
     )
     tomorrow = today + timedelta(days=1)
     ax = plt.gcf().add_axes(
@@ -276,7 +282,7 @@ def draw_pies(
 
 def draw_weather(
     weather: Optional[WeatherData],
-    rect: Tuple[float, float, float, float],
+    rect: tuple[float, float, float, float],
     image_loader: ImageLoader,
 ) -> None:
     """Render the weather data onto a specified rectangle using matplotlib.
@@ -285,9 +291,10 @@ def draw_weather(
                     Only data for 1st day is used.
                     If weather is None, only the date is rendered.
 
-    :param rect: A list of four float numbers [left, bottom, width, height] specifying the rectangle where the
+    :param rect: A list of four float numbers [left, bottom, width, height]
+                 specifying the rectangle where the
                  weather data will be rendered.
-    :type rect: List[float]
+    :type rect: list[float]
 
     :param image_loader: Instance responsible for loading images.
     :type image_loader: ImageLoader
@@ -376,26 +383,29 @@ def configure_axes_for_image(axes: Axes) -> None:
     axes.set_xlim(0, 1 / plot_height)  # Used the earlier logic for x_scale directly here.
 
 
-def draw_plot(  # pylint: disable=too-many-positional-arguments
-    x: List[datetime],
-    y: List[List[float]],
-    labels: List[WeatherLabel],
-    rect: Tuple[float, float, float, float],
+def draw_plot(  # noqa: PLR0913
+    x: list[datetime],
+    y: list[list[float]],
+    labels: list[WeatherLabel],
+    rect: tuple[float, float, float, float],
     image_loader: ImageLoader,
     legend: str = "inside",
 ) -> None:
     """Render a stacked plot using matplotlib.
 
     :param x: List of datetime objects for the X-axis data.
-    :type x: List[datetime]
+    :type x: list[datetime]
     :param y: 2D list where each inner list represents a dataset for the plot, meant to be stacked.
-    :type y: List[List[float]]
+    :type y: list[list[float]]
     :param labels: List of dictionaries containing labels for each dataset in `y`.
-    :param rect: A list of four floats denoting the [left, bottom, width, height] of the rectangle where the plot is drawn.
-    :type rect: List[float]
+    :param rect: A list of four floats denoting the [left, bottom, width, height]
+                   of the rectangle where the plot is drawn.
+    :type rect: list[float]
     :param image_loader: Instance responsible for image operations.
     :type image_loader: ImageLoader
-    :param legend: Specifies the legend style. Can be 'inside', 'rectangle', or other values that result in no legend being drawn.
+    :param legend: Specifies the legend style.
+                   Can be 'inside', 'rectangle', or other values that result
+                   in no legend being drawn.
                    Defaults to 'inside'.
     :type legend: str
 
@@ -405,12 +415,12 @@ def draw_plot(  # pylint: disable=too-many-positional-arguments
     if len(x) > 0:
         days_on_plot = (x[-1] - x[0]).days
         if days_on_plot < 5 * 30:
-            shortFmt = DateFormatter("%b %d")  # type: ignore
+            short_fmt = DateFormatter("%b %d")  # type: ignore
         elif days_on_plot < 5 * 365:
-            shortFmt = DateFormatter("%d")  # type: ignore
+            short_fmt = DateFormatter("%d")  # type: ignore
         else:
-            shortFmt = DateFormatter("%Y")  # type: ignore
-        ax.xaxis.set_major_formatter(shortFmt)
+            short_fmt = DateFormatter("%Y")  # type: ignore
+        ax.xaxis.set_major_formatter(short_fmt)
     legend_labels = [label.summary for label in labels]
     polies = ax.stackplot(x, y)  # type: ignore
     ax.xaxis.set_major_locator(plt.MaxNLocator(6))
@@ -435,15 +445,15 @@ def draw_plot(  # pylint: disable=too-many-positional-arguments
     seconds=IMAGE_CACHED_SECONDS,
     trace_fmt="Use stored imaged without rendering (from {time})",
     daily_refresh=True,
-)
-def draw_calendar(  # pylint: disable=too-many-positional-arguments
-    grid: List[List[Dict[str, Union[datetime, List[int]]]]],
-    x: List[datetime],
-    y: List[List[float]],
+)  # noqa: PLR0913
+def draw_calendar(  # noqa: PLR0913
+    grid: list[list[dict[str, Union[datetime, list[int]]]]],
+    x: list[datetime],
+    y: list[list[float]],
     weather: Optional[WeatherData],
-    dashboard: Dict[str, Union[str, List[Dict[str, str]]]],
-    events: List[Dict[str, str]],
-    absent_labels: List[Dict[str, str]],
+    dashboard: dict[str, Union[str, list[dict[str, str]]]],
+    events: list[dict[str, str]],
+    absent_labels: list[dict[str, str]],
     params: "ImageParams",
 ) -> bytes:
     """Draw IoT calendar as image, optimized for Amazon Kindle (600 x 800).
@@ -480,7 +490,9 @@ def draw_calendar(  # pylint: disable=too-many-positional-arguments
         if int(params.xkcd):
             plt.xkcd()
         draw_weather(
-            weather, rect=(0, plot_bottom, plot_left * 0.8, plot_height), image_loader=image_loader
+            weather,
+            rect=(0, plot_bottom, plot_left * 0.8, plot_height),
+            image_loader=image_loader,
         )
         draw_plot(
             x,
@@ -492,7 +504,8 @@ def draw_calendar(  # pylint: disable=too-many-positional-arguments
         empty_image_file_name = dashboard["empty_image"]
         if not isinstance(empty_image_file_name, str):
             raise TypeError(
-                f"Expected filename in `empty_image`, got {type(empty_image_file_name)} instead: {empty_image_file_name}"
+                f"Expected filename in `empty_image`, got {type(empty_image_file_name)} "
+                f"instead: {empty_image_file_name}",
             )
         draw_pies(
             grid,
@@ -530,7 +543,8 @@ def create_image(rotation_degrees: int, format: str) -> PIL.Image.Image:  # prag
 def check(show: bool = True) -> None:  # pragma: no cover
     """Debugging function.
 
-    To create the file with parameters for the check(), add the following code to the draw_calendar()
+    To create the file with parameters for the check(),
+    add the following code to the draw_calendar()
 
         call_params = dict(grid=grid, x=x, y=y, weather=weather, dashboard=dashboard, labels=labels,
             absent_labels=absent_labels, params=params)
@@ -541,13 +555,13 @@ def check(show: bool = True) -> None:  # pragma: no cover
 
     from dateutil import parser  # pylint: disable=import-outside-toplevel
 
-    with open("tests/resources/draw_calendar_params_2.json", "r", encoding="utf-8") as file:
+    with open("tests/resources/draw_calendar_params_2.json", encoding="utf-8") as file:
         call_params = json.load(file)
 
     for row in call_params["grid"]:
         for col in row:
             col["date"] = parser.parse(col["date"])
-    for i, day in enumerate(call_params["x"]):
+    for i, _ in enumerate(call_params["x"]):
         call_params["x"][i] = parser.parse(call_params["x"][i])
     t0 = datetime.now()
     image_data = draw_calendar(

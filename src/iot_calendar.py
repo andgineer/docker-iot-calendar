@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Web-server for calendar."""
 
 import datetime
@@ -7,8 +6,9 @@ import os
 import os.path
 import pprint
 import sys
+from collections.abc import Awaitable, Sequence
 from pathlib import Path
-from typing import Any, Awaitable, Dict, Optional, Sequence, Tuple, Union, cast
+from typing import Any, Optional, Union, cast
 
 import tornado.auth
 import tornado.escape
@@ -32,7 +32,7 @@ from openweathermap_org import WEATHER_KEY_PARAM, Weather
 SETTINGS_FOLDER = "../amazon-dash-private"
 SETTINGS_FILE_NAME = "settings.json"
 
-settings: Dict[str, Any] = {}
+settings: dict[str, Any] = {}
 
 
 NO_SETTINGS_FILE = """\nNo {} found. \nIf you run application in docker container you
@@ -40,15 +40,15 @@ should connect volume with setting files, like
     -v $PWD/amazon-dash-private:/amazon-dash-private:ro"""
 
 
-def load_settings(folder: Optional[str] = None, load_secrets: bool = True) -> Dict[str, Any]:
+def load_settings(folder: Optional[str] = None, load_secrets: bool = True) -> dict[str, Any]:  # noqa: C901
     """Load settings."""
 
-    def set_folder(params: Dict[str, Any], substr: str, folder: str) -> None:
+    def set_folder(params: dict[str, Any], substr: str, folder: str) -> None:
         """Add folder to params if substr is in the param name."""
-        for param in params:
-            if param.find(substr) > -1:
-                _, name = os.path.split(params[param])
-                params[param] = os.path.join(folder, name)
+        for param_name, param_value in params.items():
+            if param_name.find(substr) > -1:
+                _, name = os.path.split(param_value)
+                params[param_name] = os.path.join(folder, name)
 
     if folder is None:
         folder = SETTINGS_FOLDER
@@ -56,7 +56,7 @@ def load_settings(folder: Optional[str] = None, load_secrets: bool = True) -> Di
     if not settings_path.is_file():
         print(NO_SETTINGS_FILE.format(settings_path))
         sys.exit(1)
-    result: Dict[str, Any] = json.loads(settings_path.read_text(encoding="utf-8-sig"))
+    result: dict[str, Any] = json.loads(settings_path.read_text(encoding="utf-8-sig"))
 
     if load_secrets:
         g_path, g_name = os.path.split(result[GOOGLE_CREDENTIALS_PARAM])
@@ -72,7 +72,8 @@ def load_settings(folder: Optional[str] = None, load_secrets: bool = True) -> Di
                     set_folder(absent_event, "image", images_folder)
         for button in result["events"]:
             if "summary" in result["events"][button] and isinstance(
-                result["events"][button]["summary"], list
+                result["events"][button]["summary"],
+                list,
             ):
                 for summary in result["events"][button]["summary"]:
                     set_folder(summary, "image", images_folder)
@@ -122,7 +123,8 @@ class DashboardImageHandler(HandlerWithParams):
         """Get image."""
         self.disable_cache()
         params = self.load_params(
-            format=image_format, dashboard=list(settings["dashboards"].keys())[0]
+            format=image_format,
+            dashboard=list(settings["dashboards"].keys())[0],
         )
         calendar_events = calendar_events_list(settings, params.dashboard)
         absent_events = dashboard_absent_events_list(settings, "anna_work_out")
@@ -137,7 +139,14 @@ class DashboardImageHandler(HandlerWithParams):
         if "images_folder" not in dashboard:
             dashboard["images_folder"] = settings["images_folder"]
         image = draw_calendar(
-            grid, x, y, weather, dashboard, calendar_events, absent_events, params
+            grid,
+            x,
+            y,
+            weather,
+            dashboard,
+            calendar_events,
+            absent_events,
+            params,
         )
         self.write(image)
         self.set_header("Content-type", f"image/{image_format}")
@@ -179,8 +188,8 @@ class DashboardListHandler(HandlerWithParams):
 HandlersType = Optional[
     Sequence[
         Union[
-            Tuple[str, type[HandlerWithParams]],
-            Tuple[str, type[tornado.web.StaticFileHandler], Dict[str, Any]],
+            tuple[str, type[HandlerWithParams]],
+            tuple[str, type[tornado.web.StaticFileHandler], dict[str, Any]],
         ]
     ]
 ]
@@ -191,7 +200,7 @@ class Application(tornado.web.Application):
 
     def __init__(
         self,
-        server_settings: Optional[Dict[str, Any]] = None,
+        server_settings: Optional[dict[str, Any]] = None,
         handlers: HandlersType = None,
     ):
         """Init."""
@@ -227,7 +236,7 @@ class Application(tornado.web.Application):
 
 def main() -> None:  # pragma: no cover
     """Check."""
-    global settings  # pylint: disable=global-statement
+    global settings  # noqa: PLW0603
 
     define("port", default=4444, help="run on the given port", type=int)
     define("folder", default=None, help="path to settings and files with secrets", type=str)

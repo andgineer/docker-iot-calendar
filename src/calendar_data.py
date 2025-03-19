@@ -4,12 +4,13 @@ import collections.abc
 import copy
 import datetime
 import pprint
-from typing import Any, Dict, List, Optional, Tuple, Union, cast
+from typing import Any, Optional, Union, cast
 
 
-def preprocess_actions(
-    button: str, button_settings: Dict[str, List[Dict[str, Any]]]
-) -> List[Dict[str, Any]]:
+def preprocess_actions(  # noqa: C901
+    button: str,
+    button_settings: dict[str, list[dict[str, Any]]],
+) -> list[dict[str, Any]]:
     """Add summary (with button name value) if there is no one.
 
     Substitutes {button} with button name in parameters.
@@ -34,18 +35,16 @@ def preprocess_actions(
     actions = copy.deepcopy(button_settings["actions"])
     for action in actions:
         if "summary" not in action:
-            if "summary" in button_settings:
-                action["summary"] = button_settings["summary"]
-            else:
-                action["summary"] = button
+            action["summary"] = button_settings.get("summary", button)
         for param in action:
             action[param] = subst(action[param])
     return actions
 
 
 def calendar_events_list(
-    settings: Dict[str, Any], dashboard_name: str
-) -> List[Dict[str, Union[str, Any]]]:
+    settings: dict[str, Any],
+    dashboard_name: str,
+) -> list[dict[str, Union[str, Any]]]:
     """List of calendar events for the dashboard_name.
 
     :param settings: Dictionary containing actions.
@@ -54,10 +53,10 @@ def calendar_events_list(
     [{'summary': summary, 'calendar_id': calendar_id, 'image': image_file_name}, ...]
     """
 
-    def is_relevant_action(action: Dict[str, Any]) -> bool:
+    def is_relevant_action(action: dict[str, Any]) -> bool:
         return action.get("type") == "calendar" and action.get("dashboard") == dashboard_name
 
-    def process_action(action: Dict[str, Any]) -> List[Dict[str, Any]]:
+    def process_action(action: dict[str, Any]) -> list[dict[str, Any]]:
         """Process an action and return list of actions based on summary."""
         if isinstance(action["summary"], list):
             return [
@@ -82,27 +81,30 @@ def calendar_events_list(
 
 
 def dashboard_absent_events_list(
-    settings: Dict[str, Any], dashboard_name: str
-) -> List[Dict[str, Any]]:
+    settings: dict[str, Any],
+    dashboard_name: str,
+) -> list[dict[str, Any]]:
     """List of calendar absent events for the dashboard_name."""
     dashboards = settings["dashboards"]
     if dashboard_name in dashboards and "absent" in dashboards[dashboard_name]:
-        return cast(List[Dict[str, Any]], dashboards[dashboard_name]["absent"])
+        return cast(list[dict[str, Any]], dashboards[dashboard_name]["absent"])
     return []
 
 
-def event_duration(event: Dict[str, Any]) -> int:
+def event_duration(event: dict[str, Any]) -> int:
     """Duration of event in minutes."""
     delta = cast(datetime.datetime, event["end"]) - cast(datetime.datetime, event["start"])
     return (delta.days * 24 * 60) + (delta.seconds // 60)
 
 
-def events_to_weeks_grid(
-    events: List[List[Dict[str, Any]]], absents: List[List[Dict[str, Any]]], weeks: int = 4
-) -> List[List[Dict[str, Union[datetime.datetime, List[int], List[Dict[str, str]]]]]]:
+def events_to_weeks_grid(  # noqa: C901
+    events: list[list[dict[str, Any]]],
+    absents: list[list[dict[str, Any]]],
+    weeks: int = 4,
+) -> list[list[dict[str, Union[datetime.datetime, list[int], list[dict[str, str]]]]]]:
     """Convert list of events to weeks grid."""
 
-    def get_tzinfo(events: List[List[Dict[str, Any]]]) -> Optional[datetime.tzinfo]:
+    def get_tzinfo(events: list[list[dict[str, Any]]]) -> Optional[datetime.tzinfo]:
         """Get tzinfo from any event."""
         for event_list in events:
             for event in event_list:
@@ -111,7 +113,7 @@ def events_to_weeks_grid(
 
     def initialize_grid(
         first_date: datetime.datetime,
-    ) -> List[List[Dict[str, Union[datetime.datetime, List[int], List[Dict[str, str]]]]]]:
+    ) -> list[list[dict[str, Union[datetime.datetime, list[int], list[dict[str, str]]]]]]:
         """Initialize grid with empty values."""
         return [
             [
@@ -129,10 +131,10 @@ def events_to_weeks_grid(
     tomorrow = today + datetime.timedelta(days=1)
     today_week_day = today.weekday()
     first_date_in_grid = today - datetime.timedelta(
-        days=weeks * 7 - (7 - (today_week_day + 1)) - 1
+        days=weeks * 7 - (7 - (today_week_day + 1)) - 1,
     )
-    DictType = Dict[str, Union[datetime.datetime, List[int], List[Dict[str, str]]]]
-    grid: List[List[DictType]] = initialize_grid(first_date_in_grid)
+    dict_type = dict[str, Union[datetime.datetime, list[int], list[dict[str, str]]]]
+    grid: list[list[dict_type]] = initialize_grid(first_date_in_grid)
 
     if not events:
         return grid
@@ -144,10 +146,10 @@ def events_to_weeks_grid(
                 week = int((time - first_date_in_grid).days // 7)
                 day = (time - first_date_in_grid).days % 7
                 grid[week][day]["values"][event_list_idx] += event_duration(
-                    event
+                    event,
                 )  # assuming event_duration is previously defined
 
-    for absent_list_idx, absent_list in enumerate(absents):
+    for absent_list in absents:
         for absent in absent_list:
             start = absent["start"].replace(hour=0, minute=0, second=0, microsecond=0)
             end = absent["end"].replace(hour=0, minute=0, second=0, microsecond=0)
@@ -157,21 +159,22 @@ def events_to_weeks_grid(
                     week = int((absent_date - first_date_in_grid).days // 7)
                     day = (absent_date - first_date_in_grid).days % 7
                     grid[week][day].setdefault("absents", []).append(
-                        {"summary": absent["summary"]}
+                        {"summary": absent["summary"]},
                     )
     return grid
 
 
 def events_to_array(
-    events: List[List[Dict[str, Any]]], absents: List[List[Dict[str, Any]]]
-) -> Tuple[List[datetime.datetime], List[List[int]]]:
+    events: list[list[dict[str, Any]]],
+    absents: list[list[dict[str, Any]]],
+) -> tuple[list[datetime.datetime], list[list[int]]]:
     """Convert list of events to array."""
-    DATE_FMT = "%Y%m%d"
+    date_fmt = "%Y%m%d"
     by_date = {}
     for event_list_idx, event_list in enumerate(events):
         for event in event_list:
             date = event["start"].replace(hour=0, minute=0, second=0, microsecond=0)
-            date_str = date.strftime(DATE_FMT)
+            date_str = date.strftime(date_fmt)
             if date_str not in by_date:
                 by_date[date_str] = [0 for _ in range(len(events))]
             by_date[date_str][event_list_idx] += event_duration(event)
@@ -182,10 +185,10 @@ def events_to_array(
             end = absent["end"].replace(hour=0, minute=0, second=0, microsecond=0)
             for day in range((end - start).days):
                 date = start + datetime.timedelta(days=day)
-                date_str = date.strftime(DATE_FMT)
+                date_str = date.strftime(date_fmt)
                 if date_str not in by_date:
                     by_date[date_str] = [0 for _ in range(len(events))]
-    x = [datetime.datetime.strptime(date_str, DATE_FMT) for date_str in sorted(by_date.keys())]
+    x = [datetime.datetime.strptime(date_str, date_fmt) for date_str in sorted(by_date.keys())]
     y = [
         [by_date[date_str][event_list_idx] for date_str in sorted(by_date.keys())]
         for event_list_idx in range(len(events))
@@ -209,10 +212,16 @@ def check() -> None:  # pragma: no cover
     calendar_start = datetime.datetime.now(tz=three_hour_offset) - datetime.timedelta(days=25)
 
     def get_relative_date(
-        days_diff: int, hour: int, minute: int, second: int
+        days_diff: int,
+        hour: int,
+        minute: int,
+        second: int,
     ) -> datetime.datetime:
         return (calendar_start + datetime.timedelta(days=days_diff)).replace(
-            hour=hour, minute=minute, second=second, microsecond=0
+            hour=hour,
+            minute=minute,
+            second=second,
+            microsecond=0,
         )
 
     events = [
@@ -322,13 +331,13 @@ def check() -> None:  # pragma: no cover
         ],
     ]
 
-    absents: List[List[Dict[str, Any]]] = [
+    absents: list[list[dict[str, Any]]] = [
         [
             {
                 "end": get_relative_date(23, 23, 59, 59),
                 "start": get_relative_date(17, 0, 0, 0),
                 "summary": "Sick",
-            }
+            },
         ],
         [],
     ]

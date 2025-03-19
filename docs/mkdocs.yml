@@ -65,4 +65,3 @@ extra:
     - name: Русский
       link: /{{ cookiecutter.package_name }}/ru/
       lang: ru
-

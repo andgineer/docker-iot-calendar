@@ -28,8 +28,9 @@ def test_openweathermap_icons(icon_code, condition_code, expected_icon):
 def test_load_key_success():
     # Mocking os.path.isfile to always return True
     # and reading the file to return a valid JSON content
-    with patch("os.path.isfile", return_value=True), patch(
-        "builtins.open", mock_open(read_data='{"key": "test_key"}')
+    with (
+        patch("os.path.isfile", return_value=True),
+        patch("builtins.open", mock_open(read_data='{"key": "test_key"}')),
     ):
         weather = Weather(props={WEATHER_KEY_PARAM: "fake_path"})
         assert weather.key == "test_key"
@@ -43,8 +44,9 @@ def test_load_key_file_not_exists():
 
 def test_load_key_invalid_format():
     # Mocking the content of the file to be invalid (missing the 'key' field)
-    with patch("os.path.isfile", return_value=True), patch(
-        "builtins.open", mock_open(read_data='{"invalid_key": "test_value"}')
+    with (
+        patch("os.path.isfile", return_value=True),
+        patch("builtins.open", mock_open(read_data='{"invalid_key": "test_value"}')),
     ):
         with pytest.raises(KeyError):
             Weather(props={WEATHER_KEY_PARAM: "fake_path"})
@@ -64,8 +66,9 @@ def test_get_weather_success():
     }
     mock_response.text = '{"cod": "200", "list": ...}'
 
-    with patch("requests.get", return_value=mock_response), patch.object(
-        Weather, "load_key", return_value="dummy_key"
+    with (
+        patch("requests.get", return_value=mock_response),
+        patch.object(Weather, "load_key", return_value="dummy_key"),
     ):
         weather = Weather(props={WEATHER_KEY_PARAM: "fake_path"})
         weather_data = weather.get_weather(51.5, 0.12)
@@ -98,8 +101,9 @@ def test_get_weather_error_invalid_key():
     mock_response.json.return_value = {"cod": "401", "message": "Invalid API key"}
     mock_response.text = "Invalid key"
 
-    with patch("requests.get", return_value=mock_response), patch.object(
-        Weather, "load_key", return_value="dummy_key"
+    with (
+        patch("requests.get", return_value=mock_response),
+        patch.object(Weather, "load_key", return_value="dummy_key"),
     ):
         weather = Weather(props={WEATHER_KEY_PARAM: "fake_path"})
         weather_data = weather.get_weather(51.5, 0.12, units="m")
@@ -112,8 +116,9 @@ def test_get_weather_error_unexpected():
     mock_response.json.return_value = {"cod": "400", "message": "Unexpected error"}
     mock_response.text = "Unexpected error"
 
-    with patch("requests.get", return_value=mock_response), patch.object(
-        Weather, "load_key", return_value="dummy_key"
+    with (
+        patch("requests.get", return_value=mock_response),
+        patch.object(Weather, "load_key", return_value="dummy_key"),
     ):
         weather = Weather(props={WEATHER_KEY_PARAM: "fake_path"})
         weather_data = weather.get_weather(51.5, 0.12, units="m")
@@ -134,8 +139,9 @@ def test_get_weather_metric_units():
     }
     mock_response.text = '{"cod": "200", "list": ...}'
 
-    with patch("requests.get", return_value=mock_response), patch.object(
-        Weather, "load_key", return_value="dummy_key"
+    with (
+        patch("requests.get", return_value=mock_response),
+        patch.object(Weather, "load_key", return_value="dummy_key"),
     ):
         weather = Weather(props={WEATHER_KEY_PARAM: "fake_path"})
         weather_data = weather.get_weather(51.5, 0.12, units="m")
@@ -157,8 +163,9 @@ def test_get_weather_imperial_units():
     }
     mock_response.text = '{"cod": "200", "list": ...}'
 
-    with patch("requests.get", return_value=mock_response), patch.object(
-        Weather, "load_key", return_value="dummy_key"
+    with (
+        patch("requests.get", return_value=mock_response),
+        patch.object(Weather, "load_key", return_value="dummy_key"),
     ):
         weather = Weather(props={WEATHER_KEY_PARAM: "fake_path"})
         weather_data = weather.get_weather(51.5, 0.12, units="e")
@@ -180,8 +187,9 @@ def test_get_weather_shower_rain():
     }
     mock_response.text = '{"cod": "200", "list": ...}'
 
-    with patch("requests.get", return_value=mock_response), patch.object(
-        Weather, "load_key", return_value="dummy_key"
+    with (
+        patch("requests.get", return_value=mock_response),
+        patch.object(Weather, "load_key", return_value="dummy_key"),
     ):
         weather = Weather(props={WEATHER_KEY_PARAM: "fake_path"})
         weather_data = weather.get_weather(51.5, 0.12)
@@ -212,8 +220,9 @@ def test_get_weather_2_days():
     }
     mock_response.text = '{"cod": "200", "list": ...}'
 
-    with patch("requests.get", return_value=mock_response), patch.object(
-        Weather, "load_key", return_value="dummy_key"
+    with (
+        patch("requests.get", return_value=mock_response),
+        patch.object(Weather, "load_key", return_value="dummy_key"),
     ):
         weather = Weather(props={WEATHER_KEY_PARAM: "fake_path"})
         weather_data = weather.get_weather(51.5, 0.12, days=2)
@@ -258,8 +267,9 @@ def test_get_weather_another_2_days():
     }
     mock_response.text = '{"cod": "200", "list": ...}'
 
-    with patch("requests.get", return_value=mock_response), patch.object(
-        Weather, "load_key", return_value="dummy_key"
+    with (
+        patch("requests.get", return_value=mock_response),
+        patch.object(Weather, "load_key", return_value="dummy_key"),
     ):
         weather = Weather(props={WEATHER_KEY_PARAM: "fake_path"})
         weather_data = weather.get_weather(51.5, 0.12, days=2)
@@ -289,8 +299,9 @@ def test_get_weather_wrong_units():
     }
     mock_response.text = "2023-08-13 12:00:00"
 
-    with patch("requests.get", return_value=mock_response), patch.object(
-        Weather, "load_key", return_value="dummy_key"
+    with (
+        patch("requests.get", return_value=mock_response),
+        patch.object(Weather, "load_key", return_value="dummy_key"),
     ):
         weather = Weather(props={WEATHER_KEY_PARAM: "fake_path"})
         weather_data = weather.get_weather(51.5, 0.12, units="x")

@@ -6,7 +6,7 @@ import os.path
 import time
 from datetime import timedelta
 from pprint import pprint
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Optional
 
 import dateutil.parser
 import dateutil.tz
@@ -23,7 +23,7 @@ MIN_GOOGLE_API_CALL_DELAY_SECONDS = 15
 class Calendar:
     """Google Calendar API wrapper."""
 
-    def __init__(self, settings: Dict[str, Any], calendar_id: str) -> None:
+    def __init__(self, settings: dict[str, Any], calendar_id: str) -> None:
         """Init."""
         self.settings = settings
         self.http = self.get_credentials_http()
@@ -39,7 +39,7 @@ class Calendar:
         if not os.path.isfile(self.settings[GOOGLE_CREDENTIALS_PARAM]):
             print(
                 f"""Google API credentials file {self.settings[GOOGLE_CREDENTIALS_PARAM]} not found.
-Get it on https://console.developers.google.com/start/api?id=calendar"""
+Get it on https://console.developers.google.com/start/api?id=calendar""",
             )
             return None
         try:
@@ -47,10 +47,11 @@ Get it on https://console.developers.google.com/start/api?id=calendar"""
                 self.settings[GOOGLE_CREDENTIALS_PARAM],
                 ["https://www.googleapis.com/auth/calendar"],
             )
-        except Exception:
+        except Exception:  # noqa: BLE001
             print(
-                f"""Cannot login to Google API - check your credential file {self.settings[GOOGLE_CREDENTIALS_PARAM]}.
-You can get new one from https://console.developers.google.com/start/api?id=calendar"""
+                f"""Cannot login to Google API:
+Check your credential file {self.settings[GOOGLE_CREDENTIALS_PARAM]}.
+You can get new one from https://console.developers.google.com/start/api?id=calendar""",
             )
             return None
         return credentials.authorize(httplib2.Http())
@@ -74,13 +75,16 @@ You can get new one from https://console.developers.google.com/start/api?id=cale
 
     def time_to_str(self, t: datetime.datetime) -> str:
         """Time to string."""
-        GCAL_TIME_FORMAT = "%Y-%m-%dT%H:%M:%S"
+        gcal_time_format = "%Y-%m-%dT%H:%M:%S"
         minutes = -time.timezone // 60
-        return f"{t.strftime(GCAL_TIME_FORMAT)}{minutes // 60:+03d}:{abs(minutes % 60):02d}"
+        return f"{t.strftime(gcal_time_format)}{minutes // 60:+03d}:{abs(minutes % 60):02d}"
 
     def get_last_events(
-        self, summary: str, days: int = 31, default_length: int = 900
-    ) -> List[Dict[str, Any]]:
+        self,
+        summary: str,
+        days: int = 31,
+        default_length: int = 900,
+    ) -> list[dict[str, Any]]:
         """Get last events.
 
         :param summary: text to search
@@ -91,15 +95,15 @@ You can get new one from https://console.developers.google.com/start/api?id=cale
         """
 
         def get_event_interval(
-            event: Dict[str, Any],
-        ) -> Tuple[datetime.datetime, datetime.datetime]:
+            event: dict[str, Any],
+        ) -> tuple[datetime.datetime, datetime.datetime]:
             """Get event interval.
 
             :param event: with ['start'] and ['end']
             :return: start and end calculated from dateTime or date formats of google calendar
             """
 
-            def get_timepoint(timepoint: Dict[str, Any]) -> datetime.datetime:
+            def get_timepoint(timepoint: dict[str, Any]) -> datetime.datetime:
                 """Get timepoint."""
                 if "dateTime" in timepoint:
                     return self.parse_time(timepoint["dateTime"])
@@ -111,7 +115,7 @@ You can get new one from https://console.developers.google.com/start/api?id=cale
                 end = start + timedelta(seconds=default_length)
             return start, end
 
-        result: List[Dict[str, Any]] = []
+        result: list[dict[str, Any]] = []
         if not self.service:
             return result
         tzinfo = dateutil.tz.tzoffset(None, -time.timezone)
@@ -122,7 +126,7 @@ You can get new one from https://console.developers.google.com/start/api?id=cale
                 .list(
                     calendarId=self.calendarId,
                     timeMin=self.google_time_format(
-                        datetime.datetime.now() - datetime.timedelta(days=days)
+                        datetime.datetime.now() - datetime.timedelta(days=days),
                     ),
                     q=summary,
                     # timeZone='UTC',
@@ -152,7 +156,7 @@ You can get new one from https://console.developers.google.com/start/api?id=cale
     def google_today(self) -> str:
         """Google today."""
         return self.google_time_format(
-            datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+            datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0),
         )
 
 
@@ -161,10 +165,10 @@ You can get new one from https://console.developers.google.com/start/api?id=cale
     trace_fmt="Use stored google calendar data (from {time})",
 )
 def collect_events(
-    calendar_events: List[Dict[str, Any]],
-    absent_events: List[Dict[str, Any]],
-    settings: Dict[str, Any],
-) -> Tuple[List[List[Dict[str, Any]]], List[List[Dict[str, Any]]]]:
+    calendar_events: list[dict[str, Any]],
+    absent_events: list[dict[str, Any]],
+    settings: dict[str, Any],
+) -> tuple[list[list[dict[str, Any]]], list[list[dict[str, Any]]]]:
     """Collect events.
 
     Return (events, absents)
@@ -173,7 +177,7 @@ def collect_events(
     """
     calendars = {}
     events = []
-    absents: List[List[Dict[str, Any]]] = []
+    absents: list[list[dict[str, Any]]] = []
     for event in calendar_events:
         if event["calendar_id"] in calendars:
             calendar_processed = True
@@ -182,7 +186,7 @@ def collect_events(
             calendars[event["calendar_id"]] = Calendar(settings, event["calendar_id"])
         calendar = calendars[event["calendar_id"]]
         events.append(
-            calendar.get_last_events(event["summary"], default_length=event.get("default", 900))
+            calendar.get_last_events(event["summary"], default_length=event.get("default", 900)),
         )
         if not calendar_processed:
             absents.extend(calendar.get_last_events(event["summary"]) for event in absent_events)
