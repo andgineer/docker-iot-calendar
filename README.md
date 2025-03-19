@@ -4,17 +4,17 @@
 
 | Name                       |    Stmts |     Miss |   Cover |   Missing |
 |--------------------------- | -------: | -------: | ------: | --------: |
-| src/cached\_decorator.py   |       59 |        2 |     97% |  108, 117 |
-| src/calendar\_data.py      |      103 |        1 |     99% |        90 |
-| src/calendar\_image.py     |      177 |       11 |     94% |105, 170, 177, 312, 409-412, 419, 428, 481, 494 |
-| src/google\_calendar.py    |       90 |        5 |     94% |106, 111, 150, 154, 179 |
+| src/cached\_decorator.py   |       57 |        1 |     98% |       110 |
+| src/calendar\_data.py      |      101 |        1 |     99% |        90 |
+| src/calendar\_image.py     |      177 |       11 |     94% |104, 172, 179, 319, 419-422, 429, 438, 491, 506 |
+| src/google\_calendar.py    |       90 |        5 |     94% |110, 115, 154, 158, 183 |
 | src/image\_loader.py       |       19 |        0 |    100% |           |
-| src/iot\_calendar.py       |      109 |        2 |     98% |  158, 199 |
-| src/models.py              |       12 |        0 |    100% |           |
+| src/iot\_calendar.py       |      110 |        2 |     98% |  167, 208 |
+| src/models.py              |       11 |        0 |    100% |           |
 | src/openweathermap\_org.py |       63 |        0 |    100% |           |
 | src/singleton.py           |       10 |        0 |    100% |           |
-| src/weather\_gov.py        |       73 |       12 |     84% |43-46, 56, 65-68, 77, 81, 83, 85, 117 |
-|                  **TOTAL** |  **715** |   **33** | **95%** |           |
+| src/weather\_gov.py        |       73 |       12 |     84% |47-51, 61, 74-77, 86, 90, 92, 94, 127 |
+|                  **TOTAL** |  **711** |   **32** | **95%** |           |
 
 
 ## Setup coverage badge
