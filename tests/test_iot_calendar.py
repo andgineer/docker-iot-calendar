@@ -32,8 +32,10 @@ def mock_request_list_handler():
     )
     application = Application(server_settings=mock_settings)
     connection = MockConnection()
+    # Create headers with Host value for HTTP/1.1
+    headers = tornado.httputil.HTTPHeaders({"Host": "localhost"})
     request = tornado.httputil.HTTPServerRequest(
-        method="GET", uri="/", version="HTTP/1.1", headers=None, body=None, connection=connection
+        method="GET", uri="/", version="HTTP/1.1", headers=headers, body=None, connection=connection
     )
     handler = DashboardListHandler(application, request)
     handler._transforms = []
@@ -86,20 +88,20 @@ def test_load_params_overrides(mock_request_list_handler):
 
 
 @pytest.fixture
-def mock_request_inage_handler():
+def mock_request_image_handler():
     mock_settings = dict(
         template_path=os.path.join(os.path.dirname(__file__), "../templates"),
         debug=True,
     )
     application = tornado.web.Application(settings=mock_settings)
     connection = MockConnection()
+    # Create headers with Host value for HTTP/1.1
+    headers = tornado.httputil.HTTPHeaders({"Host": "localhost"})
     request = tornado.httputil.HTTPServerRequest(
-        method="GET", uri="/", version="HTTP/1.1", headers=None, body=None, connection=connection
+        method="GET", uri="/", version="HTTP/1.1", headers=headers, body=None, connection=connection
     )
 
-    # Change this line:
-    handler = DashboardImageHandler(application, request)  # <-- use DashboardImageHandler here
-
+    handler = DashboardImageHandler(application, request)
     handler._transforms = []
     handler.render = MagicMock()
     return handler
@@ -129,9 +131,9 @@ def test_dashboard_image_handler(
     mock_collect_events,
     MockWeather,
     mock_draw_calendar,
-    mock_request_inage_handler,
+    mock_request_image_handler,
 ):
-    mock_request_inage_handler.get("png")
+    mock_request_image_handler.get("png")
 
     mock_draw_calendar.assert_called_once()
-    assert mock_request_inage_handler._headers.get("Content-type") == "image/png"
+    assert mock_request_image_handler._headers.get("Content-type") == "image/png"
