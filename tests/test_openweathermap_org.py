@@ -272,7 +272,7 @@ def test_get_weather_another_2_days():
         patch.object(Weather, "load_key", return_value="dummy_key"),
     ):
         weather = Weather(props={WEATHER_KEY_PARAM: "fake_path"})
-        weather_data = weather.get_weather(51.5, 0.12, days=2)
+        weather_data = weather.get_weather(52.5, 0.13, days=2)
         assert weather_data == WeatherData(
             temp_min=[21.0, 19.0],
             temp_max=[25.0, 27.0],
