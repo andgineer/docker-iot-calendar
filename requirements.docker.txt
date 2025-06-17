@@ -8,7 +8,7 @@ cairocffi==1.7.1
     # via cairosvg
 cairosvg==2.8.2
     # via -r requirements.docker.in
-certifi==2025.4.26
+certifi==2025.6.15
     # via requests
 cffi==1.17.1
     # via cairocffi
@@ -18,11 +18,11 @@ cssselect2==0.8.0
     # via cairosvg
 defusedxml==0.7.1
     # via cairosvg
-google-api-core==2.24.2
+google-api-core==2.25.1
     # via google-api-python-client
-google-api-python-client==2.169.0
+google-api-python-client==2.172.0
     # via -r requirements.docker.in
-google-auth==2.40.1
+google-auth==2.40.3
     # via
     #   google-api-core
     #   google-api-python-client
@@ -46,7 +46,7 @@ pillow==11.2.1
     #   cairosvg
 proto-plus==1.26.1
     # via google-api-core
-protobuf==6.31.0
+protobuf==6.31.1
     # via
     #   google-api-core
     #   googleapis-common-protos
@@ -62,7 +62,7 @@ pyasn1-modules==0.4.2
     #   oauth2client
 pycparser==2.22
     # via cffi
-pydantic==2.11.4
+pydantic==2.11.7
     # via -r requirements.docker.in
 pydantic-core==2.33.2
     # via pydantic
@@ -70,7 +70,7 @@ pyparsing==3.2.3
     # via httplib2
 python-dateutil==2.9.0.post0
     # via -r requirements.docker.in
-requests==2.32.3
+requests==2.32.4
     # via
     #   -r requirements.docker.in
     #   google-api-core
@@ -78,7 +78,7 @@ rsa==4.9.1
     # via
     #   google-auth
     #   oauth2client
-setuptools==80.7.1
+setuptools==80.9.0
     # via -r requirements.docker.in
 six==1.17.0
     # via
@@ -88,16 +88,16 @@ tinycss2==1.4.0
     # via
     #   cairosvg
     #   cssselect2
-tornado==6.5
+tornado==6.5.1
     # via -r requirements.docker.in
-typing-extensions==4.13.2
+typing-extensions==4.14.0
     # via
     #   pydantic
     #   pydantic-core
     #   typing-inspection
-typing-inspection==0.4.0
+typing-inspection==0.4.1
     # via pydantic
-uritemplate==4.1.1
+uritemplate==4.2.0
     # via google-api-python-client
 urllib3==2.4.0
     # via requests
