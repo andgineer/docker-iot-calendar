@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1750132420507,
+  "lastUpdate": 1750133305845,
   "repoUrl": "https://github.com/andgineer/docker-iot-calendar",
   "entries": {
     "Benchmark": [
@@ -589,6 +589,37 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.00008718354085938843",
             "extra": "mean: 1.7887868000002527 msec\nrounds: 5"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "Andrei_Sorokin2@epam.com",
+            "name": "andgineer",
+            "username": "andgineer"
+          },
+          "committer": {
+            "email": "Andrei_Sorokin2@epam.com",
+            "name": "andgineer",
+            "username": "andgineer"
+          },
+          "distinct": true,
+          "id": "79400fdc365564652aaa0abb414aa7896bb1d58f",
+          "message": "retire Python 3.10, fixed problem in Python 3.13 test",
+          "timestamp": "2025-06-17T06:07:32+02:00",
+          "tree_id": "775df13e533f8a1753bbbac8708317ce3ed2adaa",
+          "url": "https://github.com/andgineer/docker-iot-calendar/commit/79400fdc365564652aaa0abb414aa7896bb1d58f"
+        },
+        "date": 1750133305423,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/test_calendar_image.py::test_draw_benchmark",
+            "value": 511.61991142613573,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00011819714726138811",
+            "extra": "mean: 1.954576000008501 msec\nrounds: 5"
           }
         ]
       }
