@@ -44,7 +44,7 @@ google-api-core==2.25.1
     # via
     #   -r requirements.docker.txt
     #   google-api-python-client
-google-api-python-client==2.172.0
+google-api-python-client==2.174.0
     # via -r requirements.docker.txt
 google-auth==2.40.3
     # via
@@ -74,7 +74,7 @@ kiwisolver==1.4.8
     # via matplotlib
 matplotlib==3.10.3
     # via -r requirements.in
-numpy==2.3.0
+numpy==2.3.1
     # via
     #   -r requirements.in
     #   contourpy
@@ -83,7 +83,7 @@ oauth2client==4.1.3
     # via -r requirements.docker.txt
 packaging==25.0
     # via matplotlib
-pillow==11.2.1
+pillow==11.3.0
     # via
     #   -r requirements.docker.txt
     #   cairosvg
@@ -165,7 +165,7 @@ uritemplate==4.2.0
     # via
     #   -r requirements.docker.txt
     #   google-api-python-client
-urllib3==2.4.0
+urllib3==2.5.0
     # via
     #   -r requirements.docker.txt
     #   requests
