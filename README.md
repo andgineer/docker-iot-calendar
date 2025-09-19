@@ -3,29 +3,29 @@
 [![Docker Automated build](https://img.shields.io/docker/image-size/andgineer/iot-calendar)](https://hub.docker.com/r/andgineer/iot-calendar)
 
 [Docker Hub container](https://hub.docker.com/r/andgineer/iot-calendar)
-that generates image for Amazon Kindle.
+that generates calendar images for Amazon Kindle.
 
 ![calendar](docs/src/en/images/calendar.png)
 
-The image contains calendar with events from Google Calendar - supposedly events from your IoT devices
+The image displays a calendar with events from Google Calendar - typically events from your IoT devices
 (like [Smart wifi button (Amazon Dash Button hack)](https://sorokin.engineer/posts/en/amazon_dash_button_hack.html)).
 
-You can point your Kindle browser to html-page that updates the image every minute.
-So you can see the calendar on your Kindle.
+You can point your Kindle browser to an HTML page that updates the image every minute,
+so you can view the calendar on your Kindle.
 
 ## Usage
 Read [description in my blog](https://sorokin.engineer/posts/en/iot_calendar_synology.html).
 
 ## Prepare environment
-Detailed manual how to create Google and open weather credentials is in the blog post mentioned above.
+A detailed manual on how to create Google and OpenWeather credentials is in the blog post mentioned above.
 
-Roadmap:
+Setup steps:
 * Create Google project
 * Create Google service account
 * Enable [Google Calendar API](https://console.cloud.google.com/apis/api/calendar-json.googleapis.com/metrics)
 * [Create key](https://console.cloud.google.com/iam-admin/serviceaccounts/details/110121235683045242579;edit=true/keys) -> Add Key -> JSON
-* replace `amazon-dash-hack.json` in `amazon-dash-private` folder with downloaded file
-* Create Google calendar wheret your IoT device will publish events (like [Amazon Dash Button](https://sorokin.engineer/posts/en/amazon_dash_button_hack.html))
+* Replace `amazon-dash-hack.json` in `amazon-dash-private` folder with downloaded file
+* Create Google calendar where your IoT device will publish events (like [Amazon Dash Button](https://sorokin.engineer/posts/en/amazon_dash_button_hack.html))
 * Share Google calendar with service account
 * Create OpenWeatherMap API key and place it into `amazon-dash-private/openweathermap.key` file
 
@@ -34,15 +34,15 @@ Roadmap:
 
 Prepare secrets as described in the blog post mentioned above.
 
-Copy `amazon-dash-private` folder up one level, so it will be in the same folder as `docker-iot-calendar` project.
-Place your secrets to this folder copy.
+Copy the `amazon-dash-private` folder up one level, so it's in the same folder as the `docker-iot-calendar` project.
+Place your secrets in this folder copy.
 
 Run in the `docker-iot-calendar` folder:
 ```
 make run
 ```
 
-Local address for the calendar page `http://localhost:4444`
+Local address for the calendar page: `http://localhost:4444`
 
 ## Development
 
@@ -55,7 +55,7 @@ and use [matplotlib](http://matplotlib.org) instead.
 
 ### Development dependencies
 
-To install system dependencies in Mac OSX (if you want to run it outside docker container):
+To install system dependencies on macOS (if you want to run it outside Docker container):
 ```
 brew update
 brew install cairo
@@ -71,15 +71,15 @@ If you already had matplotlib installed, after font installation you have to rem
 
 ### HTTP server
 
-As HTTP server I use [tornado](http://www.tornadoweb.org/en/stable/).
+The application uses [Tornado](http://www.tornadoweb.org/en/stable/) as the HTTP server.
 
 ### Local debug
 
-Create and/or virtual environment (note two dots):
+Create and/or activate virtual environment (note two dots):
 
     . ./activate.sh
 
-Now you can run debug code or debug the application, for example
+Now you can run debug code or debug the application, for example:
 
     python src/iot_calendar.py
 
@@ -87,6 +87,6 @@ Now you can run debug code or debug the application, for example
 
 https://andgineer.github.io/docker-iot-calendar/builds/benchmark
 
-## Coverage report
+## Coverage reports
 * [Codecov](https://app.codecov.io/gh/andgineer/docker-iot-calendar/tree/master/src)
 * [Coveralls](https://coveralls.io/github/andgineer/docker-iot-calendar)
