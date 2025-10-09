@@ -4,16 +4,16 @@
 
 | Name                       |    Stmts |     Miss |   Cover |   Missing |
 |--------------------------- | -------: | -------: | ------: | --------: |
-| src/cached\_decorator.py   |       57 |        1 |     98% |       110 |
+| src/cached\_decorator.py   |       58 |        1 |     98% |       111 |
 | src/calendar\_data.py      |      101 |        1 |     99% |        90 |
 | src/calendar\_image.py     |      177 |       11 |     94% |104, 172, 179, 319, 419-422, 429, 438, 491, 506 |
 | src/google\_calendar.py    |       90 |        5 |     94% |110, 115, 154, 158, 183 |
 | src/image\_loader.py       |       19 |        0 |    100% |           |
-| src/iot\_calendar.py       |      110 |        2 |     98% |  167, 208 |
+| src/iot\_calendar.py       |      110 |        2 |     98% |  167, 207 |
 | src/models.py              |       11 |        0 |    100% |           |
 | src/openweathermap\_org.py |       63 |        0 |    100% |           |
 | src/singleton.py           |       10 |        0 |    100% |           |
-| src/weather\_gov.py        |       73 |       12 |     84% |47-51, 61, 74-77, 86, 90, 92, 94, 127 |
+| src/weather\_gov.py        |       72 |       12 |     83% |46-50, 60, 73-76, 85, 89, 91, 93, 126 |
 |                  **TOTAL** |  **711** |   **32** | **95%** |           |
 
 
