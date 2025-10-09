@@ -9,7 +9,7 @@ import contextlib
 import io
 import os
 from datetime import datetime, timedelta
-from typing import Any, Optional, Union
+from typing import Any
 
 import matplotlib
 import matplotlib.font_manager
@@ -117,8 +117,8 @@ def draw_week_headers(grid: list[list[dict[str, Any]]]) -> None:
 def draw_pie(
     week: int,
     day: int,
-    values: list[Union[int, float]],
-    daily_max: Union[int, float],
+    values: list[int | float],
+    daily_max: int | float,
 ) -> None:
     """Draws a pie chart for a specific day of a week based on the given values.
 
@@ -145,7 +145,7 @@ def draw_pie(
 
 
 def draw_empty_pie(  # noqa: PLR0913
-    grid: list[list[dict[str, Union[datetime, list[dict[str, Any]]]]]],
+    grid: list[list[dict[str, datetime | list[dict[str, Any]]]]],
     image_loader: ImageLoader,
     week: int,
     day: int,
@@ -281,7 +281,7 @@ def draw_pies(
 
 
 def draw_weather(
-    weather: Optional[WeatherData],
+    weather: WeatherData | None,
     rect: tuple[float, float, float, float],
     image_loader: ImageLoader,
 ) -> None:
@@ -334,7 +334,7 @@ def draw_weather(
 def place_text_and_image(
     ax: Axes,
     x_pos: datetime,
-    y_pos: Union[int, float],
+    y_pos: int | float,
     label: WeatherLabel,
     image_loader: ImageLoader,
 ) -> None:
@@ -348,7 +348,7 @@ def place_text_and_image(
 def add_image_to_axes(
     ax: Axes,
     x_pos: datetime,
-    y_pos: Union[int, float],
+    y_pos: int | float,
     label: WeatherLabel,
     image_loader: ImageLoader,
 ) -> None:
@@ -447,11 +447,11 @@ def draw_plot(  # noqa: PLR0913
     daily_refresh=True,
 )  # noqa: PLR0913
 def draw_calendar(  # noqa: PLR0913
-    grid: list[list[dict[str, Union[datetime, list[int]]]]],
+    grid: list[list[dict[str, datetime | list[int]]]],
     x: list[datetime],
     y: list[list[float]],
-    weather: Optional[WeatherData],
-    dashboard: dict[str, Union[str, list[dict[str, str]]]],
+    weather: WeatherData | None,
+    dashboard: dict[str, str | list[dict[str, str]]],
     events: list[dict[str, str]],
     absent_labels: list[dict[str, str]],
     params: "ImageParams",

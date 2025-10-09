@@ -7,7 +7,6 @@ Usage:
 """
 
 import datetime
-from typing import Optional
 from urllib.request import urlopen
 from xml.dom import minidom
 from xml.dom.minicompat import NodeList
@@ -29,7 +28,7 @@ class Weather:
         longitude: str,
         days: int = 1,
         units: str = "m",
-    ) -> Optional[WeatherData]:
+    ) -> WeatherData | None:
         """Get weather from weather.gov.
 
         For days more than 1 it returns "No data were found using the following input"

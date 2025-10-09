@@ -24,7 +24,7 @@ cairocffi==1.7.1
     #   cairosvg
 cairosvg==2.8.2
     # via -r requirements.txt
-certifi==2025.8.3
+certifi==2025.10.5
     # via
     #   -r requirements.txt
     #   requests
@@ -70,7 +70,7 @@ dill==0.4.0
     # via pylint
 distlib==0.4.0
     # via virtualenv
-filelock==3.19.1
+filelock==3.20.0
     # via virtualenv
 fonttools==4.60.1
     # via
@@ -78,11 +78,11 @@ fonttools==4.60.1
     #   matplotlib
 ghp-import==2.1.0
     # via mkdocs
-google-api-core==2.25.1
+google-api-core==2.26.0
     # via
     #   -r requirements.txt
     #   google-api-python-client
-google-api-python-client==2.183.0
+google-api-python-client==2.184.0
     # via -r requirements.txt
 google-auth==2.41.1
     # via
@@ -106,7 +106,7 @@ httplib2==0.31.0
     #   google-api-python-client
     #   google-auth-httplib2
     #   oauth2client
-identify==2.6.14
+identify==2.6.15
     # via pre-commit
 idna==3.10
     # via
@@ -114,7 +114,7 @@ idna==3.10
     #   requests
 iniconfig==2.1.0
     # via pytest
-isort==6.0.1
+isort==6.1.0
     # via pylint
 jinja2==3.1.6
     # via
@@ -138,7 +138,7 @@ markupsafe==3.0.3
     #   mkdocs
     #   mkdocs-autorefs
     #   mkdocstrings
-matplotlib==3.10.6
+matplotlib==3.10.7
     # via -r requirements.txt
 mccabe==0.7.0
     # via pylint
@@ -205,9 +205,9 @@ pillow==11.3.0
     #   matplotlib
 pip==25.2
     # via pip-tools
-pip-tools==7.5.0
+pip-tools==7.5.1
     # via -r requirements.dev.in
-platformdirs==4.4.0
+platformdirs==4.5.0
     # via
     #   mkdocs-get-deps
     #   pylint
@@ -245,9 +245,9 @@ pycparser==2.23
     # via
     #   -r requirements.txt
     #   cffi
-pydantic==2.11.9
+pydantic==2.12.0
     # via -r requirements.txt
-pydantic-core==2.33.2
+pydantic-core==2.41.1
     # via
     #   -r requirements.txt
     #   pydantic
@@ -255,7 +255,7 @@ pygments==2.19.2
     # via
     #   mkdocs-material
     #   pytest
-pylint==3.3.8
+pylint==3.3.9
     # via -r requirements.dev.in
 pymdown-extensions==10.16.1
     # via

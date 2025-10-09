@@ -7,7 +7,8 @@ To be honest, this was implemented primarily for educational purposes.
 import datetime
 import functools
 import hashlib
-from typing import Any, Callable, Optional, Union
+from collections.abc import Callable
+from typing import Any
 
 Func = Callable[..., Any]
 
@@ -72,10 +73,10 @@ class cached:  # noqa: N801
 
     def __init__(  # noqa: PLR0913
         self,
-        func: Optional[Func] = None,
+        func: Func | None = None,
         *,
-        seconds: Union[float, int] = 0.1,
-        trace_fmt: Optional[str] = None,
+        seconds: float | int = 0.1,
+        trace_fmt: str | None = None,
         daily_refresh: bool = False,
         per_instance: bool = False,
         cache_none: bool = True,
@@ -177,7 +178,7 @@ class cached:  # noqa: N801
 
         return cached_func
 
-    def __get__(self, obj: Any, objtype: Optional[Any] = None) -> Func:
+    def __get__(self, obj: Any, objtype: Any | None = None) -> Func:
         """Descriptor protocol.
 
         To automatically bind the decorator's call to the object instance.

@@ -4,7 +4,7 @@ import collections.abc
 import copy
 import datetime
 import pprint
-from typing import Any, Optional, Union, cast
+from typing import Any, cast
 
 
 def preprocess_actions(  # noqa: C901
@@ -44,7 +44,7 @@ def preprocess_actions(  # noqa: C901
 def calendar_events_list(
     settings: dict[str, Any],
     dashboard_name: str,
-) -> list[dict[str, Union[str, Any]]]:
+) -> list[dict[str, str | Any]]:
     """List of calendar events for the dashboard_name.
 
     :param settings: Dictionary containing actions.
@@ -101,10 +101,10 @@ def events_to_weeks_grid(  # noqa: C901
     events: list[list[dict[str, Any]]],
     absents: list[list[dict[str, Any]]],
     weeks: int = 4,
-) -> list[list[dict[str, Union[datetime.datetime, list[int], list[dict[str, str]]]]]]:
+) -> list[list[dict[str, datetime.datetime | list[int] | list[dict[str, str]]]]]:
     """Convert list of events to weeks grid."""
 
-    def get_tzinfo(events: list[list[dict[str, Any]]]) -> Optional[datetime.tzinfo]:
+    def get_tzinfo(events: list[list[dict[str, Any]]]) -> datetime.tzinfo | None:
         """Get tzinfo from any event."""
         for event_list in events:
             for event in event_list:
@@ -113,7 +113,7 @@ def events_to_weeks_grid(  # noqa: C901
 
     def initialize_grid(
         first_date: datetime.datetime,
-    ) -> list[list[dict[str, Union[datetime.datetime, list[int], list[dict[str, str]]]]]]:
+    ) -> list[list[dict[str, datetime.datetime | list[int] | list[dict[str, str]]]]]:
         """Initialize grid with empty values."""
         return [
             [
@@ -133,7 +133,7 @@ def events_to_weeks_grid(  # noqa: C901
     first_date_in_grid = today - datetime.timedelta(
         days=weeks * 7 - (7 - (today_week_day + 1)) - 1,
     )
-    dict_type = dict[str, Union[datetime.datetime, list[int], list[dict[str, str]]]]
+    dict_type = dict[str, datetime.datetime | list[int] | list[dict[str, str]]]
     grid: list[list[dict_type]] = initialize_grid(first_date_in_grid)
 
     if not events:

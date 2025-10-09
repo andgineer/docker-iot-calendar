@@ -8,7 +8,7 @@ Usage:
 import datetime
 import json
 import os.path
-from typing import Any, Optional, Union
+from typing import Any
 
 import requests
 
@@ -36,7 +36,7 @@ class Weather:
         self.settings = props
         self.key = self.load_key()
 
-    def load_key(self) -> Optional[str]:
+    def load_key(self) -> str | None:
         """Load the API key from the file specified in the settings.
 
         :return: The API key as a string, or None if the key couldn't be loaded.
@@ -47,7 +47,7 @@ class Weather:
         else:
             return None
 
-    def openweathermap_icons(self, icon_code: str, condition_code: Union[str, int]) -> str:
+    def openweathermap_icons(self, icon_code: str, condition_code: str | int) -> str:
         """Convert OpenWeatherMap icon code and condition code to icon file names.
 
         Mostly we use icon code but for specific conditions use specific icon.
@@ -94,7 +94,7 @@ class Weather:
         longitude: float,
         days: int = 1,
         units: str = "m",
-    ) -> Optional[WeatherData]:
+    ) -> WeatherData | None:
         """Fetch weather data for the given latitude and longitude.
 
         :param latitude:
@@ -113,7 +113,7 @@ class Weather:
             print(f"Exiting because unknown units '{units}', supported {units_map}")
             return None
 
-        params: dict[str, Union[str, int, float]] = {
+        params: dict[str, str | int | float] = {
             "units": units_code,
             "lat": latitude,
             "lon": longitude,

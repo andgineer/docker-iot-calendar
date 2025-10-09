@@ -8,7 +8,7 @@ cairocffi==1.7.1
     # via cairosvg
 cairosvg==2.8.2
     # via -r requirements.docker.in
-certifi==2025.8.3
+certifi==2025.10.5
     # via requests
 cffi==2.0.0
     # via cairocffi
@@ -18,9 +18,9 @@ cssselect2==0.8.0
     # via cairosvg
 defusedxml==0.7.1
     # via cairosvg
-google-api-core==2.25.1
+google-api-core==2.26.0
     # via google-api-python-client
-google-api-python-client==2.183.0
+google-api-python-client==2.184.0
     # via -r requirements.docker.in
 google-auth==2.41.1
     # via
@@ -62,9 +62,9 @@ pyasn1-modules==0.4.2
     #   oauth2client
 pycparser==2.23
     # via cffi
-pydantic==2.11.9
+pydantic==2.12.0
     # via -r requirements.docker.in
-pydantic-core==2.33.2
+pydantic-core==2.41.1
     # via pydantic
 pyparsing==3.2.5
     # via httplib2

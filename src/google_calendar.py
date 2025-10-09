@@ -6,7 +6,7 @@ import os.path
 import time
 from datetime import timedelta
 from pprint import pprint
-from typing import Any, Optional
+from typing import Any
 
 import dateutil.parser
 import dateutil.tz
@@ -31,7 +31,7 @@ class Calendar:
         self.tz = os.environ.get("TZ", "Europe/Moscow")
         self.calendarId = calendar_id
 
-    def get_credentials_http(self) -> Optional[httplib2.Http]:
+    def get_credentials_http(self) -> httplib2.Http | None:
         """Get credentials."""
         if GOOGLE_CREDENTIALS_PARAM not in self.settings:
             raise ValueError(f"'{GOOGLE_CREDENTIALS_PARAM}' not found in settings.")
@@ -56,7 +56,7 @@ You can get new one from https://console.developers.google.com/start/api?id=cale
             return None
         return credentials.authorize(httplib2.Http())
 
-    def get_service(self) -> Optional[discovery.Resource]:
+    def get_service(self) -> discovery.Resource | None:
         """Get service."""
         if not self.http:
             return None

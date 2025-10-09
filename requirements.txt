@@ -14,7 +14,7 @@ cairocffi==1.7.1
     #   cairosvg
 cairosvg==2.8.2
     # via -r requirements.docker.txt
-certifi==2025.8.3
+certifi==2025.10.5
     # via
     #   -r requirements.docker.txt
     #   requests
@@ -40,11 +40,11 @@ defusedxml==0.7.1
     #   cairosvg
 fonttools==4.60.1
     # via matplotlib
-google-api-core==2.25.1
+google-api-core==2.26.0
     # via
     #   -r requirements.docker.txt
     #   google-api-python-client
-google-api-python-client==2.183.0
+google-api-python-client==2.184.0
     # via -r requirements.docker.txt
 google-auth==2.41.1
     # via
@@ -72,7 +72,7 @@ idna==3.10
     #   requests
 kiwisolver==1.4.9
     # via matplotlib
-matplotlib==3.10.6
+matplotlib==3.10.7
     # via -r requirements.in
 numpy==2.3.3
     # via
@@ -113,9 +113,9 @@ pycparser==2.23
     # via
     #   -r requirements.docker.txt
     #   cffi
-pydantic==2.11.9
+pydantic==2.12.0
     # via -r requirements.docker.txt
-pydantic-core==2.33.2
+pydantic-core==2.41.1
     # via
     #   -r requirements.docker.txt
     #   pydantic

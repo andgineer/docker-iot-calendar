@@ -8,7 +8,7 @@ import pprint
 import sys
 from collections.abc import Awaitable, Sequence
 from pathlib import Path
-from typing import Any, Optional, Union, cast
+from typing import Any, cast
 
 import tornado.auth
 import tornado.escape
@@ -40,7 +40,7 @@ should connect volume with setting files, like
     -v $PWD/amazon-dash-private:/amazon-dash-private:ro"""
 
 
-def load_settings(folder: Optional[str] = None, load_secrets: bool = True) -> dict[str, Any]:  # noqa: C901
+def load_settings(folder: str | None = None, load_secrets: bool = True) -> dict[str, Any]:  # noqa: C901
     """Load settings."""
 
     def set_folder(params: dict[str, Any], substr: str, folder: str) -> None:
@@ -111,7 +111,7 @@ class HandlerWithParams(tornado.web.RequestHandler):
         expiration = datetime.datetime(now.year - 1, now.month, now.day)
         self.set_header("Last-Modified", expiration)
 
-    def data_received(self, chunk: bytes) -> Optional[Awaitable[None]]:
+    def data_received(self, chunk: bytes) -> Awaitable[None] | None:
         """Receive data."""
 
 
@@ -152,7 +152,7 @@ class DashboardImageHandler(HandlerWithParams):
         self.set_header("Content-type", f"image/{image_format}")
         self.flush()
 
-    def data_received(self, chunk: bytes) -> Optional[Awaitable[None]]:
+    def data_received(self, chunk: bytes) -> Awaitable[None] | None:
         """Receive data."""
 
 
@@ -181,18 +181,17 @@ class DashboardListHandler(HandlerWithParams):
                 page_title="Dashboards list",
             )
 
-    def data_received(self, chunk: bytes) -> Optional[Awaitable[None]]:
+    def data_received(self, chunk: bytes) -> Awaitable[None] | None:
         """Receive data."""
 
 
-HandlersType = Optional[
+HandlersType = (
     Sequence[
-        Union[
-            tuple[str, type[HandlerWithParams]],
-            tuple[str, type[tornado.web.StaticFileHandler], dict[str, Any]],
-        ]
+        tuple[str, type[HandlerWithParams]]
+        | tuple[str, type[tornado.web.StaticFileHandler], dict[str, Any]]
     ]
-]
+    | None
+)
 
 
 class Application(tornado.web.Application):
@@ -200,7 +199,7 @@ class Application(tornado.web.Application):
 
     def __init__(
         self,
-        server_settings: Optional[dict[str, Any]] = None,
+        server_settings: dict[str, Any] | None = None,
         handlers: HandlersType = None,
     ):
         """Init."""
