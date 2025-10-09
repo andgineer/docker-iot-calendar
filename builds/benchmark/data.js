@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1759291383014,
+  "lastUpdate": 1759982969152,
   "repoUrl": "https://github.com/andgineer/docker-iot-calendar",
   "entries": {
     "Benchmark": [
@@ -744,6 +744,37 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.00012789926120483576",
             "extra": "mean: 1.9602497999997581 msec\nrounds: 5"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "Andrei_Sorokin2@epam.com",
+            "name": "andgineer",
+            "username": "andgineer"
+          },
+          "committer": {
+            "email": "Andrei_Sorokin2@epam.com",
+            "name": "andgineer",
+            "username": "andgineer"
+          },
+          "distinct": true,
+          "id": "7af63a5407e7682efd4e0139bc471d577674626f",
+          "message": "get rid of Optional and union",
+          "timestamp": "2025-10-09T06:08:42+02:00",
+          "tree_id": "a423873d6ddf15e0bf984e5adf34319506fbf402",
+          "url": "https://github.com/andgineer/docker-iot-calendar/commit/7af63a5407e7682efd4e0139bc471d577674626f"
+        },
+        "date": 1759982968710,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/test_calendar_image.py::test_draw_benchmark",
+            "value": 508.35801581019007,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00009444696945700978",
+            "extra": "mean: 1.9671175999974366 msec\nrounds: 5"
           }
         ]
       }
