@@ -4,7 +4,7 @@ annotated-types==0.7.0
     # via
     #   -r requirements.docker.txt
     #   pydantic
-cachetools==6.2.0
+cachetools==6.2.1
     # via
     #   -r requirements.docker.txt
     #   google-auth
@@ -22,7 +22,7 @@ cffi==2.0.0
     # via
     #   -r requirements.docker.txt
     #   cairocffi
-charset-normalizer==3.4.3
+charset-normalizer==3.4.4
     # via
     #   -r requirements.docker.txt
     #   requests
@@ -40,23 +40,23 @@ defusedxml==0.7.1
     #   cairosvg
 fonttools==4.60.1
     # via matplotlib
-google-api-core==2.26.0
+google-api-core==2.28.1
     # via
     #   -r requirements.docker.txt
     #   google-api-python-client
-google-api-python-client==2.184.0
+google-api-python-client==2.186.0
     # via -r requirements.docker.txt
-google-auth==2.41.1
+google-auth==2.42.1
     # via
     #   -r requirements.docker.txt
     #   google-api-core
     #   google-api-python-client
     #   google-auth-httplib2
-google-auth-httplib2==0.2.0
+google-auth-httplib2==0.2.1
     # via
     #   -r requirements.docker.txt
     #   google-api-python-client
-googleapis-common-protos==1.70.0
+googleapis-common-protos==1.71.0
     # via
     #   -r requirements.docker.txt
     #   google-api-core
@@ -66,7 +66,7 @@ httplib2==0.31.0
     #   google-api-python-client
     #   google-auth-httplib2
     #   oauth2client
-idna==3.10
+idna==3.11
     # via
     #   -r requirements.docker.txt
     #   requests
@@ -74,7 +74,7 @@ kiwisolver==1.4.9
     # via matplotlib
 matplotlib==3.10.7
     # via -r requirements.in
-numpy==2.3.3
+numpy==2.3.4
     # via
     #   -r requirements.in
     #   contourpy
@@ -83,7 +83,7 @@ oauth2client==4.1.3
     # via -r requirements.docker.txt
 packaging==25.0
     # via matplotlib
-pillow==11.3.0
+pillow==12.0.0
     # via
     #   -r requirements.docker.txt
     #   cairosvg
@@ -92,7 +92,7 @@ proto-plus==1.26.1
     # via
     #   -r requirements.docker.txt
     #   google-api-core
-protobuf==6.32.1
+protobuf==6.33.0
     # via
     #   -r requirements.docker.txt
     #   google-api-core
@@ -113,9 +113,9 @@ pycparser==2.23
     # via
     #   -r requirements.docker.txt
     #   cffi
-pydantic==2.12.0
+pydantic==2.12.3
     # via -r requirements.docker.txt
-pydantic-core==2.41.1
+pydantic-core==2.41.4
     # via
     #   -r requirements.docker.txt
     #   pydantic
