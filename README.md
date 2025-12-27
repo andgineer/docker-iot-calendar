@@ -14,7 +14,7 @@
 | src/openweathermap\_org.py |       63 |        0 |    100% |           |
 | src/singleton.py           |       10 |        0 |    100% |           |
 | src/weather\_gov.py        |       72 |       12 |     83% |46-50, 60, 73-76, 85, 89, 91, 93, 126 |
-|                  **TOTAL** |  **706** |   **32** | **95%** |           |
+| **TOTAL**                  |  **706** |   **32** | **95%** |           |
 
 
 ## Setup coverage badge
