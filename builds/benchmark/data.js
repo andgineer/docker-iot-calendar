@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1766815252040,
+  "lastUpdate": 1769244202794,
   "repoUrl": "https://github.com/andgineer/docker-iot-calendar",
   "entries": {
     "Benchmark": [
@@ -837,6 +837,37 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.00006157499312595511",
             "extra": "mean: 1.9502423999824714 msec\nrounds: 5"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "Andrei_Sorokin2@epam.com",
+            "name": "andgineer",
+            "username": "andgineer"
+          },
+          "committer": {
+            "email": "Andrei_Sorokin2@epam.com",
+            "name": "andgineer",
+            "username": "andgineer"
+          },
+          "distinct": true,
+          "id": "c6175cd4a8f8016cf9e86c28551c7d16ddedc887",
+          "message": "Wheel Affected by Arbitrary File Permission",
+          "timestamp": "2026-01-24T09:42:33+01:00",
+          "tree_id": "560af36c831b34f5ec57ec68954aed933e48888a",
+          "url": "https://github.com/andgineer/docker-iot-calendar/commit/c6175cd4a8f8016cf9e86c28551c7d16ddedc887"
+        },
+        "date": 1769244201717,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/test_calendar_image.py::test_draw_benchmark",
+            "value": 512.624874135768,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00012160447640594496",
+            "extra": "mean: 1.950744200007648 msec\nrounds: 5"
           }
         ]
       }
