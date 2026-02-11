@@ -18,12 +18,17 @@ cffi==2.0.0
     # via
     #   -r requirements.docker.txt
     #   cairocffi
+    #   cryptography
 charset-normalizer==3.4.4
     # via
     #   -r requirements.docker.txt
     #   requests
 contourpy==1.3.3
     # via matplotlib
+cryptography==46.0.5
+    # via
+    #   -r requirements.docker.txt
+    #   google-auth
 cssselect2==0.8.0
     # via
     #   -r requirements.docker.txt
@@ -40,9 +45,9 @@ google-api-core==2.29.0
     # via
     #   -r requirements.docker.txt
     #   google-api-python-client
-google-api-python-client==2.188.0
+google-api-python-client==2.189.0
     # via -r requirements.docker.txt
-google-auth==2.47.0
+google-auth==2.48.0
     # via
     #   -r requirements.docker.txt
     #   google-api-core
@@ -70,7 +75,7 @@ kiwisolver==1.4.9
     # via matplotlib
 matplotlib==3.10.8
     # via -r requirements.in
-numpy==2.4.1
+numpy==2.4.2
     # via
     #   -r requirements.in
     #   contourpy
@@ -79,16 +84,16 @@ oauth2client==4.1.3
     # via -r requirements.docker.txt
 packaging==26.0
     # via matplotlib
-pillow==12.1.0
+pillow==12.1.1
     # via
     #   -r requirements.docker.txt
     #   cairosvg
     #   matplotlib
-proto-plus==1.27.0
+proto-plus==1.27.1
     # via
     #   -r requirements.docker.txt
     #   google-api-core
-protobuf==6.33.4
+protobuf==6.33.5
     # via
     #   -r requirements.docker.txt
     #   google-api-core
@@ -133,7 +138,7 @@ rsa==4.9.1
     #   -r requirements.docker.txt
     #   google-auth
     #   oauth2client
-setuptools==80.10.1
+setuptools==82.0.0
     # via -r requirements.docker.txt
 six==1.17.0
     # via
