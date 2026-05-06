@@ -4,8 +4,6 @@ annotated-types==0.7.0
     # via
     #   -r requirements.txt
     #   pydantic
-astroid==4.0.4
-    # via pylint
 babel==2.18.0
     # via mkdocs-material
 backrefs==7.0
@@ -65,8 +63,6 @@ defusedxml==0.7.1
     # via
     #   -r requirements.txt
     #   cairosvg
-dill==0.4.1
-    # via pylint
 distlib==0.4.0
     # via virtualenv
 filelock==3.29.0
@@ -115,8 +111,6 @@ idna==3.13
     #   requests
 iniconfig==2.3.0
     # via pytest
-isort==8.0.1
-    # via pylint
 jinja2==3.1.6
     # via
     #   mkdocs
@@ -126,8 +120,6 @@ kiwisolver==1.5.0
     # via
     #   -r requirements.txt
     #   matplotlib
-librt==0.10.0
-    # via mypy
 markdown==3.10.2
     # via
     #   mkdocs
@@ -143,8 +135,6 @@ markupsafe==3.0.3
     #   mkdocstrings
 matplotlib==3.10.9
     # via -r requirements.txt
-mccabe==0.7.0
-    # via pylint
 mergedeep==1.3.4
     # via
     #   mkdocs
@@ -173,10 +163,6 @@ mkdocstrings==1.0.4
     #   mkdocstrings-python
 mkdocstrings-python==2.0.3
     # via mkdocstrings
-mypy==1.20.2
-    # via -r requirements.dev.in
-mypy-extensions==1.1.0
-    # via mypy
 natsort==8.4.0
     # via mkdocs-awesome-pages-plugin
 nodeenv==1.10.0
@@ -199,9 +185,7 @@ packaging==26.2
 paginate==0.5.7
     # via mkdocs-material
 pathspec==1.1.1
-    # via
-    #   mkdocs
-    #   mypy
+    # via mkdocs
 pillow==12.2.0
     # via
     #   -r requirements.txt
@@ -214,7 +198,6 @@ pip-tools==7.5.3
 platformdirs==4.9.6
     # via
     #   mkdocs-get-deps
-    #   pylint
     #   python-discovery
     #   virtualenv
 pluggy==1.6.0
@@ -260,8 +243,6 @@ pygments==2.20.0
     # via
     #   mkdocs-material
     #   pytest
-pylint==4.0.5
-    # via -r requirements.dev.in
 pymdown-extensions==10.21.2
     # via
     #   -r requirements.dev.in
@@ -276,6 +257,8 @@ pyproject-hooks==1.2.0
     # via
     #   build
     #   pip-tools
+pyrefly==0.63.1
+    # via -r requirements.dev.in
 pytest==9.0.3
     # via
     #   -r requirements.dev.in
@@ -327,14 +310,11 @@ tinycss2==1.5.1
     #   -r requirements.txt
     #   cairosvg
     #   cssselect2
-tomlkit==0.14.0
-    # via pylint
 tornado==6.5.5
     # via -r requirements.txt
 typing-extensions==4.15.0
     # via
     #   -r requirements.txt
-    #   mypy
     #   pydantic
     #   pydantic-core
     #   typing-inspection

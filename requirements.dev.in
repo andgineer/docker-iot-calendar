@@ -20,5 +20,4 @@ pip-tools
 
 # lint
 pre-commit
-pylint
-mypy
+pyrefly

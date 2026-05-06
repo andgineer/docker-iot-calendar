@@ -359,7 +359,8 @@ def add_image_to_axes(
     xlim, ylim = ax.get_xlim(), ax.get_ylim()
     xsz, ysz = xlim[1] - xlim[0], ylim[1] - ylim[0]
     x_scale = 1 / plot_height  # Clarify the logic behind this.
-    x_val, y_val = (date2num(x_pos) - xlim[0]) / xsz * x_scale, (y_pos - ylim[0]) / ysz  # type: ignore
+    x_val = float((date2num(x_pos) - xlim[0]) / xsz * x_scale)
+    y_val = float((y_pos - ylim[0]) / ysz)
 
     axes = plt.axes((plot_left, plot_bottom, plot_width, plot_height), label="2")
     configure_axes_for_image(axes)
