@@ -119,8 +119,9 @@ class DashboardImageHandler(HandlerWithParams):
     """Dashboard image handler."""
 
     # todo async decorators and async version of draw_calendar
-    def get(self, image_format: str) -> None:
+    def get(self, *args: str, **_kwargs: str) -> None:
         """Get image."""
+        image_format = args[0]
         self.disable_cache()
         params = self.load_params(
             format=image_format,
@@ -159,7 +160,7 @@ class DashboardImageHandler(HandlerWithParams):
 class DashboardListHandler(HandlerWithParams):
     """Dashboard list handler."""
 
-    def get(self) -> None:
+    def get(self, *_args: str, **_kwargs: str) -> None:
         """Get list of dashboards."""
         self.disable_cache()
         params = self.load_params()

@@ -8,11 +8,11 @@ astroid==4.0.4
     # via pylint
 babel==2.18.0
     # via mkdocs-material
-backrefs==6.2
+backrefs==7.0
     # via mkdocs-material
 bracex==2.6
     # via wcmatch
-build==1.4.0
+build==1.5.0
     # via pip-tools
 cairocffi==1.7.1
     # via
@@ -20,7 +20,7 @@ cairocffi==1.7.1
     #   cairosvg
 cairosvg==2.9.0
     # via -r requirements.txt
-certifi==2026.2.25
+certifi==2026.4.22
     # via
     #   -r requirements.txt
     #   requests
@@ -31,11 +31,11 @@ cffi==2.0.0
     #   cryptography
 cfgv==3.5.0
     # via pre-commit
-charset-normalizer==3.4.6
+charset-normalizer==3.4.7
     # via
     #   -r requirements.txt
     #   requests
-click==8.3.1
+click==8.3.3
     # via
     #   mkdocs
     #   pip-tools
@@ -49,7 +49,7 @@ coverage==7.13.5
     # via
     #   -r requirements.dev.in
     #   pytest-cov
-cryptography==46.0.5
+cryptography==48.0.0
     # via
     #   -r requirements.txt
     #   google-auth
@@ -69,7 +69,7 @@ dill==0.4.1
     # via pylint
 distlib==0.4.0
     # via virtualenv
-filelock==3.25.2
+filelock==3.29.0
     # via
     #   python-discovery
     #   virtualenv
@@ -79,27 +79,27 @@ fonttools==4.62.1
     #   matplotlib
 ghp-import==2.1.0
     # via mkdocs
-google-api-core==2.30.0
+google-api-core==2.30.3
     # via
     #   -r requirements.txt
     #   google-api-python-client
-google-api-python-client==2.193.0
+google-api-python-client==2.195.0
     # via -r requirements.txt
-google-auth==2.49.1
+google-auth==2.50.0
     # via
     #   -r requirements.txt
     #   google-api-core
     #   google-api-python-client
     #   google-auth-httplib2
-google-auth-httplib2==0.3.0
+google-auth-httplib2==0.3.1
     # via
     #   -r requirements.txt
     #   google-api-python-client
-googleapis-common-protos==1.73.0
+googleapis-common-protos==1.74.0
     # via
     #   -r requirements.txt
     #   google-api-core
-griffelib==2.0.0
+griffelib==2.0.2
     # via mkdocstrings-python
 httplib2==0.31.2
     # via
@@ -107,9 +107,9 @@ httplib2==0.31.2
     #   google-api-python-client
     #   google-auth-httplib2
     #   oauth2client
-identify==2.6.18
+identify==2.6.19
     # via pre-commit
-idna==3.11
+idna==3.13
     # via
     #   -r requirements.txt
     #   requests
@@ -126,7 +126,7 @@ kiwisolver==1.5.0
     # via
     #   -r requirements.txt
     #   matplotlib
-librt==0.8.1
+librt==0.10.0
     # via mypy
 markdown==3.10.2
     # via
@@ -141,7 +141,7 @@ markupsafe==3.0.3
     #   mkdocs
     #   mkdocs-autorefs
     #   mkdocstrings
-matplotlib==3.10.8
+matplotlib==3.10.9
     # via -r requirements.txt
 mccabe==0.7.0
     # via pylint
@@ -163,17 +163,17 @@ mkdocs-awesome-pages-plugin==2.10.1
     # via -r requirements.dev.in
 mkdocs-get-deps==0.2.2
     # via mkdocs
-mkdocs-material==9.7.5
+mkdocs-material==9.7.6
     # via -r requirements.dev.in
 mkdocs-material-extensions==1.3.1
     # via mkdocs-material
-mkdocstrings==1.0.3
+mkdocstrings==1.0.4
     # via
     #   -r requirements.dev.in
     #   mkdocstrings-python
 mkdocstrings-python==2.0.3
     # via mkdocstrings
-mypy==1.19.1
+mypy==1.20.2
     # via -r requirements.dev.in
 mypy-extensions==1.1.0
     # via mypy
@@ -181,14 +181,14 @@ natsort==8.4.0
     # via mkdocs-awesome-pages-plugin
 nodeenv==1.10.0
     # via pre-commit
-numpy==2.4.3
+numpy==2.4.4
     # via
     #   -r requirements.txt
     #   contourpy
     #   matplotlib
 oauth2client==4.1.3
     # via -r requirements.txt
-packaging==26.0
+packaging==26.2
     # via
     #   -r requirements.txt
     #   build
@@ -198,20 +198,20 @@ packaging==26.0
     #   wheel
 paginate==0.5.7
     # via mkdocs-material
-pathspec==1.0.4
+pathspec==1.1.1
     # via
     #   mkdocs
     #   mypy
-pillow==12.1.1
+pillow==12.2.0
     # via
     #   -r requirements.txt
     #   cairosvg
     #   matplotlib
-pip==26.0.1
+pip==26.1.1
     # via pip-tools
 pip-tools==7.5.3
     # via -r requirements.dev.in
-platformdirs==4.9.4
+platformdirs==4.9.6
     # via
     #   mkdocs-get-deps
     #   pylint
@@ -221,13 +221,13 @@ pluggy==1.6.0
     # via
     #   pytest
     #   pytest-cov
-pre-commit==4.5.1
+pre-commit==4.6.0
     # via -r requirements.dev.in
-proto-plus==1.27.1
+proto-plus==1.27.2
     # via
     #   -r requirements.txt
     #   google-api-core
-protobuf==6.33.6
+protobuf==7.34.1
     # via
     #   -r requirements.txt
     #   google-api-core
@@ -250,19 +250,19 @@ pycparser==3.0
     # via
     #   -r requirements.txt
     #   cffi
-pydantic==2.12.5
+pydantic==2.13.3
     # via -r requirements.txt
-pydantic-core==2.41.5
+pydantic-core==2.46.3
     # via
     #   -r requirements.txt
     #   pydantic
-pygments==2.19.2
+pygments==2.20.0
     # via
     #   mkdocs-material
     #   pytest
 pylint==4.0.5
     # via -r requirements.dev.in
-pymdown-extensions==10.21
+pymdown-extensions==10.21.2
     # via
     #   -r requirements.dev.in
     #   mkdocs-material
@@ -276,7 +276,7 @@ pyproject-hooks==1.2.0
     # via
     #   build
     #   pip-tools
-pytest==9.0.2
+pytest==9.0.3
     # via
     #   -r requirements.dev.in
     #   pytest-benchmark
@@ -284,7 +284,7 @@ pytest==9.0.2
     #   pytest-mock
 pytest-benchmark==5.2.3
     # via -r requirements.dev.in
-pytest-cov==7.0.0
+pytest-cov==7.1.0
     # via -r requirements.dev.in
 pytest-mock==3.15.1
     # via -r requirements.dev.in
@@ -293,7 +293,7 @@ python-dateutil==2.9.0.post0
     #   -r requirements.txt
     #   ghp-import
     #   matplotlib
-python-discovery==1.2.0
+python-discovery==1.3.0
     # via virtualenv
 pyyaml==6.0.3
     # via
@@ -304,7 +304,7 @@ pyyaml==6.0.3
     #   pyyaml-env-tag
 pyyaml-env-tag==1.1
     # via mkdocs
-requests==2.32.5
+requests==2.33.1
     # via
     #   -r requirements.txt
     #   google-api-core
@@ -350,7 +350,7 @@ urllib3==2.6.3
     # via
     #   -r requirements.txt
     #   requests
-virtualenv==21.2.0
+virtualenv==21.3.1
     # via pre-commit
 watchdog==6.0.0
     # via mkdocs
@@ -361,5 +361,5 @@ webencodings==0.5.1
     #   -r requirements.txt
     #   cssselect2
     #   tinycss2
-wheel==0.46.3
+wheel==0.47.0
     # via pip-tools

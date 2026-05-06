@@ -122,7 +122,7 @@ You can get new one from https://console.developers.google.com/start/api?id=cale
         page_token = None
         while True:
             events = (
-                self.service.events()
+                self.service.events()  # type: ignore[union-attr]
                 .list(
                     calendarId=self.calendarId,
                     timeMin=self.google_time_format(

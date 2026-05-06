@@ -13,6 +13,7 @@ from typing import Any
 
 import matplotlib
 import matplotlib.font_manager
+import matplotlib.style
 
 from models import WeatherData, WeatherLabel
 
@@ -31,6 +32,7 @@ import PIL.Image
 from matplotlib import patches
 from matplotlib.axes import Axes
 from matplotlib.dates import DateFormatter, date2num
+from matplotlib.ticker import MaxNLocator
 
 from cached_decorator import cached
 from image_loader import ImageLoader
@@ -275,9 +277,9 @@ def draw_pies(
 
     ax.set_ylim(0, pies_height)
     ax.set_xlim(0, width_aspect)
-    ax.patch.set_visible(False)
-    ax.set_xticklabels([])
-    ax.set_yticklabels([])
+    ax.patch.set_visible(False)  # type: ignore[union-attr]
+    ax.set_xticklabels([])  # type: ignore[operator]
+    ax.set_yticklabels([])  # type: ignore[operator]
 
 
 def draw_weather(
@@ -303,9 +305,9 @@ def draw_weather(
     """
     ax = plt.axes(rect)
     plt.axis("off")
-    ax.patch.set_visible(False)
-    ax.set_xticklabels([])
-    ax.set_yticklabels([])
+    ax.patch.set_visible(False)  # type: ignore[union-attr]
+    ax.set_xticklabels([])  # type: ignore[operator]
+    ax.set_yticklabels([])  # type: ignore[operator]
     ax.set_ylim(-0.03, 1.03)
     ax.set_xlim(-0.03, 1.03)
     ax.text(
@@ -376,9 +378,9 @@ def add_image_to_axes(
 def configure_axes_for_image(axes: Axes) -> None:
     """Configure the axes for displaying an image."""
     plt.axis("off")
-    axes.patch.set_visible(False)
-    axes.set_xticklabels([])
-    axes.set_yticklabels([])
+    axes.patch.set_visible(False)  # type: ignore[union-attr]
+    axes.set_xticklabels([])  # type: ignore[operator]
+    axes.set_yticklabels([])  # type: ignore[operator]
     axes.set_ylim(0, 1)
     axes.set_xlim(0, 1 / plot_height)  # Used the earlier logic for x_scale directly here.
 
@@ -423,11 +425,11 @@ def draw_plot(  # noqa: PLR0913
         ax.xaxis.set_major_formatter(short_fmt)
     legend_labels = [label.summary for label in labels]
     polies = ax.stackplot(x, y)  # type: ignore
-    ax.xaxis.set_major_locator(plt.MaxNLocator(6))
-    ax.patch.set_visible(False)
+    ax.xaxis.set_major_locator(MaxNLocator(6))
+    ax.patch.set_visible(False)  # type: ignore[union-attr]
     if legend == "rectangle":
         plt.legend(
-            [plt.Rectangle((0, 0), 1, 1, fc=poly.get_facecolor()[0]) for poly in polies],
+            [patches.Rectangle((0, 0), 1, 1, fc=poly.get_facecolor()[0]) for poly in polies],
             legend_labels,
         )
     elif legend == "inside":
@@ -485,8 +487,8 @@ def draw_calendar(  # noqa: PLR0913
     plt.figure(figsize=(picture_width, picture_height), dpi=dpi, facecolor="white")
     absent_grid_images = {absent["summary"]: absent["image_grid"] for absent in absent_labels}
     image_loader = ImageLoader()
-    plt.rcParams.update(plt.rcParamsDefault)
-    with plt.style.context(params.style, after_reset=True):
+    plt.rcParams.update(matplotlib.rcParamsDefault)
+    with matplotlib.style.context(params.style, after_reset=True):  # type: ignore[union-attr]
         if int(params.xkcd):
             plt.xkcd()
         draw_weather(
