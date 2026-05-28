@@ -10,7 +10,7 @@ cairocffi==1.7.1
     #   cairosvg
 cairosvg==2.9.0
     # via -r requirements.docker.txt
-certifi==2026.4.22
+certifi==2026.5.20
     # via
     #   -r requirements.docker.txt
     #   requests
@@ -39,25 +39,25 @@ defusedxml==0.7.1
     # via
     #   -r requirements.docker.txt
     #   cairosvg
-fonttools==4.62.1
+fonttools==4.63.0
     # via matplotlib
 google-api-core==2.30.3
     # via
     #   -r requirements.docker.txt
     #   google-api-python-client
-google-api-python-client==2.195.0
+google-api-python-client==2.196.0
     # via -r requirements.docker.txt
-google-auth==2.50.0
+google-auth==2.53.0
     # via
     #   -r requirements.docker.txt
     #   google-api-core
     #   google-api-python-client
     #   google-auth-httplib2
-google-auth-httplib2==0.3.1
+google-auth-httplib2==0.4.0
     # via
     #   -r requirements.docker.txt
     #   google-api-python-client
-googleapis-common-protos==1.74.0
+googleapis-common-protos==1.75.0
     # via
     #   -r requirements.docker.txt
     #   google-api-core
@@ -67,7 +67,7 @@ httplib2==0.31.2
     #   google-api-python-client
     #   google-auth-httplib2
     #   oauth2client
-idna==3.13
+idna==3.16
     # via
     #   -r requirements.docker.txt
     #   requests
@@ -75,7 +75,7 @@ kiwisolver==1.5.0
     # via matplotlib
 matplotlib==3.10.9
     # via -r requirements.in
-numpy==2.4.4
+numpy==2.4.6
     # via
     #   -r requirements.in
     #   contourpy
@@ -89,11 +89,11 @@ pillow==12.2.0
     #   -r requirements.docker.txt
     #   cairosvg
     #   matplotlib
-proto-plus==1.27.2
+proto-plus==1.28.0
     # via
     #   -r requirements.docker.txt
     #   google-api-core
-protobuf==7.34.1
+protobuf==7.35.0
     # via
     #   -r requirements.docker.txt
     #   google-api-core
@@ -114,9 +114,9 @@ pycparser==3.0
     # via
     #   -r requirements.docker.txt
     #   cffi
-pydantic==2.13.3
+pydantic==2.13.4
     # via -r requirements.docker.txt
-pydantic-core==2.46.3
+pydantic-core==2.46.4
     # via
     #   -r requirements.docker.txt
     #   pydantic
@@ -129,7 +129,7 @@ python-dateutil==2.9.0.post0
     # via
     #   -r requirements.docker.txt
     #   matplotlib
-requests==2.33.1
+requests==2.34.2
     # via
     #   -r requirements.docker.txt
     #   google-api-core
@@ -149,7 +149,7 @@ tinycss2==1.5.1
     #   -r requirements.docker.txt
     #   cairosvg
     #   cssselect2
-tornado==6.5.5
+tornado==6.5.6
     # via -r requirements.docker.txt
 typing-extensions==4.15.0
     # via
@@ -165,7 +165,7 @@ uritemplate==4.2.0
     # via
     #   -r requirements.docker.txt
     #   google-api-python-client
-urllib3==2.6.3
+urllib3==2.7.0
     # via
     #   -r requirements.docker.txt
     #   requests
