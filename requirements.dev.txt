@@ -18,7 +18,7 @@ cairocffi==1.7.1
     #   cairosvg
 cairosvg==2.9.0
     # via -r requirements.txt
-certifi==2026.5.20
+certifi==2026.6.17
     # via
     #   -r requirements.txt
     #   requests
@@ -33,7 +33,7 @@ charset-normalizer==3.4.7
     # via
     #   -r requirements.txt
     #   requests
-click==8.4.1
+click==8.4.2
     # via
     #   mkdocs
     #   pip-tools
@@ -43,11 +43,11 @@ contourpy==1.3.3
     # via
     #   -r requirements.txt
     #   matplotlib
-coverage==7.14.1
+coverage==7.14.3
     # via
     #   -r requirements.dev.in
     #   pytest-cov
-cryptography==48.0.0
+cryptography==49.0.0
     # via
     #   -r requirements.txt
     #   google-auth
@@ -63,9 +63,9 @@ defusedxml==0.7.1
     # via
     #   -r requirements.txt
     #   cairosvg
-distlib==0.4.0
+distlib==0.4.3
     # via virtualenv
-filelock==3.29.0
+filelock==3.29.4
     # via
     #   python-discovery
     #   virtualenv
@@ -75,13 +75,13 @@ fonttools==4.63.0
     #   matplotlib
 ghp-import==2.1.0
     # via mkdocs
-google-api-core==2.30.3
+google-api-core==2.31.0
     # via
     #   -r requirements.txt
     #   google-api-python-client
-google-api-python-client==2.196.0
+google-api-python-client==2.197.0
     # via -r requirements.txt
-google-auth==2.53.0
+google-auth==2.55.0
     # via
     #   -r requirements.txt
     #   google-api-core
@@ -95,7 +95,7 @@ googleapis-common-protos==1.75.0
     # via
     #   -r requirements.txt
     #   google-api-core
-griffelib==2.0.2
+griffelib==2.1.0
     # via mkdocstrings-python
 httplib2==0.31.2
     # via
@@ -105,7 +105,7 @@ httplib2==0.31.2
     #   oauth2client
 identify==2.6.19
     # via pre-commit
-idna==3.16
+idna==3.18
     # via
     #   -r requirements.txt
     #   requests
@@ -133,7 +133,7 @@ markupsafe==3.0.3
     #   mkdocs
     #   mkdocs-autorefs
     #   mkdocstrings
-matplotlib==3.10.9
+matplotlib==3.11.0
     # via -r requirements.txt
 mergedeep==1.3.4
     # via
@@ -161,13 +161,13 @@ mkdocstrings==1.0.4
     # via
     #   -r requirements.dev.in
     #   mkdocstrings-python
-mkdocstrings-python==2.0.3
+mkdocstrings-python==2.0.5
     # via mkdocstrings
 natsort==8.4.0
     # via mkdocs-awesome-pages-plugin
 nodeenv==1.10.0
     # via pre-commit
-numpy==2.4.6
+numpy==2.5.0
     # via
     #   -r requirements.txt
     #   contourpy
@@ -191,7 +191,7 @@ pillow==12.2.0
     #   -r requirements.txt
     #   cairosvg
     #   matplotlib
-pip==26.1.1
+pip==26.1.2
     # via pip-tools
 pip-tools==7.5.3
     # via -r requirements.dev.in
@@ -210,7 +210,7 @@ proto-plus==1.28.0
     # via
     #   -r requirements.txt
     #   google-api-core
-protobuf==7.35.0
+protobuf==7.35.1
     # via
     #   -r requirements.txt
     #   google-api-core
@@ -243,7 +243,7 @@ pygments==2.20.0
     # via
     #   mkdocs-material
     #   pytest
-pymdown-extensions==10.21.3
+pymdown-extensions==11.0
     # via
     #   -r requirements.dev.in
     #   mkdocs-material
@@ -257,9 +257,9 @@ pyproject-hooks==1.2.0
     # via
     #   build
     #   pip-tools
-pyrefly==1.0.0
+pyrefly==1.1.1
     # via -r requirements.dev.in
-pytest==9.0.3
+pytest==9.1.1
     # via
     #   -r requirements.dev.in
     #   pytest-benchmark
@@ -276,7 +276,7 @@ python-dateutil==2.9.0.post0
     #   -r requirements.txt
     #   ghp-import
     #   matplotlib
-python-discovery==1.4.0
+python-discovery==1.4.2
     # via virtualenv
 pyyaml==6.0.3
     # via
@@ -310,7 +310,7 @@ tinycss2==1.5.1
     #   -r requirements.txt
     #   cairosvg
     #   cssselect2
-tornado==6.5.6
+tornado==6.5.7
     # via -r requirements.txt
 typing-extensions==4.15.0
     # via
@@ -330,7 +330,7 @@ urllib3==2.7.0
     # via
     #   -r requirements.txt
     #   requests
-virtualenv==21.4.1
+virtualenv==21.5.1
     # via pre-commit
 watchdog==6.0.0
     # via mkdocs
