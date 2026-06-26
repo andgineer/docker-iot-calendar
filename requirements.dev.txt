@@ -102,7 +102,6 @@ httplib2==0.31.2
     #   -r requirements.txt
     #   google-api-python-client
     #   google-auth-httplib2
-    #   oauth2client
 identify==2.6.19
     # via pre-commit
 idna==3.18
@@ -172,8 +171,6 @@ numpy==2.5.0
     #   -r requirements.txt
     #   contourpy
     #   matplotlib
-oauth2client==4.1.3
-    # via -r requirements.txt
 packaging==26.2
     # via
     #   -r requirements.txt
@@ -221,14 +218,11 @@ py-cpuinfo==9.0.0
 pyasn1==0.6.3
     # via
     #   -r requirements.txt
-    #   oauth2client
     #   pyasn1-modules
-    #   rsa
 pyasn1-modules==0.4.2
     # via
     #   -r requirements.txt
     #   google-auth
-    #   oauth2client
 pycparser==3.0
     # via
     #   -r requirements.txt
@@ -292,10 +286,6 @@ requests==2.34.2
     #   -r requirements.txt
     #   google-api-core
     #   mkdocs-material
-rsa==4.9.1
-    # via
-    #   -r requirements.txt
-    #   oauth2client
 setuptools==82.0.1
     # via
     #   -r requirements.txt
@@ -303,7 +293,6 @@ setuptools==82.0.1
 six==1.17.0
     # via
     #   -r requirements.txt
-    #   oauth2client
     #   python-dateutil
 tinycss2==1.5.1
     # via

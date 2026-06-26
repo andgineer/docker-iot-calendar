@@ -5,7 +5,6 @@ tornado
 requests
 pydantic
 python-dateutil
-oauth2client
 google-api-python-client
 pillow>=10.3.0
 setuptools

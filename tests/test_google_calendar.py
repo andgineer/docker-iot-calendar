@@ -59,18 +59,18 @@ def test_get_credentials_http_valid(mock_google_calendar, monkeypatch):
 
     mock_service_account_credentials.authorize.return_value = "mocked_http_object"
     with patch(
-        "google_calendar.ServiceAccountCredentials.from_json_keyfile_name",
+        "google_calendar.service_account.Credentials.from_service_account_file",
         return_value=mock_service_account_credentials,
     ):
         calendar = Calendar(settings, "some_id")
-    assert calendar.http is not None
+    assert calendar.credentials is not None
 
 
 def test_get_credentials_http_missing(mock_google_calendar, monkeypatch, capsys):
     settings = {"credentials_file_name": "missing_path.json"}
     monkeypatch.setattr(os.path, "isfile", lambda x: False)
     calendar = Calendar(settings, "some_id")
-    assert calendar.http is None
+    assert calendar.credentials is None
 
     captured = capsys.readouterr()
     assert "Google API credentials file missing_path.json not found." in captured.out
@@ -113,7 +113,9 @@ def test_file_not_found(setup_calendar, capsys):
         assert "Google API credentials file path/to/credentials.json not found." in captured.out
 
 
-@patch("google_calendar.ServiceAccountCredentials.from_json_keyfile_name", side_effect=Exception())
+@patch(
+    "google_calendar.service_account.Credentials.from_service_account_file", side_effect=Exception()
+)
 def test_service_account_credentials_error(mock_from_json, setup_calendar, capsys):
     with patch("os.path.isfile", return_value=True):
         assert setup_calendar.get_credentials_http() is None

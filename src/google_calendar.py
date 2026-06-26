@@ -10,9 +10,8 @@ from typing import Any
 
 import dateutil.parser
 import dateutil.tz
-import httplib2
+from google.oauth2 import service_account
 from googleapiclient import discovery
-from oauth2client.service_account import ServiceAccountCredentials
 
 from cached_decorator import cached
 
@@ -26,12 +25,12 @@ class Calendar:
     def __init__(self, settings: dict[str, Any], calendar_id: str) -> None:
         """Init."""
         self.settings = settings
-        self.http = self.get_credentials_http()
+        self.credentials = self.get_credentials_http()
         self.service = self.get_service()
         self.tz = os.environ.get("TZ", "Europe/Moscow")
         self.calendarId = calendar_id
 
-    def get_credentials_http(self) -> httplib2.Http | None:
+    def get_credentials_http(self) -> service_account.Credentials | None:
         """Get credentials."""
         if GOOGLE_CREDENTIALS_PARAM not in self.settings:
             raise ValueError(f"'{GOOGLE_CREDENTIALS_PARAM}' not found in settings.")
@@ -43,9 +42,9 @@ Get it on https://console.developers.google.com/start/api?id=calendar""",
             )
             return None
         try:
-            credentials = ServiceAccountCredentials.from_json_keyfile_name(
+            credentials = service_account.Credentials.from_service_account_file(
                 self.settings[GOOGLE_CREDENTIALS_PARAM],
-                ["https://www.googleapis.com/auth/calendar"],
+                scopes=["https://www.googleapis.com/auth/calendar"],
             )
         except Exception:  # noqa: BLE001
             print(
@@ -54,19 +53,17 @@ Check your credential file {self.settings[GOOGLE_CREDENTIALS_PARAM]}.
 You can get new one from https://console.developers.google.com/start/api?id=calendar""",
             )
             return None
-        return credentials.authorize(httplib2.Http())
+        return credentials
 
     def get_service(self) -> discovery.Resource | None:
         """Get service."""
-        if not self.http:
+        if not self.credentials:
             return None
         # logging.getLogger('googleapiclient.discovery').setLevel(logging.CRITICAL)
         return discovery.build(
             "calendar",
             "v3",
-            http=self.http,
-            cache_discovery=False,  # file cash bug: https://github.com/google/google-api-python-client/issues/299
-            # also we can use older pip uninstall oauth2client ; pip install oauth2client==3.0.0
+            credentials=self.credentials,
         )
 
     def parse_time(self, s: str) -> datetime.datetime:
