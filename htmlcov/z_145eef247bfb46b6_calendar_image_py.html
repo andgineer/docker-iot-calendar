@@ -64,8 +64,8 @@
             <a id="indexLink" class="nav" href="index.html">&Hat; index</a> &nbsp; &nbsp;
             <a id="nextFileLink" class="nav" href="z_145eef247bfb46b6_google_calendar_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
-            <a class="nav" href="https://coverage.readthedocs.io/en/7.14.2">coverage.py v7.14.2</a>,
-            created at 2026-06-26 07:47 +0000
+            <a class="nav" href="https://coverage.readthedocs.io/en/7.15.2">coverage.py v7.15.2</a>,
+            created at 2026-08-07 05:46 +0000
         </p>
         <aside class="hidden">
             <button type="button" class="button_next_chunk" data-shortcut="j"></button>
@@ -228,7 +228,7 @@
     <p class="run run2"><span class="n"><a id="t146" href="#t146">146</a></span><span class="t">    <span class="op">)</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t147" href="#t147">147</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t148" href="#t148">148</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t149" href="#t149">149</a></span><span class="t"><span class="key">def</span> <span class="nam">draw_empty_pie</span><span class="op">(</span>  <span class="com"># noqa: PLR0913</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t149" href="#t149">149</a></span><span class="t"><span class="key">def</span> <span class="nam">draw_empty_pie</span><span class="op">(</span>  <span class="com"># noqa: PLR0913,PLR0917</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t150" href="#t150">150</a></span><span class="t">    <span class="nam">grid</span><span class="op">:</span> <span class="nam">list</span><span class="op">[</span><span class="nam">list</span><span class="op">[</span><span class="nam">dict</span><span class="op">[</span><span class="nam">str</span><span class="op">,</span> <span class="nam">datetime</span> <span class="op">|</span> <span class="nam">list</span><span class="op">[</span><span class="nam">dict</span><span class="op">[</span><span class="nam">str</span><span class="op">,</span> <span class="nam">Any</span><span class="op">]</span><span class="op">]</span><span class="op">]</span><span class="op">]</span><span class="op">]</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t151" href="#t151">151</a></span><span class="t">    <span class="nam">image_loader</span><span class="op">:</span> <span class="nam">ImageLoader</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t152" href="#t152">152</a></span><span class="t">    <span class="nam">week</span><span class="op">:</span> <span class="nam">int</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
@@ -468,7 +468,7 @@
     <p class="run"><span class="n"><a id="t386" href="#t386">386</a></span><span class="t">    <span class="nam">axes</span><span class="op">.</span><span class="nam">set_xlim</span><span class="op">(</span><span class="num">0</span><span class="op">,</span> <span class="num">1</span> <span class="op">/</span> <span class="nam">plot_height</span><span class="op">)</span>  <span class="com"># Used the earlier logic for x_scale directly here.</span>&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t387" href="#t387">387</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
     <p class="pln"><span class="n"><a id="t388" href="#t388">388</a></span><span class="t">&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t389" href="#t389">389</a></span><span class="t"><span class="key">def</span> <span class="nam">draw_plot</span><span class="op">(</span>  <span class="com"># noqa: PLR0913</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t389" href="#t389">389</a></span><span class="t"><span class="key">def</span> <span class="nam">draw_plot</span><span class="op">(</span>  <span class="com"># noqa: PLR0913,PLR0917</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t390" href="#t390">390</a></span><span class="t">    <span class="nam">x</span><span class="op">:</span> <span class="nam">list</span><span class="op">[</span><span class="nam">datetime</span><span class="op">]</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t391" href="#t391">391</a></span><span class="t">    <span class="nam">y</span><span class="op">:</span> <span class="nam">list</span><span class="op">[</span><span class="nam">list</span><span class="op">[</span><span class="nam">float</span><span class="op">]</span><span class="op">]</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t392" href="#t392">392</a></span><span class="t">    <span class="nam">labels</span><span class="op">:</span> <span class="nam">list</span><span class="op">[</span><span class="nam">WeatherLabel</span><span class="op">]</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
@@ -531,7 +531,7 @@
     <p class="run run2"><span class="n"><a id="t449" href="#t449">449</a></span><span class="t">    <span class="nam">trace_fmt</span><span class="op">=</span><span class="str">"Use stored imaged without rendering (from {time})"</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t450" href="#t450">450</a></span><span class="t">    <span class="nam">daily_refresh</span><span class="op">=</span><span class="key">True</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t451" href="#t451">451</a></span><span class="t"><span class="op">)</span>  <span class="com"># noqa: PLR0913</span>&nbsp;</span><span class="r"></span></p>
-    <p class="run"><span class="n"><a id="t452" href="#t452">452</a></span><span class="t"><span class="key">def</span> <span class="nam">draw_calendar</span><span class="op">(</span>  <span class="com"># noqa: PLR0913</span>&nbsp;</span><span class="r"></span></p>
+    <p class="run"><span class="n"><a id="t452" href="#t452">452</a></span><span class="t"><span class="key">def</span> <span class="nam">draw_calendar</span><span class="op">(</span>  <span class="com"># noqa: PLR0913,PLR0917</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t453" href="#t453">453</a></span><span class="t">    <span class="nam">grid</span><span class="op">:</span> <span class="nam">list</span><span class="op">[</span><span class="nam">list</span><span class="op">[</span><span class="nam">dict</span><span class="op">[</span><span class="nam">str</span><span class="op">,</span> <span class="nam">datetime</span> <span class="op">|</span> <span class="nam">list</span><span class="op">[</span><span class="nam">int</span><span class="op">]</span><span class="op">]</span><span class="op">]</span><span class="op">]</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t454" href="#t454">454</a></span><span class="t">    <span class="nam">x</span><span class="op">:</span> <span class="nam">list</span><span class="op">[</span><span class="nam">datetime</span><span class="op">]</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
     <p class="run run2"><span class="n"><a id="t455" href="#t455">455</a></span><span class="t">    <span class="nam">y</span><span class="op">:</span> <span class="nam">list</span><span class="op">[</span><span class="nam">list</span><span class="op">[</span><span class="nam">float</span><span class="op">]</span><span class="op">]</span><span class="op">,</span>&nbsp;</span><span class="r"></span></p>
@@ -677,8 +677,8 @@
             <a class="nav" href="index.html">&Hat; index</a> &nbsp; &nbsp;
             <a class="nav" href="z_145eef247bfb46b6_google_calendar_py.html">&#xbb; next</a>
             &nbsp; &nbsp; &nbsp;
-            <a class="nav" href="https://coverage.readthedocs.io/en/7.14.2">coverage.py v7.14.2</a>,
-            created at 2026-06-26 07:47 +0000
+            <a class="nav" href="https://coverage.readthedocs.io/en/7.15.2">coverage.py v7.15.2</a>,
+            created at 2026-08-07 05:46 +0000
         </p>
     </div>
 </footer>
