@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1782460054837,
+  "lastUpdate": 1786081620600,
   "repoUrl": "https://github.com/andgineer/docker-iot-calendar",
   "entries": {
     "Benchmark": [
@@ -1085,6 +1085,37 @@ window.BENCHMARK_DATA = {
             "unit": "iter/sec",
             "range": "stddev: 0.00008603969738634868",
             "extra": "mean: 1.9964031999990086 msec\nrounds: 5"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "filbert@yandex.ru",
+            "name": "andgineer",
+            "username": "andgineer"
+          },
+          "committer": {
+            "email": "filbert@yandex.ru",
+            "name": "andgineer",
+            "username": "andgineer"
+          },
+          "distinct": true,
+          "id": "d9ed0381f19de026bdf01b1c23c1e4c9d446c65d",
+          "message": "cryptography: PKCS#7 EnvelopedData decryption exposes a Bleichenbacher oracle through distinguishable errors and timing",
+          "timestamp": "2026-08-07T07:46:13+02:00",
+          "tree_id": "9d91116fc0a8bfc959a11589a5d13ee522adec48",
+          "url": "https://github.com/andgineer/docker-iot-calendar/commit/d9ed0381f19de026bdf01b1c23c1e4c9d446c65d"
+        },
+        "date": 1786081619891,
+        "tool": "pytest",
+        "benches": [
+          {
+            "name": "tests/test_calendar_image.py::test_draw_benchmark",
+            "value": 636.1560297365552,
+            "unit": "iter/sec",
+            "range": "stddev: 0.00012834665318456136",
+            "extra": "mean: 1.5719413999960352 msec\nrounds: 5"
           }
         ]
       }
