@@ -6,6 +6,7 @@ import pytest
 
 import calendar_image
 from calendar_image import (
+    WEEKS,
     ImageLoader,
     draw_calendar,
     draw_day_headers,
@@ -21,7 +22,6 @@ from calendar_image import (
     pie_row_header_width,
     pie_scale,
     pie_width,
-    WEEKS,
     width_aspect,
 )
 from models import WeatherData, WeatherLabel

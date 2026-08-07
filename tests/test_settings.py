@@ -1,4 +1,5 @@
 import json
+
 import pytest
 
 from google_calendar import GOOGLE_CREDENTIALS_PARAM

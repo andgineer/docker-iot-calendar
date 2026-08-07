@@ -5,7 +5,7 @@ from unittest.mock import MagicMock, patch
 import dateutil.tz
 import pytest
 
-from google_calendar import Calendar, collect_events, GOOGLE_CREDENTIALS_PARAM
+from google_calendar import GOOGLE_CREDENTIALS_PARAM, Calendar, collect_events
 
 # Mock the API calls to return a fixed event list
 sample_event = {

@@ -6,7 +6,7 @@ from cached_decorator import cached
 
 
 def test_cashed_decorator():
-    class second(object):
+    class second:
         def __init__(self, param):
             pass
 
@@ -16,7 +16,7 @@ def test_cashed_decorator():
 
             return second_func
 
-    class F(object):
+    class F:
         def __init__(self, n):
             self.n = n
 
@@ -33,7 +33,7 @@ def test_cashed_decorator():
     def f3(n):
         return n
 
-    class F2(object):
+    class F2:
         def __init__(self, n):
             self.n = n
 
@@ -41,7 +41,7 @@ def test_cashed_decorator():
         def f2(self, n):
             return n * self.n
 
-    class F3(object):
+    class F3:
         @cached(seconds=0.05, trace_fmt="returned cached F3.f2 at {time}")
         def f1(self, n):
             return n if n in (0, 1) else (n - 1) + (n - 2)

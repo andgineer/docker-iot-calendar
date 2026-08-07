@@ -1,5 +1,5 @@
-from unittest.mock import patch
 from datetime import datetime
+from unittest.mock import patch
 
 from models import WeatherData
 from weather_gov import Weather  # Adjust the import according to your setup

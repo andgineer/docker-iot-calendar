@@ -146,7 +146,7 @@ def draw_pie(
     )
 
 
-def draw_empty_pie(  # noqa: PLR0913
+def draw_empty_pie(  # noqa: PLR0913,PLR0917
     grid: list[list[dict[str, datetime | list[dict[str, Any]]]]],
     image_loader: ImageLoader,
     week: int,
@@ -386,7 +386,7 @@ def configure_axes_for_image(axes: Axes) -> None:
     axes.set_xlim(0, 1 / plot_height)  # Used the earlier logic for x_scale directly here.
 
 
-def draw_plot(  # noqa: PLR0913
+def draw_plot(  # noqa: PLR0913,PLR0917
     x: list[datetime],
     y: list[list[float]],
     labels: list[WeatherLabel],
@@ -449,7 +449,7 @@ def draw_plot(  # noqa: PLR0913
     trace_fmt="Use stored imaged without rendering (from {time})",
     daily_refresh=True,
 )  # noqa: PLR0913
-def draw_calendar(  # noqa: PLR0913
+def draw_calendar(  # noqa: PLR0913,PLR0917
     grid: list[list[dict[str, datetime | list[int]]]],
     x: list[datetime],
     y: list[list[float]],
